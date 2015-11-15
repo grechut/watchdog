@@ -10,10 +10,10 @@ function requestDevice(deviceId) {
     };
 }
 
-function receiveDevice(device) {
+function receiveDevice(deviceInfo) {
     return {
         type: RECEIVE_DEVICE,
-        device: device
+        deviceInfo: deviceInfo
     };
 }
 

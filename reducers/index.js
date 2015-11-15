@@ -3,9 +3,9 @@ import {
   REQUEST_DEVICE, RECEIVE_DEVICE
 } from '../actions';
 
-function devices(state = {
+function device(state = {
   isFetching: false,
-  device: null
+  info: null
 }, action) {
   switch (action.type) {
       case REQUEST_DEVICE:
@@ -15,7 +15,7 @@ function devices(state = {
       case RECEIVE_DEVICE:
       return Object.assign({}, state, {
           isFetching: false,
-          device: action.device
+          info: action.deviceInfo
       });
       default:
       return state;
@@ -23,7 +23,7 @@ function devices(state = {
 }
 
 const rootReducer = combineReducers({
-  devices,
+  device,
 });
 
 export default rootReducer;

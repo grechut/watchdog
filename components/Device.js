@@ -2,17 +2,20 @@ import React, { PropTypes, Component } from 'react';
 
 export default class Device extends Component {
   render() {
-    const { device } = this.props;
+    const { info } = this.props;
 
     return (
         <div>
-          <h1>{device.mac}</h1>
-          <h3>{device.id}</h3>
+          <h1>MAC: {info.mac}</h1>
+          <h3>ID: {info.id}</h3>
+          <div id="stream">
+            <p>Here video stream</p>
+          </div>
         </div>
     );
   }
 }
 
 Device.propTypes = {
-    device: PropTypes.object.isRequired
+    info: PropTypes.object.isRequired
 };

@@ -16,28 +16,28 @@ class App extends Component {
   }
 
   render() {
-    const { device, isFetching } = this.props;
+    const { info, isFetching } = this.props;
     return (
-      <div>
-        {(!isFetching && device) &&
-          <Device device={device} />}
+      <div className='app'>
+        {(!isFetching && info) &&
+          <Device info={info} />}
       </div>
     );
   }
 }
 
 App.propTypes = {
-  device: PropTypes.object.isRequired,
+  info: PropTypes.object,
   isFetching: PropTypes.bool.isRequired
 };
 
 function mapStateToProps(state) {
-  const { devices } = state;
-  const { isFetching, device } = devices;
+  const { device } = state;
+  const { isFetching, info } = device;
 
   return {
     isFetching,
-    device
+    info
   };
 }
 
