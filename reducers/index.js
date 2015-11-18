@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { routeReducer } from 'redux-simple-router';
 import {
   REQUEST_DEVICE, RECEIVE_DEVICE
 } from '../actions';
@@ -22,8 +23,6 @@ function device(state = {
   }
 }
 
-const rootReducer = combineReducers({
-  device,
-});
+const rootReducer = combineReducers(Object.assign({}, { device }, { routing: routeReducer }));
 
 export default rootReducer;
