@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { routeReducer } from 'redux-simple-router';
 import {
-  REQUEST_DEVICE, RECEIVE_DEVICE
+  CREATE_DEVICE, REQUEST_DEVICE, RECEIVE_DEVICE
 } from '../actions';
 
 function device(state = {
@@ -9,6 +9,7 @@ function device(state = {
   info: null
 }, action) {
   switch (action.type) {
+      case CREATE_DEVICE: return state;
       case REQUEST_DEVICE:
       return Object.assign({}, state, {
           isFetching: true

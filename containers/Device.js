@@ -2,8 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { fetchDevice } from '../actions';
 
-let hackyDeviceId = 'id1';
-
 class Device extends Component {
   constructor(props) {
     super(props);
@@ -25,11 +23,8 @@ class Device extends Component {
 
     return (
       <div className='app'>
-        <h1>MAC: {info.mac}</h1>
-          <h3>ID: {info.id}</h3>
-          <div id="stream">
-            <p>Here video stream</p>
-          </div>
+        <h1>Owner: {info.owner}</h1>
+        <h4>Listeners: {info.listeners.length}</h4>
       </div>
     );
   }

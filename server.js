@@ -4,24 +4,34 @@ var webpackHotMiddleware = require('webpack-hot-middleware');
 var config = require('./webpack.config');
 
 var app = new (require('express'))();
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json());
+
 var port = 3000;
 
 var compiler = webpack(config);
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
 app.use(webpackHotMiddleware(compiler));
 
-app.get("/", function(req, res) {
+app.get(["/", "/device/:deviceUuid"], function(req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-var devices = {
-    'id1': { id: 'id1', mac: 'AA-BB-AA' },
-    'id2': { id: 'id2', mac: 'AA-BB-CC' },
-    'id3': { id: 'id3', mac: 'AA-BB-DD' }
-};
+
+var devices = {};
 
 app.get("/api/device/:deviceUuid", function(req, res) {
   return res.send(devices[req.params.deviceUuid]);
+});
+
+app.post('/api/device/create', function (req, res) {
+  if (!devices[req.body.uuid]) {
+    devices[req.body.uuid] = {
+      owner: req.body.uuid, listeners: []
+    };
+  }
+  res.send('OK');
 });
 
 app.listen(port, function(error) {

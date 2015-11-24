@@ -1,9 +1,7 @@
 # Watchdog
 
 ## TODO JR
-- [X] add basic, non-ugly styling
-- [X] improve state structure
-- [ ] add router with paths `/device/:id` and `/device/new`
-- [ ] add action for attaching/submiting device
-- [ ] add basic infrastructure for emmiting event from device to listeners
+- [ ] add listener to device (https://www.youtube.com/watch?v=Z_K8QPQe6oM)
+- [ ] send test message from owner to device
+
 - [ ] understand how video is transferred (see https://github.com/szimek/webrtc-translate)

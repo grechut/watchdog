@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { fetchDevice } from '../actions';
+import { createDevice } from '../actions';
 import { updatePath } from 'redux-simple-router';
 
 class New extends React.Component {
@@ -9,11 +9,10 @@ class New extends React.Component {
 
         return (
             <div className='app'>
-                { ['id1', 'id2', 'id3'].map(x => {
-                    return <button key={x}
-                            onClick={() => dispatch(updatePath(`/device/${x}`))}>{x}
-                        </button>
-                })}
+                <button onClick={() => dispatch(createDevice())}
+                    className="btn btn-success">
+                    New device
+                </button>
             </div>
         );
     }
