@@ -28,7 +28,7 @@ npm start
 ```
 
 ## TODO JR
-- [ ] add redis storage
+- [X] add redis storage
 - [ ] add listener to device (setup basic push API)
 
 - [ ] add socket.io communication for WebRTC (https://github.com/andyet/signalmaster)

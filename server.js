@@ -30,14 +30,26 @@ app.get("/api/device/:deviceUuid", function(req, res) {
 });
 
 app.post('/api/device/create', function(req, res) {
-    var uuid = req.body.uuid,
+    var deviceUuid = req.body.deviceUuid,
         device = {
-            owner: uuid,
+            owner: deviceUuid,
             listeners: []
         };
 
-    redisClient.set(uuid, JSON.stringify(device));
+    redisClient.set(deviceUuid, JSON.stringify(device));
     res.send('OK');
+});
+
+app.post('/api/device/listen', function(req, res) {
+    var deviceUuid = req.body.deviceUuid,
+        listenerUuid = req.body.listenerUuid;
+
+    redisClient.get(deviceUuid, function(err, reply) {
+        var device = JSON.parse(reply);
+        device.listeners.push(listenerUuid);
+        redisClient.set(deviceUuid, JSON.stringify(device));
+        res.send('OK');
+    });
 });
 
 app.listen(port, function(error) {
