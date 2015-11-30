@@ -1,7 +1,22 @@
 # Watchdog
 
+## Roadmap
+
+- [ ] Notifications about detected motion
+- [ ] Push notifications
+- [ ] Web rtc video transfer
+- [ ] Sound detection
+- [ ] Remote configuration
+- [ ] Really good detection algos
+- [ ] Easy way to host
+- [ ] Screenshots saving
+- [ ] Video saving
+- [ ] WebRTC through server (TURN)
+
 ## TODO JR
-- [ ] add listener to device (https://www.youtube.com/watch?v=Z_K8QPQe6oM)
-- [ ] send test message from owner to device
+- [ ] add redis storage
+- [ ] add listener to device (setup basic push API)
+
+- [ ] add socket.io communication for WebRTC (https://github.com/andyet/signalmaster)
 
 - [ ] understand how video is transferred (see https://github.com/szimek/webrtc-translate)
