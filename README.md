@@ -13,6 +13,20 @@
 - [ ] Video saving
 - [ ] WebRTC through server (TURN)
 
+## Usage
+
+Install (OSX)
+
+```
+bash install.sh
+```
+
+Run
+
+```
+npm start
+```
+
 ## TODO JR
 - [ ] add redis storage
 - [ ] add listener to device (setup basic push API)
