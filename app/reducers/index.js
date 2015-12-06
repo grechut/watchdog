@@ -8,6 +8,7 @@ import {
 
 function device(state = {
   isFetching: false,
+  // TODO design better state, probably info can just be flattened
   info: null
 }, action) {
   switch (action.type) {
