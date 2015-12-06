@@ -2,7 +2,8 @@ import { combineReducers } from 'redux';
 import { routeReducer } from 'redux-simple-router';
 import {
   REQUEST_DEVICE, RECEIVE_DEVICE,
-  CREATE_DEVICE, ADD_DEVICE_LISTENER
+  CREATE_DEVICE, ADD_DEVICE_LISTENER,
+  NOTIFY
 } from '../actions';
 
 function device(state = {
@@ -19,8 +20,12 @@ function device(state = {
           isFetching: false,
           info: action.deviceInfo
       });
-      case CREATE_DEVICE: return state;
+      case CREATE_DEVICE:
+      return Object.assign({}, state, {
+          isOwner: true  // TODO temporary solution
+      });
       case ADD_DEVICE_LISTENER: return state;
+      case NOTIFY: return state;
       default:
       return state;
   }

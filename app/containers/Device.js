@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { fetchDevice, addDeviceListener } from '../actions';
+import { fetchDevice, addDeviceListener, notify } from '../actions';
+import { Btn } from '../components/Btn';
 
 class Device extends Component {
   constructor(props) {
@@ -11,14 +12,8 @@ class Device extends Component {
     this.props.dispatch(fetchDevice(this.props.params.deviceUuid));
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.deviceUuid !== this.props.params.deviceUuid) {
-      this.props.dispatch(fetchDevice(this.props.params.deviceUuid));
-    }
-  }
-
   render() {
-    const { info, dispatch } = this.props;
+    const { info, dispatch, isOwner } = this.props;
     if (!info) return null;
 
     return (
@@ -26,10 +21,12 @@ class Device extends Component {
         <h1>Owner: {info.owner}</h1>
         <h4>Listeners: {info.listeners.map(x => <p>{x}</p>)}</h4>
 
-        <button onClick={() => dispatch(addDeviceListener(this.props.params.deviceUuid))}
-          className="btn btn-success">
-          Listen to thid device
-        </button>
+        { isOwner ?
+          <Btn onClick={() => dispatch(notify('Some notification'))}
+            text="Fire notification" />
+          :
+          <Btn onClick={() => dispatch(addDeviceListener())}
+            text="Listen to this device" /> }
       </div>
     );
   }
@@ -42,13 +39,12 @@ Device.propTypes = {
 
 function mapStateToProps(state) {
   const { device, routing } = state;
-  const { isFetching, info } = device;
-  const { path } = routing;
+  const { isFetching, info, isOwner } = device;
 
   return {
     isFetching,
     info,
-    path
+    isOwner
   };
 }
 

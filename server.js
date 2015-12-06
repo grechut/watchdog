@@ -37,7 +37,7 @@ app.post('/api/device/create', function(req, res) {
         };
 
     redisClient.set(deviceUuid, JSON.stringify(device));
-    res.send('OK');
+    res.send(200);
 });
 
 app.post('/api/device/listen', function(req, res) {
@@ -48,8 +48,18 @@ app.post('/api/device/listen', function(req, res) {
         var device = JSON.parse(reply);
         device.listeners.push(listenerUuid);
         redisClient.set(deviceUuid, JSON.stringify(device));
-        res.send('OK');
+        res.sendStatus(200);
     });
+});
+
+app.post('/api/notify', function(req, res) {
+    var deviceUuid = req.body.deviceUuid,
+        message = req.body.message;
+
+    // TODO send notification via push API
+    console.log('Notificaiton: ', message);
+
+    res.sendStatus(200);
 });
 
 app.listen(port, function(error) {
