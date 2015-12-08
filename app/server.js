@@ -3,6 +3,7 @@ var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
 var config = require('../webpack.config');
 
+var express = require('express');
 var app = new (require('express'))();
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -18,6 +19,10 @@ app.get(["/", "/device/:deviceUuid"], function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
+// temporary solution
+app.get(["/sw.js"], function(req, res) { res.sendFile(__dirname + '/sw.js'); });
+app.get(["/manifest.json"], function(req, res) { res.sendFile(__dirname + '/manifest.json'); });
+
 var redis = require("redis"),
     redisClient = redis.createClient({
         prefix: 'watchdog:'
@@ -25,7 +30,11 @@ var redis = require("redis"),
 
 app.get("/api/device/:deviceUuid", function(req, res) {
     redisClient.get(req.params.deviceUuid, function(err, reply) {
-        res.send(JSON.parse(reply));
+        var result = JSON.parse(reply)
+        res.send({
+            owner: result.owner,
+            listenersCount: result.listenerEndpoints.length
+        });
     });
 });
 
@@ -33,7 +42,7 @@ app.post('/api/device/create', function(req, res) {
     var deviceUuid = req.body.deviceUuid,
         device = {
             owner: deviceUuid,
-            listeners: []
+            listenerEndpoints: []
         };
 
     redisClient.set(deviceUuid, JSON.stringify(device));
@@ -42,11 +51,13 @@ app.post('/api/device/create', function(req, res) {
 
 app.post('/api/device/listen', function(req, res) {
     var deviceUuid = req.body.deviceUuid,
-        listenerUuid = req.body.listenerUuid;
+        listenerEndpoint = req.body.listenerEndpoint;
 
     redisClient.get(deviceUuid, function(err, reply) {
         var device = JSON.parse(reply);
-        device.listeners.push(listenerUuid);
+        if (device.listenerEndpoints.indexOf(listenerEndpoint) == -1) {
+            device.listenerEndpoints.push(listenerEndpoint);
+        }
         redisClient.set(deviceUuid, JSON.stringify(device));
         res.sendStatus(200);
     });

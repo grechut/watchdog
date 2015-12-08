@@ -42,18 +42,21 @@ export function createDevice() {
 }
 
 export function addDeviceListener() {
-    /* TODO handle subscribing only once. Push API will help */
     return (dispatch, getState) => {
         dispatch({type: ADD_DEVICE_LISTENER});
 
-        let deviceUuid = getState().device.owner,
-            listenerUuid = uuid.v4();
-        return axios.post('/api/device/listen', {
+        let deviceUuid = getState().device.owner;
+
+        navigator.serviceWorker.getRegistration().then(reg => {
+            return reg.pushManager.subscribe({userVisibleOnly: true});
+        }).then(pushSubscription => {
+            console.log(pushSubscription.endpoint);
+
+            return axios.post('/api/device/listen', {
                 deviceUuid: deviceUuid,
-                listenerUuid: listenerUuid
-                /* TODO here would go push API subscription */
-            })
-            .then(response => dispatch(fetchDevice(deviceUuid)));
+                listenerEndpoint: pushSubscription.endpoint
+            });
+        }).then(response => dispatch(fetchDevice(deviceUuid)));
     }
 }
 

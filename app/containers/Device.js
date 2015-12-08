@@ -15,12 +15,12 @@ class Device extends Component {
   render() {
     const { device, dispatch } = this.props;
     if (!device.owner) return null;
-    const { owner, listeners, isOwner } = device;
+    const { owner, listenersCount, isOwner } = device;
 
     return (
       <div className='app'>
         <h1>Owner: {owner}</h1>
-        <h4>Listeners: {listeners.map(x => <p>{x}</p>)}</h4>
+        <h4>Listeners: {listenersCount}</h4>
 
         { isOwner ?
           <Btn onClick={() => dispatch(notify('Some notification'))}
