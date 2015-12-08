@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 var webpackDevMiddleware = require('webpack-dev-middleware');
 var webpackHotMiddleware = require('webpack-hot-middleware');
-var config = require('./webpack.config');
+var config = require('../webpack.config');
 
 var app = new (require('express'))();
 var bodyParser = require('body-parser');
@@ -15,7 +15,7 @@ app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output
 app.use(webpackHotMiddleware(compiler));
 
 app.get(["/", "/device/:deviceUuid"], function(req, res) {
-    res.sendFile(__dirname + '/app/index.html');
+    res.sendFile(__dirname + '/index.html');
 });
 
 var redis = require("redis"),

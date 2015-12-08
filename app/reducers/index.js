@@ -8,8 +8,9 @@ import {
 
 function device(state = {
   isFetching: false,
-  // TODO design better state, probably info can just be flattened
-  info: null
+  owner: null,
+  listeners: [],
+  isOwner: false
 }, action) {
   switch (action.type) {
       case REQUEST_DEVICE:
@@ -17,10 +18,7 @@ function device(state = {
           isFetching: true
       });
       case RECEIVE_DEVICE:
-      return Object.assign({}, state, {
-          isFetching: false,
-          info: action.deviceInfo
-      });
+      return Object.assign({}, state, { isFetching: false }, action.deviceInfo);
       case CREATE_DEVICE:
       return Object.assign({}, state, {
           isOwner: true  // TODO temporary solution

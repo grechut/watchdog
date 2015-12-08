@@ -46,7 +46,7 @@ export function addDeviceListener() {
     return (dispatch, getState) => {
         dispatch({type: ADD_DEVICE_LISTENER});
 
-        let deviceUuid = getState().device.info.owner,
+        let deviceUuid = getState().device.owner,
             listenerUuid = uuid.v4();
         return axios.post('/api/device/listen', {
                 deviceUuid: deviceUuid,
@@ -61,7 +61,7 @@ export function notify(message) {
     return (dispatch, getState) => {
         dispatch({type: NOTIFY});
 
-        let deviceUuid = getState().device.info.owner;
+        let deviceUuid = getState().device.owner;
         return axios.post('/api/notify', {
                 deviceUuid: deviceUuid,
                 message: message

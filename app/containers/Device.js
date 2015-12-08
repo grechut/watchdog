@@ -13,13 +13,14 @@ class Device extends Component {
   }
 
   render() {
-    const { info, dispatch, isOwner } = this.props;
-    if (!info) return null;
+    const { device, dispatch } = this.props;
+    if (!device.owner) return null;
+    const { owner, listeners, isOwner } = device;
 
     return (
       <div className='app'>
-        <h1>Owner: {info.owner}</h1>
-        <h4>Listeners: {info.listeners.map(x => <p>{x}</p>)}</h4>
+        <h1>Owner: {owner}</h1>
+        <h4>Listeners: {listeners.map(x => <p>{x}</p>)}</h4>
 
         { isOwner ?
           <Btn onClick={() => dispatch(notify('Some notification'))}
@@ -33,18 +34,14 @@ class Device extends Component {
 }
 
 Device.propTypes = {
-  info: PropTypes.object,
-  isFetching: PropTypes.bool.isRequired
+  device: PropTypes.object
 };
 
 function mapStateToProps(state) {
-  const { device, routing } = state;
-  const { isFetching, info, isOwner } = device;
+  const { device } = state;
 
   return {
-    isFetching,
-    info,
-    isOwner
+    device
   };
 }
 

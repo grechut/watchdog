@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Watchdog",
   "scripts": {
-    "start": "node server.js"
+    "start": "node app/server.js"
   },
   "dependencies": {
     "axios": "^0.7.0",
