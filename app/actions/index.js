@@ -36,6 +36,7 @@ export function createDevice() {
     return dispatch => {
         dispatch({type: CREATE_DEVICE});
         let deviceUuid = uuid.v4();
+        localStorage.setItem(`dummyOwner_${deviceUuid}`, true);
         return axios.post('/api/device/create', { deviceUuid: deviceUuid })
             .then(response => dispatch(updatePath(`/device/${deviceUuid}`)));
     }
