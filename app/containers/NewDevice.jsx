@@ -11,7 +11,7 @@ class NewDevice extends React.Component {
         <button onClick={() => dispatch(createDevice())}
           className="btn btn-success"
         >
-          New device
+          Use this device as a camera
         </button>
       </div>
     );
