@@ -1,4 +1,3 @@
-import 'babel-core/polyfill';
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
@@ -6,7 +5,7 @@ import { Router, Route } from 'react-router';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import { syncReduxAndRouter } from 'redux-simple-router';
 
-import New from './containers/New';
+import NewDevice from './containers/NewDevice';
 import Device from './containers/Device';
 
 import configureStore from './store/configureStore';
@@ -21,8 +20,8 @@ syncReduxAndRouter(history, store);
 render(
   <Provider store={store}>
     <Router history={history}>
-      <Route path="/" component={New} />
-      <Route path="/device/:deviceUuid" component={Device} />
+      <Route path="/" component={NewDevice} />
+      <Route path="/devices/:deviceUuid" component={Device} />
     </Router>
   </Provider>,
   document.getElementById('root')

@@ -1,0 +1,21 @@
+{
+  "extends": "airbnb",
+
+  "rules": {
+    /**
+     * Variables
+     */
+    "no-undef": 2,                          // http://eslint.org/docs/rules/no-undef
+    "no-use-before-define": [2, "nofunc"],  // http://eslint.org/docs/rules/no-use-before-define
+
+    /**
+     * Style
+     */
+    "object-curly-spacing": [2, "always"],  // http://eslint.org/docs/rules/object-curly-spacing
+    "space-before-function-paren": [2, {    // http://eslint.org/docs/rules/space-before-function-paren
+      "anonymous": "always",
+      "named": "never"
+    }],
+    "func-names": 0,
+  },
+}

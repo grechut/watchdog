@@ -11,65 +11,77 @@ export const ADD_DEVICE_LISTENER = 'ADD_DEVICE_LISTENER';
 export const NOTIFY = 'NOTIFY';
 
 function requestDevice(deviceUuid) {
-    return {
-        type: REQUEST_DEVICE,
-        deviceUuid
-    };
+  return {
+    type: REQUEST_DEVICE,
+    deviceUuid,
+  };
 }
 
 function receiveDevice(deviceInfo) {
-    return {
-        type: RECEIVE_DEVICE,
-        deviceInfo: deviceInfo
-    };
+  return {
+    type: RECEIVE_DEVICE,
+    deviceInfo,
+  };
 }
 
 export function fetchDevice(deviceUuid) {
-    return dispatch => {
-        dispatch(requestDevice(deviceUuid));
-        return axios.get(`/api/device/${deviceUuid}`)
-            .then(response => dispatch(receiveDevice(response.data)));
-    };
+  return (dispatch) => {
+    dispatch(requestDevice(deviceUuid));
+    return axios.get(`/api/device/${deviceUuid}`)
+      .then((response) => {
+        dispatch(receiveDevice(response.data));
+      });
+  };
 }
 
 export function createDevice() {
-    return dispatch => {
-        dispatch({type: CREATE_DEVICE});
-        let deviceUuid = uuid.v4();
-        localStorage.setItem(`dummyOwner_${deviceUuid}`, true);
-        return axios.post('/api/device/create', { deviceUuid: deviceUuid })
-            .then(response => dispatch(updatePath(`/device/${deviceUuid}`)));
-    }
+  return (dispatch) => {
+    dispatch({ type: CREATE_DEVICE });
+
+    const deviceUuid = uuid.v4();
+    localStorage.setItem(`dummyOwner_${deviceUuid}`, true);
+
+    return axios.post('/api/device/create', { deviceUuid })
+      .then(() =>
+        dispatch(updatePath(`/devices/${deviceUuid}`))
+      );
+  };
 }
 
 export function addDeviceListener() {
-    return (dispatch, getState) => {
-        dispatch({type: ADD_DEVICE_LISTENER});
+  return (dispatch, getState) => {
+    dispatch({ type: ADD_DEVICE_LISTENER });
 
-        let deviceUuid = getState().device.owner;
+    const deviceUuid = getState().device.owner;
 
-        navigator.serviceWorker.getRegistration().then(reg => {
-            return reg.pushManager.subscribe({userVisibleOnly: true});
-        }).then(pushSubscription => {
-            console.log(pushSubscription.endpoint);
+    navigator.serviceWorker.getRegistration()
+      .then((reg) => {
+        return reg.pushManager.subscribe({ userVisibleOnly: true });
+      })
+      .then((pushSubscription) => {
+        console.log(pushSubscription.endpoint);
 
-            return axios.post('/api/device/listen', {
-                deviceUuid: deviceUuid,
-                listenerEndpoint: pushSubscription.endpoint
-            });
-        }).then(response => dispatch(fetchDevice(deviceUuid)));
-    }
+        return axios.post('/api/device/listen', {
+          deviceUuid,
+          listenerEndpoint: pushSubscription.endpoint,
+        });
+      })
+      .then(() => {
+        dispatch(fetchDevice(deviceUuid));
+      });
+  };
 }
 
 export function notify(message) {
-    return (dispatch, getState) => {
-        dispatch({type: NOTIFY});
+  return (dispatch, getState) => {
+    dispatch({ type: NOTIFY });
 
-        let deviceUuid = getState().device.owner;
-        return axios.post('/api/notify', {
-                deviceUuid: deviceUuid,
-                message: message
-             });
-        // TODO shall we react to post in any way ? Maybe error display ?
-    }
+    const deviceUuid = getState().device.owner;
+
+    return axios.post('/api/notify', {
+      deviceUuid,
+      message,
+    });
+    // TODO shall we react to post in any way ? Maybe error display ?
+  };
 }

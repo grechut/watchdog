@@ -3,32 +3,32 @@ import { routeReducer } from 'redux-simple-router';
 import {
   REQUEST_DEVICE, RECEIVE_DEVICE,
   CREATE_DEVICE, ADD_DEVICE_LISTENER,
-  NOTIFY
+  NOTIFY,
 } from '../actions';
 
 function device(state = {
   isFetching: false,
   owner: null,
   listeners: [],
-  isOwner: false
+  isOwner: false,
 }, action) {
   switch (action.type) {
-      case REQUEST_DEVICE:
+    case REQUEST_DEVICE:
       return Object.assign({}, state, {
-          isFetching: true
+        isFetching: true,
       });
-      case RECEIVE_DEVICE:
+    case RECEIVE_DEVICE:
       return Object.assign({},
         state, {
           isFetching: false,
-          isOwner: localStorage.getItem(`dummyOwner_${action.deviceInfo.owner}`)
+          isOwner: localStorage.getItem(`dummyOwner_${action.deviceInfo.owner}`),
         },
-        action.deviceInfo);
-      case CREATE_DEVICE: return state;
-      case ADD_DEVICE_LISTENER: return state;
-      case NOTIFY: return state;
-      default:
-      return state;
+        action.deviceInfo
+      );
+    case CREATE_DEVICE: return state;
+    case ADD_DEVICE_LISTENER: return state;
+    case NOTIFY: return state;
+    default: return state;
   }
 }
 

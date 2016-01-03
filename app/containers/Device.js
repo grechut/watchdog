@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { fetchDevice, addDeviceListener, notify } from '../actions';
-import { Btn } from '../components/Btn';
 
 class Device extends Component {
   constructor(props) {
@@ -18,30 +17,40 @@ class Device extends Component {
     const { owner, listenersCount, isOwner } = device;
 
     return (
-      <div className='app'>
+      <div className="app">
         <h1>Owner: {owner}</h1>
         <h4>Listeners: {listenersCount}</h4>
 
         { isOwner ?
-          <Btn onClick={() => dispatch(notify('Some notification'))}
-            text="Fire notification" />
+          <button onClick={() => dispatch(notify('Some notification'))}
+            className="btn btn-success"
+            disabled={listenersCount === 0}
+          >
+            Fire notification
+          </button>
           :
-          <Btn onClick={() => dispatch(addDeviceListener())}
-            text="Listen to this device" /> }
+          <button onClick={() => dispatch(addDeviceListener())}
+            className="btn btn-success"
+          >
+            Listen to this device
+          </button>
+        }
       </div>
     );
   }
 }
 
 Device.propTypes = {
-  device: PropTypes.object
+  device: PropTypes.object,
+  dispatch: PropTypes.func,
+  params: PropTypes.object,
 };
 
 function mapStateToProps(state) {
   const { device } = state;
 
   return {
-    device
+    device,
   };
 }
 
