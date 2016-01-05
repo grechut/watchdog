@@ -28,9 +28,11 @@ npm start
 ```
 
 ## TODO JR
-- [X] add redis storage
-- [ ] add listener to device (setup basic push API)
+- [ ] send push notifications from server (with message, requires encryption)
+- [ ] style push notificaitons, open web app on notification click
 
+- [ ] add test heroku hosting
 - [ ] add socket.io communication for WebRTC (https://github.com/andyet/signalmaster)
-
 - [ ] understand how video is transferred (see https://github.com/szimek/webrtc-translate)
+
+- [ ] help in plugging in motion detection
