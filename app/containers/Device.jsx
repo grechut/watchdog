@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { fetchDevice, addDeviceListener, notify } from '../actions';
+import Video from '../components/Video';
 
 class Device extends Component {
   constructor(props) {
@@ -13,13 +14,15 @@ class Device extends Component {
 
   render() {
     const { device, dispatch } = this.props;
+    const { owner, listenersCount, isOwner, localStream } = device;
+
     if (!device.owner) return null;
-    const { owner, listenersCount, isOwner } = device;
 
     return (
       <div className="app">
-        <h1>Owner: {owner}</h1>
+        <h3>Owner: {owner}</h3>
         <h4>Listeners: {listenersCount}</h4>
+        <Video src={localStream} />
 
         { isOwner ?
           <button onClick={() => dispatch(notify('Some notification'))}
