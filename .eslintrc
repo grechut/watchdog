@@ -16,6 +16,7 @@
       "anonymous": "always",
       "named": "never"
     }],
-    "func-names": 0
+    "func-names": 0,
+    "no-console": 0
   },
 }
