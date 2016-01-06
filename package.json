@@ -21,6 +21,7 @@
     "redux-logger": "^2.0.2",
     "redux-simple-router": "0.0.8",
     "redux-thunk": "^0.1.0",
+    "resemblejs": "^2.1.0",
     "uuid": "^2.0.1"
   },
   "devDependencies": {

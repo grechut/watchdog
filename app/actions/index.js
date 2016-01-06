@@ -1,7 +1,9 @@
 import axios from 'axios';
 import uuid from 'uuid';
-
 import { updatePath } from 'redux-simple-router';
+import detectors from '../lib/detectors';
+import MotionDetector from '../lib/detectors/motion';
+
 
 // FETCH_DEVICE -> REQUEST_DEVICE -> RECEIVE_DEVICE -> ...
 // if isOwner then GET_LOCAL_VIDEO_STREAM -> START MOTION/NOISE DETECTION
@@ -105,6 +107,14 @@ export function getLocalVideoStream() {
         type: GET_LOCAL_VIDEO_STREAM,
         stream,
       });
+
+      // TODO: move it somewhere else and dispatch actin to update state
+      const motionDetector = new MotionDetector(stream);
+      motionDetector.onEvent = () => {
+        console.warn('Motion detected!');
+      };
+      motionDetector.start();
+      detectors.motion = motionDetector;
     };
     const gotError = function (error) {
       console.error(error);
