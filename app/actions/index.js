@@ -1,9 +1,10 @@
 import axios from 'axios';
 import uuid from 'uuid';
 import { updatePath } from 'redux-simple-router';
+import Rx from 'rxjs/Rx';
+import moment from 'moment';
 import detectors from '../lib/detectors';
 import MotionDetector from '../lib/detectors/motion';
-
 
 // FETCH_DEVICE -> REQUEST_DEVICE -> RECEIVE_DEVICE -> ...
 // if isOwner then GET_LOCAL_VIDEO_STREAM -> START MOTION/NOISE DETECTION
@@ -108,13 +109,45 @@ export function getLocalVideoStream() {
         stream,
       });
 
-      // TODO: move it somewhere else and dispatch actin to update state
+      // TODO: move it somewhere else and dispatch action to update state
       const motionDetector = new MotionDetector(stream);
-      motionDetector.onEvent = () => {
-        console.warn('Motion detected!');
+      const source = new Rx.Subject();
+      const windowDuration = 10000;
+
+      // Notify when motion has started
+      const next = source
+        .debounceTime(windowDuration)
+        .switchMap(() => source.take(1));
+
+      Rx.Observable.merge(source.take(1), next)
+        .subscribe((data) => {
+          const message = `Motion started at ${time(data.triggeredAt)}`;
+          console.log(message);
+          dispatch(notify(message));
+        });
+
+      // Notify when motion has stopped
+      source
+        .debounceTime(windowDuration)
+        .subscribe((data) => {
+          const message = `Motion stopped at ${time(data.triggeredAt)}`;
+          console.log(message);
+          dispatch(notify(message));
+        });
+
+      // Push values to Rx.Subject observable when motion is detected
+      motionDetector.onEvent = (data) => {
+        data.triggeredAt = Date.now();
+        source.next(data);
+        console.log('motion detected', data);
       };
+
       motionDetector.start();
       detectors.motion = motionDetector;
+
+      function time(timestamp) {
+        return moment(timestamp).format('hh:mm:ss.SS');
+      }
     };
     const gotError = function (error) {
       console.error(error);

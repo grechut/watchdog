@@ -3,17 +3,20 @@ import resemble from 'resemblejs';
 export default function MotionDetector(stream, options = {}) {
   this.stream = stream;
   this.options = Object.assign({}, options, {
-    threshold: 10,
-    interval: 1000,
+    interval: 500, // compare every 500ms
+    threshold: 10, // 10% difference between frames
   });
 
   this.isRunning = false;
+  this.firstFrame = true;
   this.previousFrame = null;
   this.currentFrame = null;
   this.onEvent = function () {};
 
   this.video = document.createElement('video');
   this.canvas = document.createElement('canvas');
+  this.canvas.width = this.video.width = 400;
+  this.canvas.height = this.video.height = 300;
   this.ctx = this.canvas.getContext('2d');
 
   this.video.setAttribute('autoplay', true);
@@ -35,16 +38,23 @@ MotionDetector.prototype.start = function () {
         return;
       }
 
-      resemble(this.currentFrame).compareTo(this.previousFrame).ignoreColors().onComplete(function result(data) {
-        console.log('Motion detector:', data);
+      resemble(this.currentFrame)
+        .compareTo(this.previousFrame)
+        .ignoreColors()
+        .onComplete((data) => {
+          if (data.misMatchPercentage > this.options.threshold) {
+            // FIXME: Lame workaround to skip the first frame,
+            // which for some strange reason is empty.
+            if (!this.firstFrame) {
+              this.onEvent(data);
+            }
 
-        if (data.misMatchPercentage > this.options.threshold) {
-          this.onEvent(data);
-        }
+            this.firstFrame = false;
+          }
 
-        this.previousFrame = this.currentFrame;
-        window.setTimeout(compare.bind(this), this.options.interval);
-      }.bind(this));
+          this.previousFrame = this.currentFrame;
+          window.setTimeout(compare.bind(this), this.options.interval);
+        });
     }
   }
 

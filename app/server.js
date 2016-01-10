@@ -71,11 +71,11 @@ app.post('/api/device/listen', function (req, res) {
 });
 
 app.post('/api/notify', function (req, res) {
-  // const deviceUuid = req.body.deviceUuid;
+  const deviceUuid = req.body.deviceUuid;
   const message = req.body.message;
 
   // TODO send notification via push API
-  console.log('Notificaiton: ', message);
+  console.log(`[${deviceUuid}] notification: ${message}`);
 
   res.sendStatus(200);
 });
