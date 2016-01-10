@@ -1,3 +1,5 @@
+require('dotenv').load();
+
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
@@ -5,6 +7,9 @@ const config = require('../webpack.config');
 
 const app = new (require('express'))();
 const bodyParser = require('body-parser');
+const webPush = require('web-push');
+webPush.setGCMAPIKey(process.env.GCM_API_KEY);
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -72,10 +77,16 @@ app.post('/api/device/listen', function (req, res) {
 
 app.post('/api/notify', function (req, res) {
   const deviceUuid = req.body.deviceUuid;
-  const message = req.body.message;
+  const message = req.body.message;  // not used now
 
-  // TODO send notification via push API
-  console.log(`[${deviceUuid}] notification: ${message}`);
+  redisClient.get(deviceUuid, function (err, reply) {
+    const device = JSON.parse(reply);
+    notifications = device.listenerEndpoints.map((endpoint) => {
+      return webPush.sendNotification(endpoint, 60*60);
+    });
+    Promise.all(notifications)
+      .then(() => res.sendStatus(200));
+  });
 
   res.sendStatus(200);
 });

@@ -9,6 +9,7 @@
   "dependencies": {
     "axios": "^0.7.0",
     "body-parser": "^1.14.1",
+    "dotenv": "^1.2.0",
     "history": "^1.13.1",
     "install": "^0.3.0",
     "moment": "^2.11.1",
@@ -24,7 +25,8 @@
     "redux-thunk": "^0.1.0",
     "resemblejs": "^2.1.0",
     "rxjs": "^5.0.0-beta.0",
-    "uuid": "^2.0.1"
+    "uuid": "^2.0.1",
+    "web-push": "^1.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.3.26",
