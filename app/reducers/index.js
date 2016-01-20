@@ -5,6 +5,7 @@ import {
   ADD_DEVICE_LISTENER, NOTIFY,
   GET_LOCAL_VIDEO_STREAM, // GET_REMOTE_VIDEO_STREAM
   START_DETECTOR, STOP_DETECTOR,
+  CHANGE_DETECTOR,
 } from '../actions';
 
 function device(state = {
@@ -48,6 +49,7 @@ function device(state = {
     case CREATE_DEVICE: return state;
     case ADD_DEVICE_LISTENER: return state;
     case NOTIFY: return state;
+    case CHANGE_DETECTOR: return Object.assign({}, state);  // TODO this is hacky, put here detector's info
     default: return state;
   }
 }

@@ -100,6 +100,7 @@ export function notify(message) {
 }
 
 export const GET_LOCAL_VIDEO_STREAM = 'GET_LOCAL_VIDEO_STREAM';
+export const CHANGE_DETECTOR = 'CHANGE_DETECTOR';
 export function getLocalVideoStream() {
   return (dispatch) => {
     const constraints = { video: true, audio: true };
@@ -108,7 +109,6 @@ export function getLocalVideoStream() {
         type: GET_LOCAL_VIDEO_STREAM,
         stream,
       });
-
       // TODO: move it somewhere else and dispatch action to update state
       const motionDetector = new MotionDetector(stream);
       const source = new Rx.Subject();
@@ -148,6 +148,10 @@ export function getLocalVideoStream() {
       function time(timestamp) {
         return moment(timestamp).format('hh:mm:ss.SS');
       }
+
+      dispatch({
+        type: CHANGE_DETECTOR,
+      });
     };
     const gotError = function (error) {
       console.error(error);

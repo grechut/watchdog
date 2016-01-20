@@ -1,6 +1,7 @@
 import resemble from 'resemblejs';
 
 export default function MotionDetector(stream, options = {}) {
+  this.name = 'Motion';
   this.stream = stream;
   this.options = Object.assign({}, options, {
     interval: 500, // compare every 500ms

@@ -2,6 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { fetchDevice, addDeviceListener, notify } from '../actions';
 import Video from '../components/Video';
+import DetectorConfig from '../components/DetectorConfig';
+
+import detectors from '../lib/detectors';
 
 class Device extends Component {
   constructor(props) {
@@ -18,26 +21,22 @@ class Device extends Component {
 
     if (!device.owner) return null;
 
+    console.log('Detectors', detectors);
+
     return (
       <div className="app">
+        <Video src={localStream} />
         <h3>Owner: {owner}</h3>
         <h4>Listeners: {listenersCount}</h4>
-        <Video src={localStream} />
 
         { isOwner ?
-          <button onClick={() => dispatch(notify('Some notification'))}
-            className="btn btn-success"
-            disabled={listenersCount === 0}
-          >
-            Fire notification
-          </button>
-          :
-          <button onClick={() => dispatch(addDeviceListener())}
-            className="btn btn-success"
-          >
+          Object.keys(detectors).map(key => {
+            return <DetectorConfig key={key} detector={detectors[key]} />
+          })
+          : <button onClick={() => dispatch(addDeviceListener())}
+            className="btn btn-success">
             Listen to this device
-          </button>
-        }
+          </button> }
       </div>
     );
   }
