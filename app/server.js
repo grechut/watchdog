@@ -9,7 +9,7 @@ webPush.setGCMAPIKey(process.env.GCM_API_KEY);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-if (process.env.NODE_ENV === 'prod') {
+if (process.env.NODE_ENV === 'production') {
   // TODO temporary and ugly solution
   app.get(['/static/bundle.js'], function (req, res) {
     res.sendFile(__dirname + '/bundle.js');
