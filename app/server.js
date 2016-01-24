@@ -1,6 +1,6 @@
 require('dotenv').load();
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 const app = new (require('express'))();
 const bodyParser = require('body-parser');
 const webPush = require('web-push');
