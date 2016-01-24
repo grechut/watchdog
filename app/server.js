@@ -9,16 +9,12 @@ webPush.setGCMAPIKey(process.env.GCM_API_KEY);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const redis = require('redis');
-const redisClient = redis.createClient({
-  prefix: 'watchdog:',
-});
-
 if (process.env.NODE_ENV === 'prod') {
   // TODO temporary and ugly solution
   app.get(['/static/bundle.js'], function (req, res) {
     res.sendFile(__dirname + '/bundle.js');
   });
+
 } else {
   const webpack = require('webpack');
   const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -29,6 +25,9 @@ if (process.env.NODE_ENV === 'prod') {
   app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
   app.use(webpackHotMiddleware(compiler));
 }
+
+const redisClient = require('./redisClient')();
+
 
 app.get(['/', '/devices/:deviceUuid'], function (req, res) {
   res.sendFile(__dirname + '/index.html');
