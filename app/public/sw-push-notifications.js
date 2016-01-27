@@ -10,7 +10,7 @@ self.addEventListener('activate', function (event) {
 self.addEventListener('push', function (event) {
   console.log('PUUUUSH Push message', event);
 
-  var title = 'Watchdog Alert';
+  const title = 'Watchdog Alert';
 
   event.waitUntil(
     self.registration.showNotification(title, {

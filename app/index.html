@@ -16,7 +16,7 @@
     <script type="text/javascript">
       if ('serviceWorker' in navigator) {
         console.log('Service Worker is supported');
-        navigator.serviceWorker.register('/sw.js').then(function() {
+        navigator.serviceWorker.register('/sw-push-notifications.js').then(function() {
           return navigator.serviceWorker.ready;
         }).then(function(serviceWorkerRegistration) {
           console.log('Service Worker is ready', serviceWorkerRegistration);
