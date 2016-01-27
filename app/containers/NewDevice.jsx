@@ -8,7 +8,8 @@ class NewDevice extends React.Component {
 
     return (
       <div className="app">
-        <button onClick={() => dispatch(createDevice())}
+        <button
+          onClick={() => dispatch(createDevice())}
           className="btn btn-success"
         >
           Use this device as a camera

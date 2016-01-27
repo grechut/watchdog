@@ -6,7 +6,7 @@ export default class DetectorConfig extends React.Component {
   render() {
     if (_.isEmpty(this.props.detector)) { return null; }
 
-    let { name, isRunning } = this.props.detector;
+    const { name, isRunning } = this.props.detector;
 
     return (
       <div>

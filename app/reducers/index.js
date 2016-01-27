@@ -4,11 +4,10 @@ import {
   REQUEST_DEVICE, RECEIVE_DEVICE, CREATE_DEVICE,
   ADD_DEVICE_LISTENER, NOTIFY,
   GET_LOCAL_VIDEO_STREAM, // GET_REMOTE_VIDEO_STREAM
-  START_DETECTOR, STOP_DETECTOR,
-  CHANGE_DETECTOR,
+  START_DETECTOR, STOP_DETECTOR, CHANGE_DETECTOR,
 } from '../actions';
 
-function device(state = {
+const initialState = {
   owner: null,        // ? camera uuid ?
   isOwner: false,     //
   remoteStream: null, // listener specific
@@ -16,8 +15,12 @@ function device(state = {
   listeners: [],      // TODO: does a listener need to know about other listeners? is it owner specific?
   detectors: {},      // owner specific (just a configuration of detector + its state, not actual instances)
   isFetching: false,
-}, action) {
+};
+
+function device(state = initialState, action) {
   switch (action.type) {
+    case CREATE_DEVICE:
+      return state;
     case REQUEST_DEVICE:
       return Object.assign({}, state, {
         isFetching: true,
@@ -34,6 +37,10 @@ function device(state = {
       return Object.assign({}, state, {
         localStream: action.stream,
       });
+    case ADD_DEVICE_LISTENER:
+      return state;
+    case NOTIFY:
+      return state;
     case START_DETECTOR:
       action.detector.start();
 
@@ -46,11 +53,11 @@ function device(state = {
       return Object.assign({}, state, {
         detectors: Object.assign({}, state.detectors, action.detector),
       });
-    case CREATE_DEVICE: return state;
-    case ADD_DEVICE_LISTENER: return state;
-    case NOTIFY: return state;
-    case CHANGE_DETECTOR: return Object.assign({}, state);  // TODO this is hacky, put here detector's info
-    default: return state;
+    case CHANGE_DETECTOR:
+      // TODO this is hacky, put here detector's info
+      return Object.assign({}, state);
+    default:
+      return state;
   }
 }
 
