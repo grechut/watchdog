@@ -109,10 +109,11 @@ export function getLocalVideoStream() {
         type: GET_LOCAL_VIDEO_STREAM,
         stream,
       });
+
       // TODO: move it somewhere else and dispatch action to update state
       const motionDetector = new MotionDetector(stream);
       const source = new Rx.Subject();
-      const windowDuration = 10000;
+      const windowDuration = 30000; // 30 seconds
 
       // Notify when motion has started
       const next = source
@@ -135,7 +136,7 @@ export function getLocalVideoStream() {
           dispatch(notify(message));
         });
 
-      // Push values to Rx.Subject observable when motion is detected
+      // Proxy events to source observable when motion is detected
       motionDetector.onEvent = (data) => {
         data.triggeredAt = Date.now();
         source.next(data);

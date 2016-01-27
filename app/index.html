@@ -7,27 +7,15 @@
 
     <link rel="manifest" href="/manifest.json">
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
 
     <title>Watchdog</title>
   </head>
   <body>
-    <script type="text/javascript">
-      if ('serviceWorker' in navigator) {
-        console.log('Service Worker is supported');
-        navigator.serviceWorker.register('/sw-push-notifications.js').then(function() {
-          return navigator.serviceWorker.ready;
-        }).then(function(serviceWorkerRegistration) {
-          console.log('Service Worker is ready', serviceWorkerRegistration);
-        }).catch(function(error) {
-          console.log('Service Worker Error', error);
-        });
-      }
-    </script>
-
     <div id="root"></div>
 
+    <script src="install-sw-push-notifications.js"></script>
     <script src="/static/bundle.js"></script>
   </body>
 </html>
