@@ -1,8 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, Route, Redirect } from 'react-router';
-import { browserHistory } from 'react-router';
+import { Router, Route, Redirect, browserHistory } from 'react-router';
 
 require('../node_modules/react-mdl/extra/material.css');
 require('../node_modules/react-mdl/extra/material.js');

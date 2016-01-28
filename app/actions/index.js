@@ -177,3 +177,15 @@ export function startMotionDetection() {
     });
   };
 }
+
+export const UPDATE_TITLE = 'UPDATE_TITLE';
+export function updateTitle(title) {
+  return (dispatch) => {
+    dispatch({
+      type: UPDATE_TITLE,
+      payload: {
+        title,
+      },
+    });
+  };
+}

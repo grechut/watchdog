@@ -5,9 +5,11 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 class App extends React.Component {
   render() {
+    const page = this.props.page;
+
     return (
       <Layout>
-        <Header title="Watchdog" />
+        <Header title={page.title} className="mdl-typography--text-uppercase"/>
         <Content>
           <Grid className="content">
             <Cell col={12} align="middle" className="mdl-typography--text-center">
@@ -22,7 +24,14 @@ class App extends React.Component {
 
 App.propTypes = {
   children: PropTypes.object,
-  title: PropTypes.string,
+  page: PropTypes.object,
 };
 
-export default connect()(App);
+function mapStateToProps(state) {
+  return {
+    page: state.page,
+  };
+}
+
+
+export default connect(mapStateToProps)(App);

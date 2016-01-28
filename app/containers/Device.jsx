@@ -1,18 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { fetchDevice, addDeviceListener } from '../actions';
-import Video from '../components/Video';
-import DetectorConfig from '../components/DetectorConfig';
 import Button from 'react-mdl/lib/Button';
 
+import { addDeviceListener, fetchDevice, updateTitle } from '../actions';
+import Video from '../components/Video';
+import DetectorConfig from '../components/DetectorConfig';
 import detectors from '../lib/detectors';
 
 class Device extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
+    this.props.dispatch(updateTitle('Home'));
     this.props.dispatch(fetchDevice(this.props.params.deviceUuid));
   }
 
@@ -20,9 +17,7 @@ class Device extends Component {
     const { device, dispatch } = this.props;
     const { owner, listenersCount, isOwner, localStream } = device;
 
-    if (!device.owner) return null;
-
-    console.log('Detectors', detectors);
+    if (!device.owner) { return null; }
 
     return (
       <div className="app">
@@ -54,10 +49,8 @@ Device.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { device } = state;
-
   return {
-    device,
+    device: state.device,
   };
 }
 
