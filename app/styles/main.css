@@ -1,23 +1,6 @@
-body {
-  font-family: 'Montserrat', sans-serif;
-  color: #333;
-  background: radial-gradient(black 15%, transparent 16%) 0 0, radial-gradient(black 15%, transparent 16%) 8px 8px, radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 0 1px, radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 8px 9px;
-  background-color: #282828;
-  background-size: 16px 16px;
-}
-
-.app {
-  opacity: 0.95;
-  margin: 50px auto 50px auto;
-  width: 480px;
-  font-size: 18px;
-  font-weight: 200;
-  line-height: 30px;
-  background-color: #eee;
-  border-radius: 6px;
-  padding: 60px;
-}
-
-.app video {
-  width: 100%;
+.content {
+  max-width: 960px;
+  display: block;
+  margin: 0 auto 120px;
+  padding: 40px;
 }

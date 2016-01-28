@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { fetchDevice, addDeviceListener } from '../actions';
 import Video from '../components/Video';
 import DetectorConfig from '../components/DetectorConfig';
+import Button from 'react-mdl/lib/Button';
 
 import detectors from '../lib/detectors';
 
@@ -34,12 +35,12 @@ class Device extends Component {
             <DetectorConfig key={key} detector={detectors[key]} />
           )
         :
-          <button
+          <Button raised accent ripple
             onClick={() => dispatch(addDeviceListener())}
             className="btn btn-success"
           >
             Listen to this device
-          </button>
+          </Button>
         }
       </div>
     );
