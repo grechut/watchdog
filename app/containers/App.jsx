@@ -21,8 +21,8 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-  dispatch: PropTypes.func,
   children: PropTypes.object,
+  title: PropTypes.string,
 };
 
 export default connect()(App);

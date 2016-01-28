@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { routeReducer } from 'redux-simple-router';
+import { routeReducer } from 'react-router-redux';
 import {
   REQUEST_DEVICE, RECEIVE_DEVICE, CREATE_DEVICE,
   ADD_DEVICE_LISTENER, NOTIFY,
@@ -61,6 +61,8 @@ function device(state = initialState, action) {
   }
 }
 
-const rootReducer = combineReducers(Object.assign({}, { device }, { routing: routeReducer }));
+const rootReducer = combineReducers(Object.assign({}, { device }, {
+  routing: routeReducer,
+}));
 
 export default rootReducer;

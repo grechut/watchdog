@@ -1,6 +1,6 @@
 import axios from 'axios';
 import uuid from 'uuid';
-import { updatePath } from 'redux-simple-router';
+import { routeActions } from 'react-router-redux';
 import Rx from 'rxjs/Rx';
 import moment from 'moment';
 import detectors from '../lib/detectors';
@@ -54,7 +54,7 @@ export function createDevice() {
 
     return axios.post('/api/device/create', { deviceUuid })
       .then(() =>
-        dispatch(updatePath(`/devices/${deviceUuid}`))
+        dispatch(routeActions.push(`/devices/${deviceUuid}`))
       );
   };
 }
