@@ -1,9 +1,4 @@
-import {
-  REQUEST_DEVICE, RECEIVE_DEVICE, CREATE_DEVICE,
-  ADD_DEVICE_LISTENER, NOTIFY,
-  GET_LOCAL_VIDEO_STREAM, // GET_REMOTE_VIDEO_STREAM
-  START_DETECTOR, STOP_DETECTOR, CHANGE_DETECTOR,
-} from '../actions';
+import Constants from '../constants';
 
 const initialState = {
   owner: null,        // ? camera uuid ?
@@ -17,13 +12,13 @@ const initialState = {
 
 function device(state = initialState, action) {
   switch (action.type) {
-    case CREATE_DEVICE:
+    case Constants.CREATE_DEVICE:
       return state;
-    case REQUEST_DEVICE:
+    case Constants.REQUEST_DEVICE:
       return Object.assign({}, state, {
         isFetching: true,
       });
-    case RECEIVE_DEVICE:
+    case Constants.RECEIVE_DEVICE:
       return Object.assign({},
         state, {
           isFetching: false,
@@ -31,27 +26,27 @@ function device(state = initialState, action) {
         },
         action.deviceInfo
       );
-    case GET_LOCAL_VIDEO_STREAM:
+    case Constants.VIDEO_STREAM_GET_LOCAL:
       return Object.assign({}, state, {
         localStream: action.stream,
       });
-    case ADD_DEVICE_LISTENER:
+    case Constants.ADD_DEVICE_LISTENER:
       return state;
-    case NOTIFY:
+    case Constants.NOTIFY:
       return state;
-    case START_DETECTOR:
+    case Constants.START_DETECTOR:
       action.detector.start();
 
       return Object.assign({}, state, {
         detectors: Object.assign({}, state.detectors, action.detector),
       });
-    case STOP_DETECTOR:
+    case Constants.STOP_DETECTOR:
       action.detector.stop();
 
       return Object.assign({}, state, {
         detectors: Object.assign({}, state.detectors, action.detector),
       });
-    case CHANGE_DETECTOR:
+    case Constants.CHANGE_DETECTOR:
       // TODO this is hacky, put here detector's info
       return Object.assign({}, state);
     default:

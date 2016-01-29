@@ -5,10 +5,11 @@ import Rx from 'rxjs/Rx';
 import moment from 'moment';
 import detectors from '../lib/detectors';
 import MotionDetector from '../lib/detectors/motion';
+import Constants from '../constants';
 
 // FETCH_DEVICE -> REQUEST_DEVICE -> RECEIVE_DEVICE -> ...
-// if isOwner then GET_LOCAL_VIDEO_STREAM -> START MOTION/NOISE DETECTION
-// else then GET_REMOTE_VIDEO_STREAM (once "Live" tab is clicked)
+// if isOwner then VIDEO_STREAM_GET_LOCAL -> START MOTION/NOISE DETECTION
+// else then VIDEO_STREAM_GET_REMOTE (once "Live" tab is clicked)
 
 // TODO shall we switch here to 3 step actions ? start/success/error ?
 export function fetchDevice(deviceUuid) {
@@ -28,26 +29,23 @@ export function fetchDevice(deviceUuid) {
   };
 }
 
-export const REQUEST_DEVICE = 'REQUEST_DEVICE';
 function requestDevice(deviceUuid) {
   return {
-    type: REQUEST_DEVICE,
+    type: Constants.REQUEST_DEVICE,
     deviceUuid,
   };
 }
 
-export const RECEIVE_DEVICE = 'RECEIVE_DEVICE';
 function receiveDevice(deviceInfo) {
   return {
-    type: RECEIVE_DEVICE,
+    type: Constants.RECEIVE_DEVICE,
     deviceInfo,
   };
 }
 
-export const CREATE_DEVICE = 'CREATE_DEVICE';
 export function createDevice() {
   return (dispatch) => {
-    dispatch({ type: CREATE_DEVICE });
+    dispatch({ type: Constants.CREATE_DEVICE });
 
     const deviceUuid = uuid.v4();
     localStorage.setItem(`dummyOwner_${deviceUuid}`, true);
@@ -59,10 +57,9 @@ export function createDevice() {
   };
 }
 
-export const ADD_DEVICE_LISTENER = 'ADD_DEVICE_LISTENER';
 export function addDeviceListener() {
   return (dispatch, getState) => {
-    dispatch({ type: ADD_DEVICE_LISTENER });
+    dispatch({ type: Constants.ADD_DEVICE_LISTENER });
 
     const deviceUuid = getState().device.owner;
 
@@ -84,10 +81,9 @@ export function addDeviceListener() {
   };
 }
 
-export const NOTIFY = 'NOTIFY';
 export function notify(message) {
   return (dispatch, getState) => {
-    dispatch({ type: NOTIFY });
+    dispatch({ type: Constants.NOTIFY });
 
     const deviceUuid = getState().device.owner;
 
@@ -99,14 +95,12 @@ export function notify(message) {
   };
 }
 
-export const GET_LOCAL_VIDEO_STREAM = 'GET_LOCAL_VIDEO_STREAM';
-export const CHANGE_DETECTOR = 'CHANGE_DETECTOR';
 export function getLocalVideoStream() {
   return (dispatch) => {
     const constraints = { video: true, audio: true };
     const gotStream = function (stream) {
       dispatch({
-        type: GET_LOCAL_VIDEO_STREAM,
+        type: Constants.VIDEO_STREAM_GET_LOCAL,
         stream,
       });
 
@@ -151,7 +145,7 @@ export function getLocalVideoStream() {
       }
 
       dispatch({
-        type: CHANGE_DETECTOR,
+        type: Constants.CHANGE_DETECTOR,
       });
     };
     const gotError = function (error) {
@@ -165,7 +159,6 @@ export function getLocalVideoStream() {
   };
 }
 
-export const START_MOTION_DETECTION = 'START_MOTION_DETECTION';
 export function startMotionDetection() {
   return (dispatch) => {
     // TODO: initialize and start motion detection (figure out how to pass custom config)
@@ -173,16 +166,15 @@ export function startMotionDetection() {
     // TODO: toggle isDetectingMotion flag
 
     dispatch({
-      type: START_MOTION_DETECTION,
+      type: Constants.START_MOTION_DETECTION,
     });
   };
 }
 
-export const UPDATE_TITLE = 'UPDATE_TITLE';
 export function updateTitle(title) {
   return (dispatch) => {
     dispatch({
-      type: UPDATE_TITLE,
+      type: Constants.UPDATE_TITLE,
       payload: {
         title,
       },
