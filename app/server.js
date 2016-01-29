@@ -16,7 +16,7 @@ webPush.setGCMAPIKey(process.env.GCM_API_KEY);
 if (process.env.NODE_ENV === 'production') {
   // TODO temporary and ugly solution
   app.get(['/static/bundle.js'], function (req, res) {
-    res.sendFile(__dirname + '/bundle.js');
+    res.sendFile(__dirname + '/static/bundle.js');
   });
 } else {
   const webpack = require('webpack');
