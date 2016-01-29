@@ -3,12 +3,14 @@ require('dotenv').load();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const compression = require('compression');
 const webPush = require('web-push');
 const redisClient = require('./redisClient')();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(compression());
 app.use(express.static(__dirname + '/public'));
 
 webPush.setGCMAPIKey(process.env.GCM_API_KEY);
