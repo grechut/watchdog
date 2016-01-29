@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { createDevice, updateTitle } from '../actions';
+import DeviceActions from '../actions/device';
+import PageActions from '../actions/page';
 import Button from 'react-mdl/lib/Button';
 
 class NewDevice extends Component {
   componentDidMount() {
-    this.props.dispatch(updateTitle('Add a device'));
+    this.props.dispatch(PageActions.updateTitle('Add a device'));
   }
 
   render() {
@@ -14,7 +15,7 @@ class NewDevice extends Component {
     return (
       <div className="app">
         <Button raised accent ripple
-          onClick={() => dispatch(createDevice())}
+          onClick={() => dispatch(DeviceActions.createDevice())}
           className="btn btn-success"
         >
           Use this device as a camera

@@ -2,15 +2,16 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Button from 'react-mdl/lib/Button';
 
-import { addDeviceListener, fetchDevice, updateTitle } from '../actions';
+import DeviceActions from '../actions/device';
+import PageActions from '../actions/page';
 import Video from '../components/Video';
 import DetectorConfig from '../components/DetectorConfig';
 import detectors from '../lib/detectors';
 
 class Device extends Component {
   componentDidMount() {
-    this.props.dispatch(updateTitle('Home'));
-    this.props.dispatch(fetchDevice(this.props.params.deviceUuid));
+    this.props.dispatch(PageActions.updateTitle('Home'));
+    this.props.dispatch(DeviceActions.fetchDevice(this.props.params.deviceUuid));
   }
 
   render() {
@@ -31,7 +32,7 @@ class Device extends Component {
           )
         :
           <Button raised accent ripple
-            onClick={() => dispatch(addDeviceListener())}
+            onClick={() => dispatch(DeviceActions.addDeviceListener())}
             className="btn btn-success"
           >
             Listen to this device

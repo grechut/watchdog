@@ -1,4 +1,4 @@
-import { UPDATE_TITLE } from '../actions';
+import Constants from '../constants';
 
 const initialState = {
   title: 'Home',
@@ -6,7 +6,7 @@ const initialState = {
 
 function page(state = initialState, action) {
   switch (action.type) {
-    case UPDATE_TITLE:
+    case Constants.UPDATE_TITLE:
       return Object.assign({}, state, {
         title: action.payload.title,
       });
