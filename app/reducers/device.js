@@ -32,8 +32,6 @@ function device(state = initialState, action) {
       });
     case Constants.ADD_DEVICE_LISTENER:
       return state;
-    case Constants.NOTIFY:
-      return state;
     case Constants.START_DETECTOR:
       action.detector.start();
 

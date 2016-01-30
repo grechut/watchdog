@@ -1,10 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import Button from 'react-mdl/lib/Button';
+import _ from 'lodash';
 
 import DeviceActions from '../actions/device';
 import PageActions from '../actions/page';
+import PushNotificationActions from '../actions/push-notification';
+
+// Owner part
 import Video from '../components/Video';
+
+// Listener part
+import PushNotificationSwitch from '../components/PushNotificationSwitch';
 import DetectorConfig from '../components/DetectorConfig';
 import detectors from '../lib/detectors';
 
@@ -15,10 +21,11 @@ class Device extends Component {
   }
 
   render() {
-    const { device, dispatch } = this.props;
+    const { device, dispatch, pushNotification } = this.props;
     const { owner, listenersCount, isOwner, localStream } = device;
+    const deviceId = device.owner;
 
-    if (!device.owner) { return null; }
+    if (!deviceId) { return null; }
 
     return (
       <div className="app">
@@ -31,12 +38,12 @@ class Device extends Component {
             <DetectorConfig key={key} detector={detectors[key]} />
           )
         :
-          <Button raised accent ripple
-            onClick={() => dispatch(DeviceActions.addDeviceListener())}
-            className="btn btn-success"
-          >
-            Listen to this device
-          </Button>
+          <PushNotificationSwitch
+            deviceId={deviceId}
+            checked={_.includes(pushNotification.devices, deviceId)}
+            disabled={!pushNotification.supported || pushNotification.denied}
+            onChange={() => dispatch(PushNotificationActions.toggleSubscriptionForDevice(deviceId))}
+          />
         }
       </div>
     );
@@ -47,11 +54,13 @@ Device.propTypes = {
   device: PropTypes.object,
   dispatch: PropTypes.func,
   params: PropTypes.object,
+  pushNotification: PropTypes.object,
 };
 
 function mapStateToProps(state) {
   return {
     device: state.device,
+    pushNotification: state.pushNotification,
   };
 }
 

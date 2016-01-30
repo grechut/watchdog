@@ -1,15 +1,15 @@
 const redis = require('redis');
-const redisOptions = {
+const options = {
   prefix: 'watchdog:',
   no_ready_check: true,
 };
 
-function getRedisClient() {
+function client() {
   if (process.env.REDISCLOUD_URL) {
-    return redis.createClient(process.env.REDISCLOUD_URL, redisOptions);
+    return redis.createClient(process.env.REDISCLOUD_URL, options);
   }
 
-  return redis.createClient(redisOptions);
+  return redis.createClient(options);
 }
 
-module.exports = getRedisClient;
+module.exports = client;

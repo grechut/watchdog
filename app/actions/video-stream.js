@@ -3,11 +3,11 @@ import moment from 'moment';
 import Constants from '../constants';
 import detectors from '../lib/detectors';
 import MotionDetector from '../lib/detectors/motion';
-import NotificationActions from '../actions/notification';
+import PushNotificationActions from '../actions/push-notification';
 
 const Actions = {
   getLocalVideoStream() {
-    return (dispatch) => {
+    return (dispatch, getState) => {
       const constraints = { video: true, audio: true };
       const gotStream = function (stream) {
         dispatch({
@@ -17,8 +17,9 @@ const Actions = {
 
         // TODO: move it somewhere else and dispatch action to update state
         const motionDetector = new MotionDetector(stream);
-        const source = new Rx.Subject();
         const windowDuration = 30000; // 30 seconds
+        const source = new Rx.Subject();
+        const deviceId = getState().device.owner;
 
         // Notify when motion has started
         const next = source
@@ -29,7 +30,7 @@ const Actions = {
           .subscribe((data) => {
             const message = `Motion started at ${time(data.triggeredAt)}`;
             console.log(message);
-            dispatch(NotificationActions.notify(message));
+            dispatch(PushNotificationActions.send(deviceId, message));
           });
 
         // Notify when motion has stopped
@@ -38,7 +39,7 @@ const Actions = {
           .subscribe((data) => {
             const message = `Motion stopped at ${time(data.triggeredAt)}`;
             console.log(message);
-            dispatch(NotificationActions.notify(message));
+            dispatch(PushNotificationActions.send(deviceId, message));
           });
 
         // Proxy events to source observable when motion is detected

@@ -2,15 +2,15 @@ import axios from 'axios';
 import uuid from 'uuid';
 import { routeActions } from 'react-router-redux';
 import Constants from '../constants';
-import VideoStreamActions from '../actions/video_stream';
+import VideoStreamActions from '../actions/video-stream';
 
 const Actions = {
   // TODO shall we switch here to 3 step actions ? start/success/error ?
-  fetchDevice(deviceUuid) {
+  fetchDevice(deviceId) {
     return (dispatch, getState) => {
-      dispatch(requestDevice(deviceUuid));
+      dispatch(requestDevice(deviceId));
 
-      return axios.get(`/api/device/${deviceUuid}`)
+      return axios.get(`/api/devices/${deviceId}`)
         .then((response) => {
           dispatch(receiveDevice(response.data));
 
@@ -27,45 +27,21 @@ const Actions = {
     return (dispatch) => {
       dispatch({ type: Constants.CREATE_DEVICE });
 
-      const deviceUuid = uuid.v4();
-      localStorage.setItem(`dummyOwner_${deviceUuid}`, true);
+      const deviceId = uuid.v4();
+      localStorage.setItem(`dummyOwner_${deviceId}`, true);
 
-      return axios.post('/api/device/create', { deviceUuid })
+      return axios.post('/api/devices', { deviceId })
         .then(() =>
-          dispatch(routeActions.push(`/devices/${deviceUuid}`))
+          dispatch(routeActions.push(`/devices/${deviceId}`))
         );
-    };
-  },
-
-  addDeviceListener() {
-    return (dispatch, getState) => {
-      dispatch({ type: Constants.ADD_DEVICE_LISTENER });
-
-      const deviceUuid = getState().device.owner;
-
-      navigator.serviceWorker.getRegistration()
-        .then((registration) => {
-          return registration.pushManager.subscribe({ userVisibleOnly: true });
-        })
-        .then((pushSubscription) => {
-          console.log(pushSubscription.endpoint);
-
-          return axios.post('/api/device/listen', {
-            deviceUuid,
-            listenerEndpoint: pushSubscription.endpoint,
-          });
-        })
-        .then(() => {
-          dispatch(this.fetchDevice(deviceUuid));
-        });
     };
   },
 };
 
-function requestDevice(deviceUuid) {
+function requestDevice(deviceId) {
   return {
     type: Constants.REQUEST_DEVICE,
-    deviceUuid,
+    deviceId,
   };
 }
 

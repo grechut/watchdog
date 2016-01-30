@@ -7,12 +7,15 @@ require('../node_modules/react-mdl/extra/material.css');
 require('../node_modules/react-mdl/extra/material.js');
 require('./styles/main.css');
 
+import configureStore from './store/configureStore';
+const store = configureStore();
+
+import installServiceWorker from './lib/install-sw-push-notifications';
+installServiceWorker(store.dispatch);
+
 import App from './containers/App';
 import NewDevice from './containers/NewDevice';
 import Device from './containers/Device';
-import configureStore from './store/configureStore';
-
-const store = configureStore();
 
 render(
   <Provider store={store}>
