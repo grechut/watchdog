@@ -22,8 +22,9 @@ class Device extends Component {
 
   render() {
     const { device, dispatch, pushNotification } = this.props;
-    const { owner, listenersCount, isOwner, localStream } = device;
+    const { owner, listeners, isOwner, localStream } = device;
     const deviceId = device.owner;
+    const pushNotificationEndpoints = device.listeners.pushNotificationEndpoints;
 
     if (!deviceId) { return null; }
 
@@ -31,7 +32,7 @@ class Device extends Component {
       <div className="app">
         <Video src={localStream} />
         <h3>Owner: {owner}</h3>
-        <h4>Listeners: {listenersCount}</h4>
+        <h4>Listeners: {listeners.pushNotificationEndpoints.length}</h4>
 
         {isOwner ?
           Object.keys(detectors).map(key =>
@@ -40,8 +41,8 @@ class Device extends Component {
         :
           <PushNotificationSwitch
             deviceId={deviceId}
-            checked={_.includes(pushNotification.devices, deviceId)}
-            disabled={!pushNotification.supported || pushNotification.denied}
+            checked={_.includes(pushNotificationEndpoints, pushNotification.endpoint)}
+            disabled={!pushNotification.enabled}
             onChange={() => dispatch(PushNotificationActions.toggleSubscriptionForDevice(deviceId))}
           />
         }

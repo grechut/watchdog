@@ -27,10 +27,19 @@ const Actions = {
 
   setSubscription(subscription) {
     return (dispatch) => {
+      const endpoint = subscription ? subscription.endpoint : null;
+      let key = null;
+
+      if (subscription) {
+        const rawKey = subscription.getKey ? subscription.getKey('p256dh') : '';
+        key = rawKey ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey))) : '';
+      }
+
       dispatch({
         type: Constants.PUSH_NOTIFICATION_SET_SUBSCRIPTION,
         payload: {
-          endpoint: subscription ? subscription.endpoint : null,
+          endpoint,
+          key,
         },
       });
 
@@ -85,16 +94,18 @@ const Actions = {
 
   subscribeToDevice(deviceId) {
     return (dispatch) => {
+      dispatch({ type: Constants.PUSH_NOTIFICATION_SUBSCRIBE_TO_DEVICE_REQUEST_PENDING });
+
       return dispatch(this.subscribe())
         .then((subscription) => {
           if (subscription) {
             axios.post(`/api/devices/${deviceId}/subscribe`, {
-              listenerEndpoint: subscription.endpoint,
+              pushNotificationEndpoint: subscription.endpoint,
             })
-            .then(() =>
+            .then((response) =>
               dispatch({
-                type: Constants.PUSH_NOTIFICATION_SUBSCRIBE_TO_DEVICE,
-                payload: { deviceId },
+                type: Constants.PUSH_NOTIFICATION_SUBSCRIBE_TO_DEVICE_REQUEST_SUCCESS,
+                payload: response.data,
               })
             );
           }
@@ -104,16 +115,18 @@ const Actions = {
 
   unsubscribeFromDevice(deviceId) {
     return (dispatch, getState) => {
+      dispatch({ type: Constants.PUSH_NOTIFICATION_UNSUBSCRIBE_FROM_DEVICE_REQUEST_PENDING });
+
       const { pushNotification } = getState();
       const endpoint = pushNotification.endpoint;
 
       axios.post(`/api/devices/${deviceId}/unsubscribe`, {
-        listenerEndpoint: endpoint,
+        pushNotificationEndpoint: endpoint,
       })
-      .then(() =>
+      .then((response) =>
         dispatch({
-          type: Constants.PUSH_NOTIFICATION_UNSUBSCRIBE_FROM_DEVICE,
-          payload: { deviceId },
+          type: Constants.PUSH_NOTIFICATION_UNSUBSCRIBE_FROM_DEVICE_REQUEST_SUCCESS,
+          payload: response.data,
         })
       );
     };
@@ -121,21 +134,25 @@ const Actions = {
 
   toggleSubscriptionForDevice(deviceId) {
     return (dispatch, getState) => {
-      const { pushNotification } = getState();
-      const isSubscribed = _.includes(pushNotification.devices, deviceId);
+      const { device, pushNotification } = getState();
+      const isSubscribed = _.includes(device.listeners.pushNotificationEndpoints, pushNotification.endpoint);
       const action = isSubscribed ? 'unsubscribeFromDevice' : 'subscribeToDevice';
 
       return dispatch(this[action](deviceId));
     };
   },
 
-  send(deviceId, message) {
+  send(deviceId, key, payload) {
     return (dispatch) => {
-      dispatch({ type: Constants.PUSH_NOTIFICATION_SEND });
+      dispatch({
+        type: Constants.PUSH_NOTIFICATION_SEND,
+        payload: { deviceId, key, payload },
+      });
 
       // TODO: make sure that only owner can send notifications
       return axios.post(`/api/devices/${deviceId}/notify`, {
-        message,
+        key,
+        payload,
       });
     };
   },

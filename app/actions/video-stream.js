@@ -17,9 +17,11 @@ const Actions = {
 
         // TODO: move it somewhere else and dispatch action to update state
         const motionDetector = new MotionDetector(stream);
-        const windowDuration = 30000; // 30 seconds
+        const windowDuration = 5000; // in ms
         const source = new Rx.Subject();
-        const deviceId = getState().device.owner;
+        const { device, pushNotification } = getState();
+        const deviceId = device.owner;
+        const key = pushNotification.key;
 
         // Notify when motion has started
         const next = source
@@ -30,7 +32,8 @@ const Actions = {
           .subscribe((data) => {
             const message = `Motion started at ${time(data.triggeredAt)}`;
             console.log(message);
-            dispatch(PushNotificationActions.send(deviceId, message));
+            const payload = { body: message };
+            dispatch(PushNotificationActions.send(deviceId, key, payload));
           });
 
         // Notify when motion has stopped
@@ -39,7 +42,8 @@ const Actions = {
           .subscribe((data) => {
             const message = `Motion stopped at ${time(data.triggeredAt)}`;
             console.log(message);
-            dispatch(PushNotificationActions.send(deviceId, message));
+            const payload = { body: message };
+            dispatch(PushNotificationActions.send(deviceId, key, payload));
           });
 
         // Proxy events to source observable when motion is detected
@@ -53,7 +57,7 @@ const Actions = {
         detectors.motion = motionDetector;
 
         function time(timestamp) {
-          return moment(timestamp).format('hh:mm:ss.SS');
+          return moment(timestamp).format('HH:mm:ss.SS');
         }
 
         dispatch({

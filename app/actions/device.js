@@ -45,10 +45,10 @@ function requestDevice(deviceId) {
   };
 }
 
-function receiveDevice(deviceInfo) {
+function receiveDevice(device) {
   return {
     type: Constants.RECEIVE_DEVICE,
-    deviceInfo,
+    device,
   };
 }
 

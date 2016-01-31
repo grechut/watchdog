@@ -5,6 +5,7 @@ import { Router, Route, Redirect, browserHistory } from 'react-router';
 
 require('../node_modules/react-mdl/extra/material.css');
 require('../node_modules/react-mdl/extra/material.js');
+
 require('./styles/main.css');
 
 import configureStore from './store/configureStore';
