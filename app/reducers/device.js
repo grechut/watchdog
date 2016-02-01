@@ -8,7 +8,7 @@ const initialState = {
   listeners: {
     pushNotificationEndpoints: [],
   },
-  detectors: {},      // owner specific (just a configuration of detector + its state, not actual instances)
+  detectors: {},
   isFetching: false,
 };
 

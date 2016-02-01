@@ -47,8 +47,8 @@ const Actions = {
           });
 
         // Proxy events to source observable when motion is detected
-        motionDetector.onEvent = (data) => {
-          data.triggeredAt = Date.now();
+        motionDetector.onEvent = (event) => {
+          const data = { ...event, triggeredAt: Date.now() };
           source.next(data);
           console.log('motion detected', data);
         };

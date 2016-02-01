@@ -48,9 +48,9 @@ const Actions = {
   },
 
   subscribe() {
-    return (dispatch) => {
-      return navigator.serviceWorker.getRegistration().then((registration) => {
-        return registration.pushManager.getSubscription().then((existingSubscription) => {
+    return (dispatch) =>
+      navigator.serviceWorker.getRegistration().then((registration) =>
+        registration.pushManager.getSubscription().then((existingSubscription) => {
           // Check if we need to subscribe
           if (existingSubscription) {
             return dispatch(this.setSubscription(existingSubscription));
@@ -70,15 +70,14 @@ const Actions = {
 
               return dispatch(this.setSubscription(null));
             });
-        });
-      });
-    };
+        })
+      );
   },
 
   unsubscribe() {
-    return (dispatch) => {
-      return navigator.serviceWorker.getRegistration().then((registration) => {
-        return registration.pushManager.getSubscription().then((subscription) => {
+    return (dispatch) =>
+      navigator.serviceWorker.getRegistration().then((registration) =>
+        registration.pushManager.getSubscription().then((subscription) => {
           // Check if need to unsubscribe
           if (!subscription) {
             return dispatch(this.setSubscription(null));
@@ -87,9 +86,8 @@ const Actions = {
           return subscription.unsubscribe().then(() =>
             dispatch(this.setSubscription(null))
           );
-        });
-      });
-    };
+        })
+      );
   },
 
   subscribeToDevice(deviceId) {
@@ -135,7 +133,10 @@ const Actions = {
   toggleSubscriptionForDevice(deviceId) {
     return (dispatch, getState) => {
       const { device, pushNotification } = getState();
-      const isSubscribed = _.includes(device.listeners.pushNotificationEndpoints, pushNotification.endpoint);
+      const isSubscribed = _.includes(
+        device.listeners.pushNotificationEndpoints,
+        pushNotification.endpoint
+      );
       const action = isSubscribed ? 'unsubscribeFromDevice' : 'subscribeToDevice';
 
       return dispatch(this[action](deviceId));
