@@ -12,7 +12,7 @@ class App extends React.Component {
         <Header title={page.title} className="mdl-typography--text-uppercase"/>
         <Content>
           <Grid className="content">
-            <Cell col={12} align="middle" className="mdl-typography--text-center">
+            <Cell col={12} align="middle">
               {this.props.children}
             </Cell>
           </Grid>

@@ -2,22 +2,26 @@ require('dotenv').load();
 
 const express = require('express');
 const app = express();
+const _ = require('lodash');
+
 const bodyParser = require('body-parser');
 const compression = require('compression');
+const morgan = require('morgan');
 const webPush = require('web-push');
-const redisClient = require('./redisClient')();
+const redis = require('./redisClient')();
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(compression());
+app.use(morgan('dev'));
 app.use(express.static(__dirname + '/public'));
 
 webPush.setGCMAPIKey(process.env.GCM_API_KEY);
 
 if (process.env.NODE_ENV === 'production') {
   // TODO temporary and ugly solution
-  app.get(['/static/bundle.js'], function (req, res) {
+  app.get(['/static/bundle.js'], (req, res) => {
     res.sendFile(__dirname + '/static/bundle.js');
   });
 } else {
@@ -34,62 +38,119 @@ if (process.env.NODE_ENV === 'production') {
   app.use(webpackHotMiddleware(compiler));
 }
 
-app.get(['/', '/devices/:deviceUuid'], function (req, res) {
+// HTML
+app.get(['/', '/devices/:deviceId'], (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/api/device/:deviceUuid', function (req, res) {
-  redisClient.get(req.params.deviceUuid, function (err, reply) {
-    const result = JSON.parse(reply);
+// API
+app.post('/api/devices', (req, res) => {
+  const deviceId = req.body.deviceId;
+  const device = {
+    owner: deviceId,
+    listeners: {
+      pushNotificationEndpoints: [],
+    },
+  };
+
+  redis.set(deviceId, JSON.stringify(device));
+  res.send({
+    owner: device.owner,
+    listeners: device.listeners,
+  });
+});
+
+app.get('/api/devices/:deviceId', (req, res) => {
+  const deviceId = req.params.deviceId;
+  redis.get(deviceId, (err, result) => {
+    if (err) { return res.sendStatus(404); }
+    if (!result) { return res.sendStatus(404); }
+
+    const device = JSON.parse(result);
 
     res.send({
-      owner: result.owner,
-      listenersCount: result.listenerEndpoints.length,
+      owner: device.owner,
+      listeners: device.listeners,
     });
   });
 });
 
-app.post('/api/device/create', function (req, res) {
-  const deviceUuid = req.body.deviceUuid;
-  const device = {
-    owner: deviceUuid,
-    listenerEndpoints: [],
-  };
+app.post('/api/devices/:deviceId/subscribe', (req, res) => {
+  const deviceId = req.params.deviceId;
+  const endpoint = req.body.pushNotificationEndpoint;
 
-  redisClient.set(deviceUuid, JSON.stringify(device));
-  res.sendStatus(200);
-});
+  if (!endpoint) { return res.sendStatus(422); }
 
-app.post('/api/device/listen', function (req, res) {
-  const deviceUuid = req.body.deviceUuid;
-  const listenerEndpoint = req.body.listenerEndpoint;
+  redis.get(deviceId, function (err, result) {
+    if (err) { return res.sendStatus(404); }
+    if (!result) { return res.sendStatus(404); }
 
-  redisClient.get(deviceUuid, function (err, reply) {
-    const device = JSON.parse(reply);
+    const device = JSON.parse(result);
+    const endpoints = device.listeners.pushNotificationEndpoints;
 
-    if (device.listenerEndpoints.indexOf(listenerEndpoint) === -1) {
-      device.listenerEndpoints.push(listenerEndpoint);
+    if (!_.includes(endpoints, endpoint)) {
+      endpoints.push(endpoint);
     }
 
-    redisClient.set(deviceUuid, JSON.stringify(device));
-    res.sendStatus(200);
+    // Update device info
+    redis.set(deviceId, JSON.stringify(device));
+    res.send({
+      owner: device.owner,
+      listeners: device.listeners,
+    });
   });
 });
 
-app.post('/api/notify', function (req, res) {
-  const deviceUuid = req.body.deviceUuid;
-  // const message = req.body.message;
+app.post('/api/devices/:deviceId/unsubscribe', (req, res) => {
+  const deviceId = req.params.deviceId;
+  const endpoint = req.body.pushNotificationEndpoint;
 
-  redisClient.get(deviceUuid, function (err, reply) {
-    const device = JSON.parse(reply);
-    const notifications = device.listenerEndpoints.map((endpoint) =>
-      webPush.sendNotification(endpoint, 60 * 60)
-    );
-    Promise.all(notifications)
-      .then(() => res.sendStatus(200));
+  if (!endpoint) { return res.sendStatus(422); }
+
+  redis.get(deviceId, function (err, result) {
+    if (err) { return res.sendStatus(404); }
+    if (!result) { return res.sendStatus(404); }
+
+    const device = JSON.parse(result);
+    const endpoints = device.listeners.pushNotificationEndpoints;
+
+    if (_.includes(endpoints, endpoint)) {
+      _.pull(endpoints, endpoint);
+    }
+
+    // Update device info
+    redis.set(deviceId, JSON.stringify(device));
+    res.send({
+      owner: device.owner,
+      listeners: device.listeners,
+    });
   });
+});
 
-  res.sendStatus(200);
+app.post('/api/devices/:deviceId/notify', function (req, res) {
+  const deviceId = req.params.deviceId;
+  const key = req.body.key;
+  const payload = req.body.payload;
+  const ttl = 60 * 60;
+
+  redis.get(deviceId, function (err, result) {
+    if (err) { return res.sendStatus(404); }
+    if (!result) { return res.sendStatus(404); }
+
+    console.log('Sending push notification: ');
+    console.log('\tdevice id:\t', deviceId);
+    console.log('\tkey:\t\t', key);
+    console.log('\tpayload:\t', payload);
+
+    const device = JSON.parse(result);
+    const endpoints = device.listeners.pushNotificationEndpoints;
+    const notifications = endpoints.map((endpoint) =>
+      webPush.sendNotification(endpoint, ttl) // key, payload
+    );
+
+    Promise.all(notifications)
+      .then(() => res.sendStatus(204));
+  });
 });
 
 app.listen(port, (error) => {

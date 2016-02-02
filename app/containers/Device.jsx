@@ -1,10 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import Button from 'react-mdl/lib/Button';
+import _ from 'lodash';
 
 import DeviceActions from '../actions/device';
 import PageActions from '../actions/page';
+import PushNotificationActions from '../actions/push-notification';
+
+// Owner part
 import Video from '../components/Video';
+
+// Listener part
+import PushNotificationSwitch from '../components/PushNotificationSwitch';
 import DetectorConfig from '../components/DetectorConfig';
 import detectors from '../lib/detectors';
 
@@ -15,28 +21,30 @@ class Device extends Component {
   }
 
   render() {
-    const { device, dispatch } = this.props;
-    const { owner, listenersCount, isOwner, localStream } = device;
+    const { device, dispatch, pushNotification } = this.props;
+    const { owner, listeners, isOwner, localStream } = device;
+    const deviceId = device.owner;
+    const pushNotificationEndpoints = device.listeners.pushNotificationEndpoints;
 
-    if (!device.owner) { return null; }
+    if (!deviceId) { return null; }
 
     return (
       <div className="app">
         <Video src={localStream} />
         <h3>Owner: {owner}</h3>
-        <h4>Listeners: {listenersCount}</h4>
+        <h4>Listeners: {listeners.pushNotificationEndpoints.length}</h4>
 
         {isOwner ?
           Object.keys(detectors).map(key =>
             <DetectorConfig key={key} detector={detectors[key]} />
           )
         :
-          <Button raised accent ripple
-            onClick={() => dispatch(DeviceActions.addDeviceListener())}
-            className="btn btn-success"
-          >
-            Listen to this device
-          </Button>
+          <PushNotificationSwitch
+            deviceId={deviceId}
+            checked={_.includes(pushNotificationEndpoints, pushNotification.endpoint)}
+            disabled={!pushNotification.enabled}
+            onChange={() => dispatch(PushNotificationActions.toggleSubscriptionForDevice(deviceId))}
+          />
         }
       </div>
     );
@@ -47,11 +55,13 @@ Device.propTypes = {
   device: PropTypes.object,
   dispatch: PropTypes.func,
   params: PropTypes.object,
+  pushNotification: PropTypes.object,
 };
 
 function mapStateToProps(state) {
   return {
     device: state.device,
+    pushNotification: state.pushNotification,
   };
 }
 
