@@ -15,14 +15,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(compression());
 app.use(morgan('dev'));
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(`${__dirname}/public`));
 
 webPush.setGCMAPIKey(process.env.GCM_API_KEY);
 
 if (process.env.NODE_ENV === 'production') {
   // TODO temporary and ugly solution
   app.get(['/static/bundle.js'], (req, res) => {
-    res.sendFile(__dirname + '/static/bundle.js');
+    res.sendFile(`${__dirname}/static/bundle.js`);
   });
 } else {
   const webpack = require('webpack');
@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === 'production') {
 
 // HTML
 app.get(['/', '/devices/:deviceId'], (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(`${__dirname}/index.html`);
 });
 
 // API
@@ -81,7 +81,7 @@ app.post('/api/devices/:deviceId/subscribe', (req, res) => {
 
   if (!endpoint) { return res.sendStatus(422); }
 
-  redis.get(deviceId, function (err, result) {
+  redis.get(deviceId, (err, result) => {
     if (err) { return res.sendStatus(404); }
     if (!result) { return res.sendStatus(404); }
 
@@ -107,7 +107,7 @@ app.post('/api/devices/:deviceId/unsubscribe', (req, res) => {
 
   if (!endpoint) { return res.sendStatus(422); }
 
-  redis.get(deviceId, function (err, result) {
+  redis.get(deviceId, (err, result) => {
     if (err) { return res.sendStatus(404); }
     if (!result) { return res.sendStatus(404); }
 
@@ -127,13 +127,13 @@ app.post('/api/devices/:deviceId/unsubscribe', (req, res) => {
   });
 });
 
-app.post('/api/devices/:deviceId/notify', function (req, res) {
+app.post('/api/devices/:deviceId/notify', (req, res) => {
   const deviceId = req.params.deviceId;
   const key = req.body.key;
   const payload = req.body.payload;
   const ttl = 60 * 60;
 
-  redis.get(deviceId, function (err, result) {
+  redis.get(deviceId, (err, result) => {
     if (err) { return res.sendStatus(404); }
     if (!result) { return res.sendStatus(404); }
 
