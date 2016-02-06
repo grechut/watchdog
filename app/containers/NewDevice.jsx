@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Button from 'react-mdl/lib/Button';
 import DeviceActions from '../actions/device';
 import PageActions from '../actions/page';
-import Button from 'react-mdl/lib/Button';
 
 class NewDevice extends Component {
   componentDidMount() {

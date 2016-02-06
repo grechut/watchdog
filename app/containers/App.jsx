@@ -15,7 +15,7 @@ class App extends React.Component {
 
     return (
       <Layout>
-        <Header title={page.title} className="mdl-typography--text-uppercase">
+        <Header title={page.title}>
           <AuthNavigation />
         </Header>
         <Content>

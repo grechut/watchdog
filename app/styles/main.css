@@ -5,6 +5,22 @@
   padding: 40px;
 }
 
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
 .mdl-spinner.is-active .mdl-spinner__layer {
   border-color: #FFFFFF;
+}
+
+/* Auth menu */
+.mdl-navigation__link.avatar {
+  padding: 0;
+}
+
+.mdl-navigation__link.auth-drop-down-menu {
+  position: relative;
+  padding: 0;
 }

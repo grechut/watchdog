@@ -39,6 +39,8 @@ const Actions = {
             payload: { error },
           });
         }
+      }, {
+        scope: 'email',
       });
     };
   },

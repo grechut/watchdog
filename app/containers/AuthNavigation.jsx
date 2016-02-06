@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Navigation } from 'react-mdl/lib/Layout';
 import Spinner from 'react-mdl/lib/Spinner';
+import IconButton from 'react-mdl/lib/IconButton';
+import Menu, { MenuItem } from 'react-mdl/lib/Menu';
 import Constants from '../constants';
 import AuthActions from '../actions/auth';
 
@@ -18,14 +20,19 @@ class AuthNavigation extends Component {
         break;
       case Constants.AUTH_SIGNED_IN:
         navigation = (<Navigation>
-          <span className="mdl-navigation__link">{auth.name}</span>
-          <a
-            href="#"
-            className="mdl-navigation__link"
-            onClick={() => dispatch(AuthActions.signOut())}
-          >
-            Sign out
-          </a>
+          <img
+            className="avatar"
+            src={auth.avatarUrl}
+          />
+          <span>{auth.email}</span>
+          <div className="auth-drop-down-menu">
+            <IconButton name="arrow_drop_down" id="auth-menu" />
+            <Menu target="auth-menu" align="right">
+              <MenuItem onClick={() => dispatch(AuthActions.signOut())}>
+                Sign out
+              </MenuItem>
+            </Menu>
+          </div>
         </Navigation>);
         break;
       default:
