@@ -4,7 +4,7 @@ const initialState = {
   title: 'Home',
 };
 
-function page(state = initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case Constants.UPDATE_TITLE:
       return Object.assign({}, state, {
@@ -14,5 +14,3 @@ function page(state = initialState, action) {
       return state;
   }
 }
-
-export default page;

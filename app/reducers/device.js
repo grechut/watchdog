@@ -12,7 +12,7 @@ const initialState = {
   isFetching: false,
 };
 
-function device(state = initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case Constants.CREATE_DEVICE:
       return state;
@@ -64,5 +64,3 @@ function device(state = initialState, action) {
       return state;
   }
 }
-
-export default device;

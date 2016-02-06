@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 function join(dest) { return path.resolve(__dirname, dest); }
-function web(dest) { return join('app/' + dest); }
+function web(dest) { return join(`app/${dest}`); }
 
 const config = module.exports = {
   // our app's entry points
@@ -25,6 +25,11 @@ const config = module.exports = {
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        FIREBASE_URL: `"${process.env.FIREBASE_URL}"`,
+      },
+    }),
     // new webpack.NoErrorsPlugin(),
   ],
 

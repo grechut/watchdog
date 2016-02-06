@@ -4,3 +4,7 @@
   margin: 0 auto 120px;
   padding: 40px;
 }
+
+.mdl-spinner.is-active .mdl-spinner__layer {
+  border-color: #FFFFFF;
+}
