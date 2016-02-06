@@ -1,5 +1,6 @@
 import Firebase from 'firebase';
 import Constants from '../constants';
+import { routeActions } from 'react-router-redux';
 
 const ref = new Firebase(process.env.FIREBASE_URL);
 
@@ -10,6 +11,15 @@ const Actions = {
 
       ref.onAuth((authData) => {
         if (authData) {
+          // Save user to Firebase
+          const userRef = ref.child(`users/${authData.uid}`);
+          userRef.update({
+            uid: authData.uid,
+            name: authData.google.displayName,
+            email: authData.google.email,
+            avatarUrl: authData.google.profileImageURL,
+          });
+
           dispatch({
             type: Constants.AUTH_SIGN_IN,
             payload: { authData },
@@ -34,11 +44,13 @@ const Actions = {
 
       ref.authWithOAuthPopup('google', (error) => {
         if (error) {
-          dispatch({
+          return dispatch({
             type: Constants.AUTH_SIGN_IN_FAILURE,
             payload: { error },
           });
         }
+
+        return dispatch(routeActions.push('/devices/new'));
       }, {
         scope: 'email',
       });
@@ -51,6 +63,7 @@ const Actions = {
         type: Constants.AUTH_SIGN_OUT,
       });
       ref.unauth();
+      return dispatch(routeActions.push('/'));
     };
   },
 };
