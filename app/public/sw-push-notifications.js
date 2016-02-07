@@ -1,19 +1,20 @@
 /* eslint-env serviceworker */
 
-self.addEventListener('install', function (event) {
+self.addEventListener('install', (event) => {
   self.skipWaiting();
-  console.log('SW: installed', event);
+  console.log('Service worker: installed', event);
 });
 
-self.addEventListener('activate', function (event) {
-  console.log('SW: activated', event);
+self.addEventListener('activate', (event) => {
+  console.log('Service worker: activated', event);
 });
 
-self.addEventListener('push', function (event) {
-  console.log('SW: push notification received', event);
+self.addEventListener('push', (event) => {
+  console.log('Service worker: push notification received', event);
 
   const title = 'Watchdog Alert';
-  const body = event.data ? event.data.body : 'Watchdog has detected something on one of your cameras';
+  const defaultBody = 'Watchdog has detected something on one of your cameras';
+  const body = event.data ? event.data.text() : defaultBody;
 
   event.waitUntil(
     self.registration.showNotification(title, {
@@ -22,8 +23,8 @@ self.addEventListener('push', function (event) {
     }));
 });
 
-self.addEventListener('notificationclick', function (event) {
-  console.log('SW: push notification clicked', event);
+self.addEventListener('notificationclick', (event) => {
+  console.log('Service worker: push notification clicked', event);
   const url = 'https://youtu.be/gYMkEMCHtJ4';
 
   event.notification.close();

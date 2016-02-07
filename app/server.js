@@ -53,6 +53,7 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
   console.log('\tpayload:\t', payload);
   console.log('\tttl:\t\t', ttl);
 
+  // TODO: simplify by changing data structure stored in Firebase
   fetch(endpointsUrl)
     .then((response) => response.json())
     .then((json) => Object.keys(json))
@@ -73,9 +74,13 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
             .uniq()
         )
         .then((endpoints) => {
-          const notifications = endpoints.map((endpoint) =>
-            webPush.sendNotification(endpoint, ttl) // key, payload
-          );
+          const notifications = endpoints.map((endpoint) => {
+            if (key) {
+              return webPush.sendNotification(endpoint, ttl, key, payload);
+            }
+
+            return webPush.sendNotification(endpoint, ttl);
+          });
 
           return Promise.all(notifications)
             .then(() => res.sendStatus(204));

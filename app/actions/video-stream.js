@@ -7,7 +7,7 @@ import PushNotificationActions from '../actions/push-notification';
 
 const Actions = {
   getLocalVideoStream(deviceId) {
-    return (dispatch, getState) => {
+    return (dispatch) => {
       const constraints = { video: true, audio: true };
       const gotStream = (stream) => {
         dispatch({
@@ -22,8 +22,6 @@ const Actions = {
         const motionDetector = new MotionDetector(stream);
         const windowDuration = 5000; // in ms
         const source = new Rx.Subject();
-        const { pushNotification } = getState();
-        const key = pushNotification.key;
 
         // Notify when motion has started
         const next = source
@@ -33,9 +31,9 @@ const Actions = {
         Rx.Observable.merge(source.take(1), next)
           .subscribe((data) => {
             const message = `Motion started at ${time(data.triggeredAt)}`;
-            console.log(message);
-            const payload = { body: message };
-            dispatch(PushNotificationActions.send(deviceId, key, payload));
+            const payload = message;
+
+            dispatch(PushNotificationActions.send(deviceId, payload));
           });
 
         // Notify when motion has stopped
@@ -43,9 +41,9 @@ const Actions = {
           .debounceTime(windowDuration)
           .subscribe((data) => {
             const message = `Motion stopped at ${time(data.triggeredAt)}`;
-            console.log(message);
-            const payload = { body: message };
-            dispatch(PushNotificationActions.send(deviceId, key, payload));
+            const payload = message;
+
+            dispatch(PushNotificationActions.send(deviceId, payload));
           });
 
         // Proxy events to source observable when motion is detected
@@ -59,7 +57,7 @@ const Actions = {
         detectors.motion = motionDetector;
 
         function time(timestamp) {
-          return moment(timestamp).format('HH:mm:ss.SS');
+          return moment(timestamp).format('HH:mm:ss');
         }
 
         dispatch({

@@ -31,6 +31,7 @@ const Actions = {
       const endpoint = subscription ? subscription.endpoint : null;
       let key = null;
 
+      // Retrieve the user's public key used to encrypt notification payload
       if (subscription) {
         const rawKey = subscription.getKey ? subscription.getKey('p256dh') : '';
         key = rawKey ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey))) : '';
@@ -164,8 +165,11 @@ const Actions = {
     };
   },
 
-  send(deviceId, key, payload) {
-    return (dispatch) => {
+  send(deviceId, payload) {
+    return (dispatch, getState) => {
+      const { pushNotification } = getState();
+      const key = pushNotification.key;
+
       dispatch({
         type: Constants.PUSH_NOTIFICATION_SEND,
         payload: { deviceId, key, payload },
