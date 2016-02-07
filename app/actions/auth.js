@@ -50,7 +50,7 @@ const Actions = {
           });
         }
 
-        return dispatch(routeActions.push('/devices/new'));
+        return dispatch(routeActions.push('/devices'));
       }, {
         scope: 'email',
       });
