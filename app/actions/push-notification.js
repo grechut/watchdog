@@ -92,54 +92,71 @@ const Actions = {
   },
 
   subscribeToDevice(deviceId) {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+      const auth = getState().auth;
+
       dispatch({ type: Constants.PUSH_NOTIFICATION_SUBSCRIBE_TO_DEVICE_REQUEST_PENDING });
 
       return dispatch(this.subscribe())
         .then((subscription) => {
           if (subscription) {
-            const deviceRef = firebase.child(`/devices/${deviceId}`);
-            const endpointRef = deviceRef.child('/push_notification_endpoints').push();
-            endpointRef.set({ value: subscription.endpoint }, (error) => {
+            // TODO: don't add if endpoint already exists
+            // Add endpoint to user
+            const userRef = firebase.child(`/users/${auth.uid}/push_notification_endpoints`).push();
+            userRef.set({ url: subscription.endpoint }, (error) => {
               if (error) return;
-
-              dispatch({
-                type: Constants.PUSH_NOTIFICATION_SUBSCRIBE_TO_DEVICE_REQUEST_SUCCESS,
-                payload: {
-                  // TODO: figure out payload
-                },
-              });
             });
+
+            // Add user id to device
+            const deviceRef = firebase.child(`/devices/${deviceId}/push_notification_endpoints`);
+            deviceRef.update({ [auth.uid]: true }, onSet);
           }
         });
+
+      function onSet(error) {
+        if (error) return;
+
+        dispatch({
+          type: Constants.PUSH_NOTIFICATION_SUBSCRIBE_TO_DEVICE_REQUEST_SUCCESS,
+          payload: {
+            // TODO: figure out payload
+          },
+        });
+      }
     };
   },
 
   unsubscribeFromDevice(deviceId) {
     return (dispatch, getState) => {
-      dispatch({ type: Constants.PUSH_NOTIFICATION_UNSUBSCRIBE_FROM_DEVICE_REQUEST_PENDING });
+      dispatch({
+        type: Constants.PUSH_NOTIFICATION_UNSUBSCRIBE_FROM_DEVICE_REQUEST_PENDING,
+      });
 
-      const { pushNotification } = getState();
-      const endpoint = pushNotification.endpoint;
+      const { auth } = getState();
+      const deviceRef = firebase.child(`/devices/${deviceId}`);
+      const endpointsRef = deviceRef.child(`/push_notification_endpoints/${auth.uid}`);
+      endpointsRef.remove(onRemove);
 
-      axios.post(`/api/devices/${deviceId}/unsubscribe`, {
-        pushNotificationEndpoint: endpoint,
-      })
-      .then((response) =>
+      function onRemove(error) {
+        if (error) return;
+
         dispatch({
           type: Constants.PUSH_NOTIFICATION_UNSUBSCRIBE_FROM_DEVICE_REQUEST_SUCCESS,
-          payload: response.data,
-        })
-      );
+          payload: {
+            // TODO: figure out payload
+          },
+        });
+      }
     };
   },
 
   toggleSubscriptionForDevice(deviceId) {
     return (dispatch, getState) => {
-      const { device, pushNotification } = getState();
+      const { devices, auth } = getState();
+      const device = devices[deviceId];
       const isSubscribed = _.includes(
-        device.listeners.pushNotificationEndpoints,
-        pushNotification.endpoint
+        device.pushNotificationEndpoints,
+        auth.uid
       );
       const action = isSubscribed ? 'unsubscribeFromDevice' : 'subscribeToDevice';
 

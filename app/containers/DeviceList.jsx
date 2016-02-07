@@ -1,30 +1,70 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { FABButton, Icon } from 'react-mdl/lib';
-import PageActions from '../actions/page';
 import { routeActions } from 'react-router-redux';
+import { FABButton, Icon } from 'react-mdl/lib';
+import { Link } from 'react-router';
+import DeviceActions from '../actions/devices';
+import PageActions from '../actions/page';
+import firebase from '../lib/firebase';
 
 class DeviceList extends React.Component {
   componentDidMount() {
-    this.props.dispatch(PageActions.updateTitle('Devices'));
+    const { dispatch, auth } = this.props;
+
+    dispatch(PageActions.updateTitle('Devices'));
+
+    // TODO:
+    // - convert to action
+    // - move to onEnter/aync-props
+    // Fetch user's devices from Firebase
+    firebase.child(`users/${auth.uid}/devices`).on('child_added', (userDeviceSnapshot) => {
+      const deviceId = userDeviceSnapshot.key();
+
+      firebase.child(`devices/${deviceId}`).once('value', (deviceSnapshot) => {
+        const device = deviceSnapshot.val();
+        console.log('Received device:', device);
+        dispatch(DeviceActions.receiveDevice(device));
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    // TODO:
+    // - convert to action
+    // - move to onLeave
+    const { auth } = this.props;
+    firebase.child(`users/${auth.uid}/devices`).off('child_added');
   }
 
   render() {
-    const { dispatch } = this.props;
+    const { dispatch, devices } = this.props;
 
+    // TODO: convert to component
     return (
       <div>
-        <ul className="demo-list-item mdl-list">
-          <li className="mdl-list__item">
-            <span className="mdl-list__item-primary-content">
-              Bryan Cranston
-            </span>
-          </li>
-        </ul>
+        {(() => {
+          if (Object.keys(devices).length) {
+            return (
+              <ul className="demo-list-item mdl-list">
+                {Object.values(devices).map((device) =>
+                  (
+                    <li className="mdl-list__item" key={device.uid}>
+                      <span className="mdl-list__item-primary-content">
+                        <Link to={`/devices/${device.uid}`}>{device.name}</Link>
+                      </span>
+                    </li>
+                  )
+                )}
+              </ul>
+            );
+          }
 
-        <FABButton colored ripple
-          onClick={() => dispatch(routeActions.push('/devices/new'))}
-        >
+          return (
+            <div>You don't have any devices yet.</div>
+          );
+        })()}
+
+        <FABButton colored ripple onClick={() => dispatch(routeActions.push('/devices/new'))}>
           <Icon name="add" />
         </FABButton>
       </div>
@@ -34,6 +74,15 @@ class DeviceList extends React.Component {
 
 DeviceList.propTypes = {
   dispatch: PropTypes.func,
+  auth: PropTypes.object,
+  devices: PropTypes.object,
 };
 
-export default connect()(DeviceList);
+function mapStateToProps(state) {
+  return {
+    auth: state.auth,
+    devices: state.devices,
+  };
+}
+
+export default connect(mapStateToProps)(DeviceList);

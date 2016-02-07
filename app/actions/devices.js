@@ -10,14 +10,15 @@ const Actions = {
 
       deviceRef.on('value', (snapshot) => {
         const device = snapshot.val();
+        dispatch(this.receiveDevice(device));
+      });
 
-        dispatch(receiveDevice(device));
+      // Start video only when the device data is received for the first time
+      deviceRef.once('value', () => {
+        const device = getState().devices[deviceId];
 
-        // TODO:
-        // - run this code only on inital load, not on updates
-        // - stop video/detectos when leaving device page as owner
-        if (getState().device.isOwner) {
-          dispatch(VideoStreamActions.getLocalVideoStream());
+        if (device.isOwner) {
+          dispatch(VideoStreamActions.getLocalVideoStream(device.uid));
         }
       });
     };
@@ -46,15 +47,15 @@ const Actions = {
       dispatch(routeActions.push(`/devices/${deviceId}`));
     };
   },
-};
 
-function receiveDevice(device) {
-  return {
-    type: Constants.DEVICE_RECEIVE,
-    payload: {
-      device,
-    },
-  };
-}
+  receiveDevice(device) {
+    return {
+      type: Constants.DEVICE_RECEIVE,
+      payload: {
+        device,
+      },
+    };
+  },
+};
 
 export default Actions;

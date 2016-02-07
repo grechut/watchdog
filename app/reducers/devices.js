@@ -1,17 +1,6 @@
 import Constants from '../constants';
 
 const initialState = {
-  uid: null,
-  name: null,
-
-  isOwner: false,     // TODO: derived data
-  remoteStream: null, // listener specific
-  localStream: null,  // owner specific
-  listeners: {
-    pushNotificationEndpoints: [],
-  },
-  detectors: {},
-  isFetching: false,
 };
 
 export default function reducer(state = initialState, action) {
@@ -20,23 +9,31 @@ export default function reducer(state = initialState, action) {
       return state;
 
     case Constants.DEVICE_REQUEST:
-      return {
-        ...state,
-        isFetching: true,
-      };
+      return state;
 
     case Constants.DEVICE_RECEIVE:
+      const device = action.payload.device;
+
       return {
         ...state,
-        isFetching: false,
-        isOwner: localStorage.getItem(`dummyOwner_${action.payload.device.uid}`),
-        ...action.payload.device,
+        [device.uid]: {
+          ...state[device.uid],
+          uid: device.uid,
+          name: device.name,
+
+          pushNotificationEndpoints: Object.keys(device.push_notification_endpoints || {}),
+          isOwner: !!localStorage.getItem(`dummyOwner_${device.uid}`),
+        },
       };
 
     case Constants.VIDEO_STREAM_GET_LOCAL:
+      const { deviceId, stream } = action.payload;
       return {
         ...state,
-        localStream: action.stream,
+        [deviceId]: {
+          ...state[deviceId],
+          localStream: stream,
+        },
       };
 
     case Constants.START_DETECTOR:

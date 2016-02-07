@@ -1,11 +1,11 @@
 import auth from './auth';
-import device from './device';
+import devices from './devices';
 import page from './page';
 import pushNotification from './push-notification';
 
 const reducers = {
   auth,
-  device,
+  devices,
   page,
   pushNotification,
 };

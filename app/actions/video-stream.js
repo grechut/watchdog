@@ -6,21 +6,23 @@ import MotionDetector from '../lib/detectors/motion';
 import PushNotificationActions from '../actions/push-notification';
 
 const Actions = {
-  getLocalVideoStream() {
+  getLocalVideoStream(deviceId) {
     return (dispatch, getState) => {
       const constraints = { video: true, audio: true };
-      const gotStream = function (stream) {
+      const gotStream = (stream) => {
         dispatch({
           type: Constants.VIDEO_STREAM_GET_LOCAL,
-          stream,
+          payload: {
+            deviceId,
+            stream,
+          },
         });
 
         // TODO: move it somewhere else and dispatch action to update state
         const motionDetector = new MotionDetector(stream);
         const windowDuration = 5000; // in ms
         const source = new Rx.Subject();
-        const { device, pushNotification } = getState();
-        const deviceId = device.uid;
+        const { pushNotification } = getState();
         const key = pushNotification.key;
 
         // Notify when motion has started
@@ -64,7 +66,7 @@ const Actions = {
           type: Constants.CHANGE_DETECTOR,
         });
       };
-      const gotError = function (error) {
+      const gotError = (error) => {
         console.error(error);
       };
       navigator.getUserMedia = navigator.getUserMedia ||

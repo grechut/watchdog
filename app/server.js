@@ -1,14 +1,14 @@
 require('dotenv').load();
 
+const _ = require('lodash');
 const express = require('express');
 const app = express();
-const _ = require('lodash');
 
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const morgan = require('morgan');
 const webPush = require('web-push');
-const redis = require('./redisClient')();
+const fetch = require('node-fetch');
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -39,113 +39,48 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // API
-app.post('/api/devices', (req, res) => {
-  const deviceId = req.body.deviceId;
-  const device = {
-    owner: deviceId,
-    listeners: {
-      pushNotificationEndpoints: [],
-    },
-  };
-
-  redis.set(deviceId, JSON.stringify(device));
-  res.send({
-    uid: device.owner,
-    listeners: device.listeners,
-  });
-});
-
-app.get('/api/devices/:deviceId', (req, res) => {
-  const deviceId = req.params.deviceId;
-  redis.get(deviceId, (err, result) => {
-    if (err) { return res.sendStatus(404); }
-    if (!result) { return res.sendStatus(404); }
-
-    const device = JSON.parse(result);
-
-    res.send({
-      owner: device.owner,
-      listeners: device.listeners,
-    });
-  });
-});
-
-app.post('/api/devices/:deviceId/subscribe', (req, res) => {
-  const deviceId = req.params.deviceId;
-  const endpoint = req.body.pushNotificationEndpoint;
-
-  if (!endpoint) { return res.sendStatus(422); }
-
-  redis.get(deviceId, (err, result) => {
-    if (err) { return res.sendStatus(404); }
-    if (!result) { return res.sendStatus(404); }
-
-    const device = JSON.parse(result);
-    const endpoints = device.listeners.pushNotificationEndpoints;
-
-    if (!_.includes(endpoints, endpoint)) {
-      endpoints.push(endpoint);
-    }
-
-    // Update device info
-    redis.set(deviceId, JSON.stringify(device));
-    res.send({
-      owner: device.owner,
-      listeners: device.listeners,
-    });
-  });
-});
-
-app.post('/api/devices/:deviceId/unsubscribe', (req, res) => {
-  const deviceId = req.params.deviceId;
-  const endpoint = req.body.pushNotificationEndpoint;
-
-  if (!endpoint) { return res.sendStatus(422); }
-
-  redis.get(deviceId, (err, result) => {
-    if (err) { return res.sendStatus(404); }
-    if (!result) { return res.sendStatus(404); }
-
-    const device = JSON.parse(result);
-    const endpoints = device.listeners.pushNotificationEndpoints;
-
-    if (_.includes(endpoints, endpoint)) {
-      _.pull(endpoints, endpoint);
-    }
-
-    // Update device info
-    redis.set(deviceId, JSON.stringify(device));
-    res.send({
-      owner: device.owner,
-      listeners: device.listeners,
-    });
-  });
-});
-
 app.post('/api/devices/:deviceId/notify', (req, res) => {
   const deviceId = req.params.deviceId;
   const key = req.body.key;
   const payload = req.body.payload;
   const ttl = 60 * 60;
+  const endpointsUrl =
+    `${process.env.FIREBASE_URL}/devices/${deviceId}/push_notification_endpoints.json`;
 
-  redis.get(deviceId, (err, result) => {
-    if (err) { return res.sendStatus(404); }
-    if (!result) { return res.sendStatus(404); }
+  console.log('Sending push notification: ');
+  console.log('\tdevice id:\t', deviceId);
+  console.log('\tkey:\t\t', key);
+  console.log('\tpayload:\t', payload);
+  console.log('\tttl:\t\t', ttl);
 
-    console.log('Sending push notification: ');
-    console.log('\tdevice id:\t', deviceId);
-    console.log('\tkey:\t\t', key);
-    console.log('\tpayload:\t', payload);
+  fetch(endpointsUrl)
+    .then((response) => response.json())
+    .then((json) => Object.keys(json))
+    .then((userIds) => _(userIds).uniq().map((userId) =>
+      `${process.env.FIREBASE_URL}/users/${userId}/push_notification_endpoints.json`
+    ))
+    .then((userUrls) =>
+      Promise.all(userUrls.map(fetch))
+        .then((responses) =>
+          Promise.all(responses.map((response) => response.json()))
+        )
+        .then((jsons) =>
+          // Mapping from Firebase strange data structure to plain array of endpoint urls
+          _(jsons)
+            .map((endpoint) => _.values(endpoint))
+            .flatten()
+            .map((endpoint) => endpoint.url)
+            .uniq()
+        )
+        .then((endpoints) => {
+          const notifications = endpoints.map((endpoint) =>
+            webPush.sendNotification(endpoint, ttl) // key, payload
+          );
 
-    const device = JSON.parse(result);
-    const endpoints = device.listeners.pushNotificationEndpoints;
-    const notifications = endpoints.map((endpoint) =>
-      webPush.sendNotification(endpoint, ttl) // key, payload
+          return Promise.all(notifications)
+            .then(() => res.sendStatus(204));
+        })
     );
-
-    Promise.all(notifications)
-      .then(() => res.sendStatus(204));
-  });
 });
 
 // HTML
@@ -153,6 +88,9 @@ app.get('/*', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });
 
+app.get('/*', (req, res) => {
+  res.sendFile(`${__dirname}/index.html`);
+});
 
 app.listen(port, (error) => {
   if (error) {

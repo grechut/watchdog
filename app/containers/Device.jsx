@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import DeviceActions from '../actions/device';
+import DeviceActions from '../actions/devices';
 import PageActions from '../actions/page';
 import PushNotificationActions from '../actions/push-notification';
 
@@ -21,29 +21,34 @@ class Device extends Component {
   }
 
   render() {
-    const { device, dispatch, pushNotification } = this.props;
-    const { owner, listeners, isOwner, localStream } = device;
-    const deviceId = device.uid;
-    const pushNotificationEndpoints = device.listeners.pushNotificationEndpoints;
+    const deviceId = this.props.params.deviceUuid;
+    const { dispatch, auth, devices, pushNotification } = this.props;
+    const device = devices[deviceId];
 
-    if (!deviceId) { return null; }
+    if (!device) { return null; }
+
+    const isSubscribed = _.includes(
+      device.pushNotificationEndpoints,
+      auth.uid
+    );
 
     return (
       <div className="app">
-        <Video src={localStream} />
-        <h3>Owner: {owner}</h3>
-        <h4>Listeners: {listeners.pushNotificationEndpoints.length}</h4>
+        <Video src={device.localStream} />
+        <h3>ID: {device.uid}</h3>
 
-        {isOwner ?
+        {device.isOwner ?
           Object.keys(detectors).map(key =>
             <DetectorConfig key={key} detector={detectors[key]} />
           )
         :
           <PushNotificationSwitch
-            deviceId={deviceId}
-            checked={_.includes(pushNotificationEndpoints, pushNotification.endpoint)}
+            deviceId={device.uid}
+            checked={isSubscribed}
             disabled={!pushNotification.enabled}
-            onChange={() => dispatch(PushNotificationActions.toggleSubscriptionForDevice(deviceId))}
+            onChange={() =>
+              dispatch(PushNotificationActions.toggleSubscriptionForDevice(device.uid)
+            )}
           />
         }
       </div>
@@ -52,15 +57,17 @@ class Device extends Component {
 }
 
 Device.propTypes = {
-  device: PropTypes.object,
   dispatch: PropTypes.func,
   params: PropTypes.object,
+  auth: PropTypes.object,
+  devices: PropTypes.object,
   pushNotification: PropTypes.object,
 };
 
 function mapStateToProps(state) {
   return {
-    device: state.device,
+    auth: state.auth,
+    devices: state.devices,
     pushNotification: state.pushNotification,
   };
 }
