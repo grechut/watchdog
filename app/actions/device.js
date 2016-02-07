@@ -1,54 +1,59 @@
-import axios from 'axios';
-import uuid from 'uuid';
 import { routeActions } from 'react-router-redux';
 import Constants from '../constants';
 import VideoStreamActions from '../actions/video-stream';
+import firebase from '../lib/firebase';
 
 const Actions = {
-  // TODO shall we switch here to 3 step actions ? start/success/error ?
   fetchDevice(deviceId) {
     return (dispatch, getState) => {
-      dispatch(requestDevice(deviceId));
+      const deviceRef = firebase.child(`/devices/${deviceId}`);
 
-      return axios.get(`/api/devices/${deviceId}`)
-        .then((response) => {
-          dispatch(receiveDevice(response.data));
+      deviceRef.on('value', (snapshot) => {
+        const device = snapshot.val();
 
-          // At this point isOwner should already be set
-          const isOwner = getState().device.isOwner;
-          if (isOwner) {
-            dispatch(VideoStreamActions.getLocalVideoStream());
-          }
-        });
+        dispatch(receiveDevice(device));
+
+        // TODO:
+        // - run this code only on inital load, not on updates
+        // - stop video/detectos when leaving device page as owner
+        if (getState().device.isOwner) {
+          dispatch(VideoStreamActions.getLocalVideoStream());
+        }
+      });
     };
   },
 
   createDevice() {
-    return (dispatch) => {
-      dispatch({ type: Constants.CREATE_DEVICE });
+    return (dispatch, getState) => {
+      dispatch({ type: Constants.DEVICE_CREATE });
 
-      const deviceId = uuid.v4();
+      // Create device in /devices
+      const deviceRef = firebase.child(`/devices`).push();
+      const deviceId = deviceRef.key();
+      deviceRef.set({
+        uid: deviceId,
+        name: 'Living room',
+      });
+
+      // Create association with current user
+      const auth = getState().auth;
+      const userDeviceRef = firebase.child(`/users/${auth.uid}/devices/${deviceId}`);
+      userDeviceRef.set({ uid: deviceId });
+
+      // TODO: figure out how to do it better
       localStorage.setItem(`dummyOwner_${deviceId}`, true);
 
-      return axios.post('/api/devices', { deviceId })
-        .then(() =>
-          dispatch(routeActions.push(`/devices/${deviceId}`))
-        );
+      dispatch(routeActions.push(`/devices/${deviceId}`));
     };
   },
 };
 
-function requestDevice(deviceId) {
-  return {
-    type: Constants.REQUEST_DEVICE,
-    deviceId,
-  };
-}
-
 function receiveDevice(device) {
   return {
-    type: Constants.RECEIVE_DEVICE,
-    device,
+    type: Constants.DEVICE_RECEIVE,
+    payload: {
+      device,
+    },
   };
 }
 

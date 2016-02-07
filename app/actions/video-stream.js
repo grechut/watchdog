@@ -20,7 +20,7 @@ const Actions = {
         const windowDuration = 5000; // in ms
         const source = new Rx.Subject();
         const { device, pushNotification } = getState();
-        const deviceId = device.owner;
+        const deviceId = device.uid;
         const key = pushNotification.key;
 
         // Notify when motion has started

@@ -23,7 +23,7 @@ class Device extends Component {
   render() {
     const { device, dispatch, pushNotification } = this.props;
     const { owner, listeners, isOwner, localStream } = device;
-    const deviceId = device.owner;
+    const deviceId = device.uid;
     const pushNotificationEndpoints = device.listeners.pushNotificationEndpoints;
 
     if (!deviceId) { return null; }

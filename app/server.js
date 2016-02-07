@@ -50,7 +50,7 @@ app.post('/api/devices', (req, res) => {
 
   redis.set(deviceId, JSON.stringify(device));
   res.send({
-    owner: device.owner,
+    uid: device.owner,
     listeners: device.listeners,
   });
 });

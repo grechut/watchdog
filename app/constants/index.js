@@ -1,9 +1,9 @@
 import keymirror from 'keymirror';
 
 const Constants = keymirror({
-  REQUEST_DEVICE: null,
-  RECEIVE_DEVICE: null,
-  CREATE_DEVICE: null,
+  DEVICE_REQUEST: null,
+  DEVICE_RECEIVE: null,
+  DEVICE_CREATE: null,
 
   ADD_DEVICE_LISTENER: null,
 

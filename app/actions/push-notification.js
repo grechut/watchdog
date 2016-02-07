@@ -1,4 +1,5 @@
 import axios from 'axios';
+import firebase from '../lib/firebase';
 import _ from 'lodash';
 import Constants from '../constants';
 
@@ -97,15 +98,18 @@ const Actions = {
       return dispatch(this.subscribe())
         .then((subscription) => {
           if (subscription) {
-            axios.post(`/api/devices/${deviceId}/subscribe`, {
-              pushNotificationEndpoint: subscription.endpoint,
-            })
-            .then((response) =>
+            const deviceRef = firebase.child(`/devices/${deviceId}`);
+            const endpointRef = deviceRef.child('/push_notification_endpoints').push();
+            endpointRef.set({ value: subscription.endpoint }, (error) => {
+              if (error) return;
+
               dispatch({
                 type: Constants.PUSH_NOTIFICATION_SUBSCRIBE_TO_DEVICE_REQUEST_SUCCESS,
-                payload: response.data,
-              })
-            );
+                payload: {
+                  // TODO: figure out payload
+                },
+              });
+            });
           }
         });
     };
