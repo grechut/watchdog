@@ -38,11 +38,6 @@ if (process.env.NODE_ENV === 'production') {
   app.use(webpackHotMiddleware(compiler));
 }
 
-// HTML
-app.get(['/', '/devices/:deviceId'], (req, res) => {
-  res.sendFile(`${__dirname}/index.html`);
-});
-
 // API
 app.post('/api/devices', (req, res) => {
   const deviceId = req.body.deviceId;
@@ -152,6 +147,12 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
       .then(() => res.sendStatus(204));
   });
 });
+
+// HTML
+app.get('/*', (req, res) => {
+  res.sendFile(`${__dirname}/index.html`);
+});
+
 
 app.listen(port, (error) => {
   if (error) {
