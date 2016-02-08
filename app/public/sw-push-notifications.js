@@ -19,7 +19,7 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(title, {
       body,
-      // icon: 'images/icon.png',
+      icon: 'icon.png',
     }));
 });
 
@@ -34,7 +34,7 @@ self.addEventListener('notificationclick', (event) => {
       type: 'window',
     })
     .then((windowClients) => {
-      for (let i = 0; i < windowClients.length; i++) {
+      for (var i = 0; i < windowClients.length; i++) {
         const client = windowClients[i];
 
         if (client.url === url && 'focus' in client) {
