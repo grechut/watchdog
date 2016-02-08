@@ -11,7 +11,7 @@ export default function reducer(state = initialState, action) {
     case Constants.DEVICE_REQUEST:
       return state;
 
-    case Constants.DEVICE_RECEIVE:
+    case Constants.DEVICE_RECEIVE: {
       const device = action.payload.device;
 
       return {
@@ -25,8 +25,8 @@ export default function reducer(state = initialState, action) {
           isOwner: !!localStorage.getItem(`dummyOwner_${device.uid}`),
         },
       };
-
-    case Constants.VIDEO_STREAM_GET_LOCAL:
+    }
+    case Constants.VIDEO_STREAM_GET_LOCAL: {
       const { deviceId, stream } = action.payload;
       return {
         ...state,
@@ -35,6 +35,7 @@ export default function reducer(state = initialState, action) {
           localStream: stream,
         },
       };
+    }
 
     case Constants.START_DETECTOR:
       action.detector.start();

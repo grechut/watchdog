@@ -21,12 +21,13 @@ export default function reducer(state = initialState, action) {
         ...authDataToState(null),
         state: Constants.AUTH_SIGN_IN_PENDING,
       };
-    case Constants.AUTH_SIGN_IN:
+    case Constants.AUTH_SIGN_IN: {
       const authData = action.payload.authData;
       return {
         ...state,
         ...authDataToState(authData),
       };
+    }
     case Constants.AUTH_SIGN_OUT:
       return {
         ...state,
