@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import DeviceActions from '../actions/devices';
-import PageActions from '../actions/page';
 import PushNotificationActions from '../actions/push-notification';
 
 // Owner part
@@ -16,7 +15,6 @@ import detectors from '../lib/detectors';
 
 class Device extends Component {
   componentDidMount() {
-    this.props.dispatch(PageActions.updateTitle('Home'));
     this.props.dispatch(DeviceActions.fetchDevice(this.props.params.deviceUuid));
   }
 
