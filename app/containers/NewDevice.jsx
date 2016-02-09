@@ -2,13 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Button from 'react-mdl/lib/Button';
 import DeviceActions from '../actions/devices';
-import PageActions from '../actions/page';
 
 class NewDevice extends Component {
-  componentDidMount() {
-    this.props.dispatch(PageActions.updateTitle('Add a device'));
-  }
-
   render() {
     const { dispatch } = this.props;
 

@@ -4,14 +4,11 @@ import { routeActions } from 'react-router-redux';
 import { FABButton, Icon } from 'react-mdl/lib';
 import { Link } from 'react-router';
 import DeviceActions from '../actions/devices';
-import PageActions from '../actions/page';
 import firebase from '../lib/firebase';
 
 class DeviceList extends React.Component {
   componentDidMount() {
     const { dispatch, auth } = this.props;
-
-    dispatch(PageActions.updateTitle('Devices'));
 
     // TODO:
     // - convert to action
