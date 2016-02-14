@@ -165,6 +165,7 @@ const Actions = {
     };
   },
 
+  // TODO: make sure that only owner can send notifications
   send(deviceId, payload) {
     return (dispatch, getState) => {
       const { pushNotification } = getState();
@@ -176,15 +177,11 @@ const Actions = {
       });
 
       const incidentRef = firebase.child(`incidents/${deviceId}`).push();
-      incidentRef.set({
-        message: payload,      // TODO: change to constant
-        timestamp: Date.now(),
-      });
+      incidentRef.set(payload);
 
-      // TODO: make sure that only owner can send notifications
       return axios.post(`/api/devices/${deviceId}/notify`, {
         key,
-        payload,
+        payload: payload.message,
       });
     };
   },

@@ -30,8 +30,14 @@ const Actions = {
 
         Rx.Observable.merge(source.take(1), next)
           .subscribe((data) => {
+            const code = 'motion_started';
+            const triggeredAt = data.triggeredAt;
             const message = `Motion started at ${time(data.triggeredAt)}`;
-            const payload = message;
+            const payload = {
+              message,
+              code,
+              triggeredAt,
+            };
 
             dispatch(PushNotificationActions.send(deviceId, payload));
           });
@@ -40,8 +46,14 @@ const Actions = {
         source
           .debounceTime(windowDuration)
           .subscribe((data) => {
+            const code = 'motion_stopped';
+            const triggeredAt = data.triggeredAt;
             const message = `Motion stopped at ${time(data.triggeredAt)}`;
-            const payload = message;
+            const payload = {
+              message,
+              code,
+              triggeredAt,
+            };
 
             dispatch(PushNotificationActions.send(deviceId, payload));
           });
