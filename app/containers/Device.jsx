@@ -70,7 +70,7 @@ class Device extends Component {
                 dispatch(PushNotificationActions.toggleSubscriptionForDevice(device.uid))
               }
             />
-          <IncidentList incidents={incidentsForDevice} />
+            <IncidentList incidents={incidentsForDevice} />
           </div>
         }
       </div>

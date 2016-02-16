@@ -22,7 +22,7 @@
     "npm": "^3.4.1",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
-    "react-mdl": "^1.3.0",
+    "react-mdl": "^1.4.0",
     "react-redux": "^4.0.0",
     "react-router": "^2.0.0",
     "react-router-redux": "^3.0.0",

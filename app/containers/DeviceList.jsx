@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { routeActions } from 'react-router-redux';
 import { FABButton, Icon } from 'react-mdl/lib';
+import { List, ListItem, ListItemContent } from 'react-mdl/lib/List';
 import { Link } from 'react-router';
 import DeviceActions from '../actions/devices';
 import PageActions from '../actions/page';
@@ -45,22 +46,28 @@ class DeviceList extends React.Component {
         {(() => {
           if (Object.keys(devices).length) {
             return (
-              <ul className="demo-list-item mdl-list">
+              <List>
                 {Object.values(devices).map((device) =>
                   (
-                    <li className="mdl-list__item" key={device.uid}>
-                      <span className="mdl-list__item-primary-content">
+                    <ListItem key={device.uid}>
+                      <ListItemContent>
                         <Link to={`/devices/${device.uid}`}>{device.name}</Link>
-                      </span>
-                    </li>
+                      </ListItemContent>
+                    </ListItem>
                   )
                 )}
-              </ul>
+              </List>
             );
           }
 
           return (
-            <div>You don't have any devices yet.</div>
+            <List>
+              <ListItem>
+                <ListItemContent>
+                  You don't have any devices yet.
+                </ListItemContent>
+              </ListItem>
+            </List>
           );
         })()}
 

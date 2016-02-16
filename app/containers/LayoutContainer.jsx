@@ -15,7 +15,7 @@ class LayoutContainer extends React.Component {
         </Header>
         <Content>
           <Grid className="content">
-            <Cell col={12} align="middle">
+            <Cell col={12}>
               {children}
             </Cell>
           </Grid>
