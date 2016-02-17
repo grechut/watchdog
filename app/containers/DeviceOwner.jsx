@@ -16,7 +16,7 @@ class DeviceOwner extends Component {
     const deviceId = params.deviceUuid;
 
     dispatch(PageActions.updateTitle('Home'));
-    dispatch(DeviceActions.fetchDevice(deviceId));
+    dispatch(DeviceActions.bindToDevice(deviceId));
     dispatch(DeviceActions.syncConnected(deviceId));
     dispatch(VideoStreamActions.getLocalVideoStream(deviceId));
   }

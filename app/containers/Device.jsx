@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import DeviceActions from '../actions/devices';
+import IncidentActions from '../actions/incidents';
 import PageActions from '../actions/page';
 import PushNotificationActions from '../actions/push-notification';
-import IncidentActions from '../actions/incidents';
 
 import firebase from '../lib/firebase';
 import PushNotificationSwitch from '../components/PushNotificationSwitch';
@@ -21,20 +21,8 @@ class Device extends Component {
     const deviceId = params.deviceUuid;
 
     dispatch(PageActions.updateTitle('Home'));
-    dispatch(DeviceActions.fetchDevice(deviceId));
-
-    // TODO: Convert to action
-    // Fetch and sync incidents
-    const incidentsRef = firebase.child(`incidents/${deviceId}`).orderByKey().limitToLast(10);
-
-    incidentsRef.on('child_added', (incidentSnapshot) => {
-      const device = { uid: deviceId };
-      const incident = {
-        [incidentSnapshot.key()]: incidentSnapshot.val(),
-      };
-
-      dispatch(IncidentActions.addIncident(device, incident));
-    });
+    dispatch(DeviceActions.bindToDevice(deviceId));
+    dispatch(IncidentActions.bindToIncidents(deviceId));
 
     // Initiate WebRTC connection
     // TODO change it to some custom ID received via presence system
@@ -64,6 +52,12 @@ class Device extends Component {
 
     // TODO: call peer.signal(data) on incoming sidata from the other peer
     // Listen to signaling messages from the other peer
+  }
+
+  componentWillUnmount() {
+    const deviceId = this.props.params.deviceUuid;
+    DeviceActions.unbindFromDevice(deviceId);
+    IncidentActions.unbindFromIncidents(deviceId);
   }
 
   render() {

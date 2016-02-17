@@ -28,7 +28,7 @@ const Actions = {
     };
   },
 
-  fetchDevice(deviceId) {
+  bindToDevice(deviceId) {
     return (dispatch) => {
       const deviceRef = firebase.child(`/devices/${deviceId}`);
 
@@ -36,7 +36,14 @@ const Actions = {
         const device = snapshot.val();
         dispatch(this.receiveDevice(device));
       });
+
+      return deviceRef;
     };
+  },
+
+  unbindFromDevice(deviceId) {
+    const deviceRef = firebase.child(`/devices/${deviceId}`);
+    deviceRef.off('value');
   },
 
   syncConnected(deviceId) {

@@ -6,6 +6,7 @@ import IncidentListItem from '../components/IncidentListItem';
 class IncidentList extends React.Component {
   render() {
     const { incidents } = this.props;
+
     const list = (
       <List>
         {Object.keys(incidents).map((id) =>
@@ -34,7 +35,7 @@ class IncidentList extends React.Component {
 }
 
 IncidentList.propTypes = {
-  incidents: PropTypes.object,
+  incidents: PropTypes.object.isRequired,
 };
 
 export default connect()(IncidentList);

@@ -26,5 +26,5 @@ export default class IncidentListItem extends Component {
 }
 
 IncidentListItem.propTypes = {
-  incident: PropTypes.bool,
+  incident: PropTypes.object,
 };
