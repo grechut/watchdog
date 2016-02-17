@@ -4,6 +4,7 @@ import { routeActions } from 'react-router-redux';
 import { FABButton, Icon } from 'react-mdl/lib';
 import { List, ListItem, ListItemContent } from 'react-mdl/lib/List';
 import { Link } from 'react-router';
+import _ from 'lodash';
 import DeviceActions from '../actions/devices';
 import PageActions from '../actions/page';
 import firebase from '../lib/firebase';
@@ -47,7 +48,7 @@ class DeviceList extends React.Component {
           if (Object.keys(devices).length) {
             return (
               <List>
-                {Object.values(devices).map((device) =>
+                {_.values(devices).map((device) =>
                   (
                     <ListItem key={device.uid}>
                       <ListItemContent>
