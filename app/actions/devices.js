@@ -1,39 +1,19 @@
 import { routeActions } from 'react-router-redux';
 import Constants from '../constants';
-import VideoStreamActions from '../actions/video-stream';
 import firebase from '../lib/firebase';
 
 const Actions = {
-  fetchDevice(deviceId) {
-    return (dispatch, getState) => {
-      const deviceRef = firebase.child(`/devices/${deviceId}`);
-
-      deviceRef.on('value', (snapshot) => {
-        const device = snapshot.val();
-        dispatch(this.receiveDevice(device));
-      });
-
-      // Start video only when the device data is received for the first time
-      deviceRef.once('value', () => {
-        const device = getState().devices[deviceId];
-
-        if (device.isOwner) {
-          dispatch(VideoStreamActions.getLocalVideoStream(device.uid));
-        }
-      });
-    };
-  },
-
   createDevice() {
     return (dispatch, getState) => {
       dispatch({ type: Constants.DEVICE_CREATE });
 
-      // Create device in /devices
+      // Create a new device in /devices
       const deviceRef = firebase.child(`/devices`).push();
       const deviceId = deviceRef.key();
       deviceRef.set({
         uid: deviceId,
         name: 'Living room',
+        connected: true,
       });
 
       // Create association with current user
@@ -44,7 +24,34 @@ const Actions = {
       // TODO: figure out how to do it better
       localStorage.setItem(`dummyOwner_${deviceId}`, true);
 
-      dispatch(routeActions.push(`/devices/${deviceId}`));
+      dispatch(routeActions.push(`/devices/${deviceId}/device`));
+    };
+  },
+
+  fetchDevice(deviceId) {
+    return (dispatch) => {
+      const deviceRef = firebase.child(`/devices/${deviceId}`);
+
+      deviceRef.on('value', (snapshot) => {
+        const device = snapshot.val();
+        dispatch(this.receiveDevice(device));
+      });
+    };
+  },
+
+  syncConnected(deviceId) {
+    return () => {
+      const connectedRef = firebase.child('.info/connected');
+      const deviceRef = firebase.child(`/devices/${deviceId}`);
+
+      connectedRef.on('value', (snapshot) => {
+        if (snapshot.val()) {
+          deviceRef.update({ connected: true });
+          deviceRef.onDisconnect().update({ connected: false });
+        } else {
+          deviceRef.update({ connected: false });
+        }
+      });
     };
   },
 

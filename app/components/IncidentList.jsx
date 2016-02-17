@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import { List, ListItem, ListItemContent } from 'react-mdl/lib/List';
+import IncidentListItem from '../components/IncidentListItem';
 
 class IncidentList extends React.Component {
   render() {
@@ -10,9 +10,7 @@ class IncidentList extends React.Component {
       <List>
         {Object.keys(incidents).map((id) =>
           <ListItem key={id} twoLine>
-            <ListItemContent subtitle={incidents[id].message}>
-              {moment(incidents[id].triggeredAt).format('HH:mm:ss')}
-            </ListItemContent>
+            <IncidentListItem incident={incidents[id]} />
           </ListItem>
         )}
       </List>

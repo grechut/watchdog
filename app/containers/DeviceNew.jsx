@@ -4,7 +4,7 @@ import Button from 'react-mdl/lib/Button';
 import DeviceActions from '../actions/devices';
 import PageActions from '../actions/page';
 
-class NewDevice extends Component {
+class DeviceNew extends Component {
   componentDidMount() {
     this.props.dispatch(PageActions.updateTitle('Add a device'));
   }
@@ -25,8 +25,8 @@ class NewDevice extends Component {
   }
 }
 
-NewDevice.propTypes = {
+DeviceNew.propTypes = {
   dispatch: PropTypes.func,
 };
 
-export default connect()(NewDevice);
+export default connect()(DeviceNew);

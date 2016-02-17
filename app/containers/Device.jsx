@@ -7,15 +7,13 @@ import PageActions from '../actions/page';
 import PushNotificationActions from '../actions/push-notification';
 import IncidentActions from '../actions/incidents';
 
-// Owner part
-import Video from '../components/Video';
-
-// Listener part
 import firebase from '../lib/firebase';
 import PushNotificationSwitch from '../components/PushNotificationSwitch';
-import DetectorConfig from '../components/DetectorConfig';
 import IncidentList from '../components/IncidentList';
-import detectors from '../lib/detectors';
+import DeviceConnectionStatus from '../components/DeviceConnectionStatus';
+
+import Peer from 'simple-peer';
+
 
 class Device extends Component {
   componentDidMount() {
@@ -26,6 +24,7 @@ class Device extends Component {
     dispatch(DeviceActions.fetchDevice(deviceId));
 
     // TODO: Convert to action
+    // Fetch and sync incidents
     const incidentsRef = firebase.child(`incidents/${deviceId}`).orderByKey().limitToLast(10);
 
     incidentsRef.on('child_added', (incidentSnapshot) => {
@@ -36,6 +35,35 @@ class Device extends Component {
 
       dispatch(IncidentActions.addIncident(device, incident));
     });
+
+    // Initiate WebRTC connection
+    // TODO change it to some custom ID received via presence system
+    const otherPeerId = deviceId;
+    const peer = new Peer({ initiator: true, trickle: false });
+    const signalingRef = firebase.child(`webrtc/messages/${otherPeerId}`);
+
+    peer.on('connect', () => {
+      console.log('WebRTC: connect');
+    });
+
+    peer.on('error', (error) => {
+      console.warn('WebRTC: error', error);
+    });
+
+    peer.on('signal', (data) => {
+      console.log('WebRTC: signal', data);
+
+      // Send signaling data to the other peer
+      const messageRef = signalingRef.push();
+      messageRef.set(data);
+    });
+
+    peer.on('stream', (stream) => {
+      console.log('WebRTC: stream', stream);
+    });
+
+    // TODO: call peer.signal(data) on incoming sidata from the other peer
+    // Listen to signaling messages from the other peer
   }
 
   render() {
@@ -53,26 +81,18 @@ class Device extends Component {
 
     return (
       <div className="app">
-        <Video src={device.localStream} />
-        <h3>ID: {device.uid}</h3>
-
-        {device.isOwner ?
-          Object.keys(detectors).map(key =>
-            <DetectorConfig key={key} detector={detectors[key]} />
-          )
-        :
-          <div>
-            <PushNotificationSwitch
-              deviceId={device.uid}
-              checked={isSubscribed}
-              disabled={!pushNotification.enabled}
-              onChange={() =>
-                dispatch(PushNotificationActions.toggleSubscriptionForDevice(device.uid))
-              }
-            />
-            <IncidentList incidents={incidentsForDevice} />
-          </div>
-        }
+        <div>
+          <DeviceConnectionStatus connected={device.connected} />
+          <PushNotificationSwitch
+            deviceId={device.uid}
+            checked={isSubscribed}
+            disabled={!pushNotification.enabled}
+            onChange={() =>
+              dispatch(PushNotificationActions.toggleSubscriptionForDevice(device.uid))
+            }
+          />
+          <IncidentList incidents={incidentsForDevice} />
+        </div>
       </div>
     );
   }

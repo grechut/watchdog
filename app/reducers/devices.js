@@ -20,6 +20,7 @@ export default function reducer(state = initialState, action) {
           ...state[device.uid],
           uid: device.uid,
           name: device.name,
+          connected: device.connected,
 
           pushNotificationEndpoints: Object.keys(device.push_notification_endpoints || {}),
           isOwner: !!localStorage.getItem(`dummyOwner_${device.uid}`),
