@@ -9,7 +9,7 @@ class LayoutContainer extends React.Component {
     const { children, page } = this.props;
 
     return (
-      <Layout>
+      <Layout fixedHeader>
         <Header title={page.title}>
           <AuthNavigation />
         </Header>
