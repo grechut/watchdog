@@ -2,8 +2,8 @@
 
 ## Roadmap
 
-- [ ] Notifications about detected motion
-- [ ] Push notifications
+- [X] Notifications about detected motion
+- [X] Push notifications
 - [ ] Web rtc video transfer
 - [ ] Sound detection
 - [ ] Remote configuration
@@ -15,10 +15,10 @@
 
 ## Usage
 
-Install (OSX)
+Install
 
 ```
-bash install.sh
+npm install
 ```
 
 Run
@@ -26,13 +26,3 @@ Run
 ```
 npm start
 ```
-
-## TODO JR
-- [ ] send push notifications from server (with message, requires encryption)
-- [ ] style push notificaitons, open web app on notification click
-
-- [ ] add test heroku hosting
-- [ ] add socket.io communication for WebRTC (https://github.com/andyet/signalmaster)
-- [ ] understand how video is transferred (see https://github.com/szimek/webrtc-translate)
-
-- [ ] help in plugging in motion detection
