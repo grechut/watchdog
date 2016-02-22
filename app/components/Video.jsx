@@ -5,6 +5,10 @@ export default class Video extends React.Component {
     this.setSource();
   }
 
+  shouldComponentUpdate(nextProps) {
+    return nextProps.src !== this.props.src;
+  }
+
   componentDidUpdate() {
     this.setSource();
   }

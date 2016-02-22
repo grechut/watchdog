@@ -6,14 +6,12 @@ import DeviceActions from '../actions/devices';
 import IncidentActions from '../actions/incidents';
 import PageActions from '../actions/page';
 import PushNotificationActions from '../actions/push-notification';
+import PeerActions from '../actions/peer';
 
-import firebase from '../lib/firebase';
 import PushNotificationSwitch from '../components/PushNotificationSwitch';
 import IncidentList from '../components/IncidentList';
 import DeviceConnectionStatus from '../components/DeviceConnectionStatus';
-
-import Peer from 'simple-peer';
-
+import Video from '../components/Video';
 
 class Device extends Component {
   componentDidMount() {
@@ -23,35 +21,18 @@ class Device extends Component {
     dispatch(PageActions.updateTitle('Home'));
     dispatch(DeviceActions.bindToDevice(deviceId));
     dispatch(IncidentActions.bindToIncidents(deviceId));
+  }
 
-    // Initiate WebRTC connection
-    // TODO change it to some custom ID received via presence system
-    const otherPeerId = deviceId;
-    const peer = new Peer({ initiator: true, trickle: false });
-    const signalingRef = firebase.child(`webrtc/messages/${otherPeerId}`);
+  componentWillReceiveProps(nextProps) {
+    const { dispatch, params, devices } = nextProps;
+    const deviceId = params.deviceUuid;
+    const device = devices[deviceId];
 
-    peer.on('connect', () => {
-      console.log('WebRTC: connect');
-    });
-
-    peer.on('error', (error) => {
-      console.warn('WebRTC: error', error);
-    });
-
-    peer.on('signal', (data) => {
-      console.log('WebRTC: signal', data);
-
-      // Send signaling data to the other peer
-      const messageRef = signalingRef.push();
-      messageRef.set(data);
-    });
-
-    peer.on('stream', (stream) => {
-      console.log('WebRTC: stream', stream);
-    });
-
-    // TODO: call peer.signal(data) on incoming sidata from the other peer
-    // Listen to signaling messages from the other peer
+    // TODO: don't try to connect if already connecting/connected (properly)
+    if (device && device.online && !this.connecting) {
+      this.connecting = true;
+      dispatch(PeerActions.connectToDevice(device.uid));
+    }
   }
 
   componentWillUnmount() {
@@ -75,18 +56,17 @@ class Device extends Component {
 
     return (
       <div className="app">
-        <div>
-          <DeviceConnectionStatus connected={device.connected} />
-          <PushNotificationSwitch
-            deviceId={device.uid}
-            checked={isSubscribed}
-            disabled={!pushNotification.enabled}
-            onChange={() =>
-              dispatch(PushNotificationActions.toggleSubscriptionForDevice(device.uid))
-            }
-          />
-          <IncidentList incidents={incidentsForDevice} />
-        </div>
+        <DeviceConnectionStatus online={device.online} />
+        <Video src={device.remoteStream} />
+        <PushNotificationSwitch
+          deviceId={device.uid}
+          checked={isSubscribed}
+          disabled={!pushNotification.enabled}
+          onChange={() =>
+            dispatch(PushNotificationActions.toggleSubscriptionForDevice(device.uid))
+          }
+        />
+        <IncidentList incidents={incidentsForDevice} />
       </div>
     );
   }

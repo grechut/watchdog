@@ -14,6 +14,9 @@ const Constants = keymirror({
 
   INCIDENT_ADD: null,
 
+  PEER_CONNECTING: null,
+  PEER_CONNECTED: null,
+
   PUSH_NOTIFICATION_SET_SUPPORTED: null,
   PUSH_NOTIFICATION_SET_DENIED: null,
   PUSH_NOTIFICATION_SET_SUBSCRIPTION: null,
@@ -25,7 +28,8 @@ const Constants = keymirror({
 
   ADD_DEVICE_LISTENER: null,
 
-  VIDEO_STREAM_GET_LOCAL: null,
+  VIDEO_STREAM_SET_LOCAL: null,
+  VIDEO_STREAM_SET_REMOTE: null,
 
   START_MOTION_DETECTION: null,
   CHANGE_DETECTOR: null,

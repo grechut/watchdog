@@ -10,6 +10,23 @@ import Device from './containers/Device';
 import DeviceOwner from './containers/DeviceOwner';
 import DeviceNew from './containers/DeviceNew';
 
+const routes = (
+  <Route path="/" component={App}>
+    <IndexRoute component={LandingPage} onEnter={requireNoAuth} />
+
+    <Route path="devices" component={LayoutContainer} onEnter={requireAuth}>
+      <IndexRoute component={DeviceList} />
+      <Route path="new" component={DeviceNew} />
+      <Route path=":deviceUuid" component={Device} />
+      <Route
+        path=":deviceUuid/device"
+        component={DeviceOwner}
+        onEnter={requireDeviceOwnership}
+      />
+    </Route>
+  </Route>
+);
+
 function requireAuth(nextState, replace) {
   if (!firebase.getAuth()) {
     replace({
@@ -31,23 +48,5 @@ function requireNoAuth(nextState, replace) {
 function requireDeviceOwnership() {
   // TODO implement me
 }
-
-
-const routes = (
-  <Route path="/" component={App}>
-    <IndexRoute component={LandingPage} onEnter={requireNoAuth} />
-
-    <Route path="devices" component={LayoutContainer} onEnter={requireAuth}>
-      <IndexRoute component={DeviceList} />
-      <Route path="new" component={DeviceNew} />
-      <Route path=":deviceUuid" component={Device} />
-      <Route
-        path=":deviceUuid/device"
-        component={DeviceOwner}
-        onEnter={requireDeviceOwnership}
-      />
-    </Route>
-  </Route>
-);
 
 export default routes;

@@ -4,7 +4,9 @@ export default function install(dispatch) {
   if ('serviceWorker' in navigator) {
     console.log('Service workers are supported');
 
-    navigator.serviceWorker.register('/sw-push-notifications.js')
+    navigator
+      .serviceWorker
+      .register('/sw-push-notifications.js')
       .then(initializeState);
   } else {
     console.warn('Service workers are not supported');
@@ -36,33 +38,38 @@ export default function install(dispatch) {
     }
 
     // We need the service worker registration to check for a subscription
-    navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
-      // Check we have a subscription
-      serviceWorkerRegistration.pushManager.getSubscription()
-        .then((subscription) => {
-          // Enable any UI which subscribes / unsubscribes from
-          // push messages.
-          dispatch(PushNotificationActions.setSupported(true));
-          dispatch(PushNotificationActions.setDenied(false));
+    navigator
+      .serviceWorker
+      .ready
+      .then((serviceWorkerRegistration) => {
+        // Check we have a subscription
+        serviceWorkerRegistration
+          .pushManager
+          .getSubscription()
+          .then((subscription) => {
+            // Enable any UI which subscribes / unsubscribes from
+            // push messages.
+            dispatch(PushNotificationActions.setSupported(true));
+            dispatch(PushNotificationActions.setDenied(false));
 
-          if (!subscription) {
-            // We aren't subscribed to push, so set UI
-            // to allow the user to enable push
-            dispatch(PushNotificationActions.setSubscription(null));
-            return;
-          }
+            if (!subscription) {
+              // We aren't subscribed to push, so set UI
+              // to allow the user to enable push
+              dispatch(PushNotificationActions.setSubscription(null));
+              return;
+            }
 
-          // Keep your server in sync with the latest subscriptionId
-          // sendSubscriptionToServer(subscription);
+            // Keep your server in sync with the latest subscriptionId
+            // sendSubscriptionToServer(subscription);
 
-          // Set your UI to show they have subscribed for
-          // push messages
-          dispatch(PushNotificationActions.setSubscription(subscription));
-        })
-        .catch((error) => {
-          console.warn('Error during getSubscription()', error);
-        });
-    });
+            // Set your UI to show they have subscribed for
+            // push messages
+            dispatch(PushNotificationActions.setSubscription(subscription));
+          })
+          .catch((error) => {
+            console.warn('Error during getSubscription()', error);
+          });
+      });
   }
 }
 

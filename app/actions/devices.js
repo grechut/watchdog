@@ -8,12 +8,14 @@ const Actions = {
       dispatch({ type: Constants.DEVICE_CREATE });
 
       // Create a new device in /devices
-      const deviceRef = firebase.child(`/devices`).push();
+      const { peer } = getState();
+      const deviceRef = firebase.child('/devices').push();
       const deviceId = deviceRef.key();
       deviceRef.set({
         uid: deviceId,
         name: 'Living room',
-        connected: true,
+        online: true,
+        peerId: peer.id,
       });
 
       // Create association with current user
@@ -46,17 +48,17 @@ const Actions = {
     deviceRef.off('value');
   },
 
-  syncConnected(deviceId) {
+  syncOnlineStatus(deviceId) {
     return () => {
       const connectedRef = firebase.child('.info/connected');
       const deviceRef = firebase.child(`/devices/${deviceId}`);
 
       connectedRef.on('value', (snapshot) => {
         if (snapshot.val()) {
-          deviceRef.update({ connected: true });
-          deviceRef.onDisconnect().update({ connected: false });
+          deviceRef.update({ online: true });
+          deviceRef.onDisconnect().update({ online: false });
         } else {
-          deviceRef.update({ connected: false });
+          deviceRef.update({ online: false });
         }
       });
     };

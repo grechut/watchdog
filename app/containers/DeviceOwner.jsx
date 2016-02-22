@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import DeviceActions from '../actions/devices';
 import PageActions from '../actions/page';
+import PeerActions from '../actions/peer';
 import VideoStreamActions from '../actions/video-stream';
 
 import DetectorConfig from '../components/DetectorConfig';
@@ -17,8 +18,21 @@ class DeviceOwner extends Component {
 
     dispatch(PageActions.updateTitle('Home'));
     dispatch(DeviceActions.bindToDevice(deviceId));
-    dispatch(DeviceActions.syncConnected(deviceId));
+    dispatch(DeviceActions.syncOnlineStatus(deviceId));
     dispatch(VideoStreamActions.getLocalVideoStream(deviceId));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { dispatch, params, devices } = nextProps;
+    const deviceId = params.deviceUuid;
+    const device = devices[deviceId];
+
+    // TODO: figure out how to wait for device, video stream and don't listen if already
+    // listening in a clean way
+    if (device && device.online && device.localStream && !this.listening) {
+      this.listening = true;
+      dispatch(PeerActions.listen(deviceId));
+    }
   }
 
   render() {

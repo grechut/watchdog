@@ -2,14 +2,14 @@ import React, { Component, PropTypes } from 'react';
 
 export default class DeviceConnectionStatus extends Component {
   render() {
-    const { connected } = this.props;
+    const { online } = this.props;
 
     return (
-      <p>Device is {connected ? 'online' : 'offline'}</p>
+      <p>Device is {online ? 'online' : 'offline'}</p>
     );
   }
 }
 
 DeviceConnectionStatus.propTypes = {
-  connected: PropTypes.bool,
+  online: PropTypes.bool,
 };

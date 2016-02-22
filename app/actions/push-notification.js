@@ -51,44 +51,58 @@ const Actions = {
 
   subscribe() {
     return (dispatch) =>
-      navigator.serviceWorker.getRegistration().then((registration) =>
-        registration.pushManager.getSubscription().then((existingSubscription) => {
-          // Check if we need to subscribe
-          if (existingSubscription) {
-            return dispatch(this.setSubscription(existingSubscription));
-          }
-
-          return registration.pushManager.subscribe({ userVisibleOnly: true })
-            .then((subscription) =>
-              dispatch(this.setSubscription(subscription))
-            )
-            .catch((error) => {
-              if (Notification.permission === 'denied') {
-                dispatch(this.setDenied(true));
-                console.log('Push Notification: permission denied', error);
-              } else {
-                console.log('Push Notification: error during subscribe', error);
+      navigator
+        .serviceWorker
+        .getRegistration()
+        .then((registration) =>
+          registration
+            .pushManager
+            .getSubscription()
+            .then((existingSubscription) => {
+              // Check if we need to subscribe
+              if (existingSubscription) {
+                return dispatch(this.setSubscription(existingSubscription));
               }
 
-              return dispatch(this.setSubscription(null));
-            });
-        })
+              return registration
+                .pushManager
+                .subscribe({ userVisibleOnly: true })
+                .then((subscription) =>
+                  dispatch(this.setSubscription(subscription))
+                )
+                .catch((error) => {
+                  if (Notification.permission === 'denied') {
+                    dispatch(this.setDenied(true));
+                    console.log('Push Notification: permission denied', error);
+                  } else {
+                    console.log('Push Notification: error during subscribe', error);
+                  }
+
+                  return dispatch(this.setSubscription(null));
+                });
+            })
       );
   },
 
   unsubscribe() {
     return (dispatch) =>
-      navigator.serviceWorker.getRegistration().then((registration) =>
-        registration.pushManager.getSubscription().then((subscription) => {
-          // Check if need to unsubscribe
-          if (!subscription) {
-            return dispatch(this.setSubscription(null));
-          }
+      navigator
+        .serviceWorker
+        .getRegistration()
+        .then((registration) =>
+          registration
+            .pushManager
+            .getSubscription()
+            .then((subscription) => {
+              // Check if need to unsubscribe
+              if (!subscription) {
+                return dispatch(this.setSubscription(null));
+              }
 
-          return subscription.unsubscribe().then(() =>
-            dispatch(this.setSubscription(null))
-          );
-        })
+              return subscription.unsubscribe().then(() =>
+                dispatch(this.setSubscription(null))
+              );
+            })
       );
   },
 

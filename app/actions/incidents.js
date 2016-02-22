@@ -1,6 +1,7 @@
 import Constants from '../constants';
 import firebase from '../lib/firebase';
 
+// TODO: convert ref to a function
 const Actions = {
   addIncident(device, incident) {
     return {
@@ -14,7 +15,10 @@ const Actions = {
 
   bindToIncidents(deviceId) {
     return (dispatch) => {
-      const incidentsRef = firebase.child(`incidents/${deviceId}`).orderByKey().limitToLast(10);
+      const incidentsRef = firebase
+        .child(`incidents/${deviceId}`)
+        .orderByKey()
+        .limitToLast(10);
 
       incidentsRef.on('child_added', (snapshot) => {
         const device = { uid: deviceId };
@@ -30,7 +34,10 @@ const Actions = {
   },
 
   unbindFromIncidents(deviceId) {
-    const incidentsRef = firebase.child(`incidents/${deviceId}`).orderByKey().limitToLast(10);
+    const incidentsRef = firebase
+      .child(`incidents/${deviceId}`)
+      .orderByKey()
+      .limitToLast(10);
     incidentsRef.off('child_added');
   },
 };

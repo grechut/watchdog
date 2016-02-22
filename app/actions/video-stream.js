@@ -11,7 +11,7 @@ const Actions = {
       const constraints = { video: true, audio: true };
       const gotStream = (stream) => {
         dispatch({
-          type: Constants.VIDEO_STREAM_GET_LOCAL,
+          type: Constants.VIDEO_STREAM_SET_LOCAL,
           payload: {
             deviceId,
             stream,
@@ -28,7 +28,9 @@ const Actions = {
           .debounceTime(windowDuration)
           .switchMap(() => source.take(1));
 
-        Rx.Observable.merge(source.take(1), next)
+        Rx
+          .Observable
+          .merge(source.take(1), next)
           .subscribe((data) => {
             const code = 'motion_started';
             const triggeredAt = data.triggeredAt;

@@ -20,20 +20,33 @@ export default function reducer(state = initialState, action) {
           ...state[device.uid],
           uid: device.uid,
           name: device.name,
-          connected: device.connected,
+          online: device.online,
+          peerId: device.peerId,
 
           pushNotificationEndpoints: Object.keys(device.push_notification_endpoints || {}),
           isOwner: !!localStorage.getItem(`dummyOwner_${device.uid}`),
         },
       };
     }
-    case Constants.VIDEO_STREAM_GET_LOCAL: {
+
+    case Constants.VIDEO_STREAM_SET_LOCAL: {
       const { deviceId, stream } = action.payload;
       return {
         ...state,
         [deviceId]: {
           ...state[deviceId],
           localStream: stream,
+        },
+      };
+    }
+
+    case Constants.VIDEO_STREAM_SET_REMOTE: {
+      const { deviceId, stream } = action.payload;
+      return {
+        ...state,
+        [deviceId]: {
+          ...state[deviceId],
+          remoteStream: stream,
         },
       };
     }
