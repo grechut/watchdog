@@ -15,12 +15,7 @@ const Actions = {
 
   bindToIncidents(deviceId) {
     return (dispatch) => {
-      const incidentsRef = firebase
-        .child(`incidents/${deviceId}`)
-        .orderByKey()
-        .limitToLast(10);
-
-      incidentsRef.on('child_added', (snapshot) => {
+      incidentsRef(deviceId).on('child_added', (snapshot) => {
         const device = { uid: deviceId };
         const incident = {
           [snapshot.key()]: snapshot.val(),
@@ -34,12 +29,15 @@ const Actions = {
   },
 
   unbindFromIncidents(deviceId) {
-    const incidentsRef = firebase
-      .child(`incidents/${deviceId}`)
-      .orderByKey()
-      .limitToLast(10);
-    incidentsRef.off('child_added');
+    incidentsRef(deviceId).off('child_added');
   },
 };
+
+function incidentsRef(deviceId) {
+  return firebase
+    .child(`incidents/${deviceId}`)
+    .orderByKey()
+    .limitToLast(10);
+}
 
 export default Actions;

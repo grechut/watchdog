@@ -63,6 +63,7 @@ const Actions = {
         type: Constants.AUTH_SIGN_OUT,
       });
       ref.unauth();
+
       return dispatch(routeActions.push('/'));
     };
   },

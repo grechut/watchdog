@@ -6,7 +6,7 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case Constants.UPDATE_TITLE:
+    case Constants.PAGE_TITLE_SET:
       return Object.assign({}, state, {
         title: action.payload.title,
       });

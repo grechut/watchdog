@@ -34,7 +34,7 @@ const Constants = keymirror({
   START_MOTION_DETECTION: null,
   CHANGE_DETECTOR: null,
 
-  UPDATE_TITLE: null,
+  PAGE_TITLE_SET: null,
 });
 
 export default Constants;

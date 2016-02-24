@@ -133,9 +133,7 @@ const Actions = {
 
         dispatch({
           type: Constants.PUSH_NOTIFICATION_SUBSCRIBE_TO_DEVICE_REQUEST_SUCCESS,
-          payload: {
-            // TODO: figure out payload
-          },
+          payload: {},
         });
       }
     };

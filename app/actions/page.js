@@ -4,10 +4,8 @@ const Actions = {
   updateTitle(title) {
     return (dispatch) => {
       dispatch({
-        type: Constants.UPDATE_TITLE,
-        payload: {
-          title,
-        },
+        type: Constants.PAGE_TITLE_SET,
+        payload: { title },
       });
     };
   },

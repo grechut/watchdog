@@ -30,6 +30,34 @@ const Actions = {
     };
   },
 
+  bindToDevices() {
+    return (dispatch, getState) => {
+      const { auth } = getState();
+      const devicesRef = firebase.child(`users/${auth.uid}/devices`);
+
+      // TODO: listen to child_removed, child_changed as well?
+      devicesRef.on('child_added', (deviceIdSnapshot) => {
+        const deviceId = deviceIdSnapshot.key();
+        const deviceRef = firebase.child(`devices/${deviceId}`);
+
+        deviceRef.once('value', (deviceSnapshot) => {
+          const device = deviceSnapshot.val();
+          console.log('Received device:', device);
+          dispatch(this.receiveDevice(device));
+        });
+      });
+    };
+  },
+
+  unbindFromDevices() {
+    return (dispatch, getState) => {
+      const { auth } = getState();
+      const devicesRef = firebase.child(`users/${auth.uid}/devices`);
+
+      devicesRef.off('child_added');
+    };
+  },
+
   bindToDevice(deviceId) {
     return (dispatch) => {
       const deviceRef = firebase.child(`/devices/${deviceId}`);

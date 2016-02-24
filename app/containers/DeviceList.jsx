@@ -7,35 +7,21 @@ import { Link } from 'react-router';
 import _ from 'lodash';
 import DeviceActions from '../actions/devices';
 import PageActions from '../actions/page';
-import firebase from '../lib/firebase';
 
 class DeviceList extends React.Component {
   componentDidMount() {
-    const { dispatch, auth } = this.props;
+    const { dispatch } = this.props;
 
     dispatch(PageActions.updateTitle('Devices'));
-
-    // TODO:
-    // - convert to action
-    // - move to onEnter/aync-props
-    // Fetch user's devices from Firebase
-    firebase.child(`users/${auth.uid}/devices`).on('child_added', (userDeviceSnapshot) => {
-      const deviceId = userDeviceSnapshot.key();
-
-      firebase.child(`devices/${deviceId}`).once('value', (deviceSnapshot) => {
-        const device = deviceSnapshot.val();
-        console.log('Received device:', device);
-        dispatch(DeviceActions.receiveDevice(device));
-      });
-    });
+    // TODO: move to onEnter/aync-props
+    dispatch(DeviceActions.bindToDevices());
   }
 
   componentWillUnmount() {
-    // TODO:
-    // - convert to action
-    // - move to onLeave
-    const { auth } = this.props;
-    firebase.child(`users/${auth.uid}/devices`).off('child_added');
+    const { dispatch } = this.props;
+
+    // TODO: move to onLeave
+    dispatch(DeviceActions.unbindFromDevices());
   }
 
   render() {
