@@ -29,7 +29,7 @@ export default function reducer(state = initialState, action) {
       };
     }
 
-    case Constants.VIDEO_STREAM_SET_LOCAL: {
+    case Constants.MEDIA_STREAM_SET_LOCAL: {
       const { deviceId, stream } = action.payload;
       return {
         ...state,
@@ -40,7 +40,7 @@ export default function reducer(state = initialState, action) {
       };
     }
 
-    case Constants.VIDEO_STREAM_SET_REMOTE: {
+    case Constants.MEDIA_STREAM_SET_REMOTE: {
       const { deviceId, stream } = action.payload;
       return {
         ...state,

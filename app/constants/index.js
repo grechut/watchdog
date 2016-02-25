@@ -14,6 +14,11 @@ const Constants = keymirror({
 
   INCIDENT_ADD: null,
 
+  MEDIA_STREAM_SET_LOCAL: null,
+  MEDIA_STREAM_SET_REMOTE: null,
+
+  PAGE_TITLE_SET: null,
+
   PEER_CONNECTING: null,
   PEER_CONNECTED: null,
 
@@ -28,13 +33,8 @@ const Constants = keymirror({
 
   ADD_DEVICE_LISTENER: null,
 
-  VIDEO_STREAM_SET_LOCAL: null,
-  VIDEO_STREAM_SET_REMOTE: null,
-
   START_MOTION_DETECTION: null,
   CHANGE_DETECTOR: null,
-
-  PAGE_TITLE_SET: null,
 });
 
 export default Constants;

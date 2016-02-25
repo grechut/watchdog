@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import DeviceActions from '../actions/devices';
 import PageActions from '../actions/page';
 import PeerActions from '../actions/peer';
-import VideoStreamActions from '../actions/video-stream';
+import MediaStreamActions from '../actions/media-stream';
 
 import DetectorConfig from '../components/DetectorConfig';
 import Video from '../components/Video';
@@ -19,7 +19,7 @@ class DeviceOwner extends Component {
     dispatch(PageActions.updateTitle('Home'));
     dispatch(DeviceActions.bindToDevice(deviceId));
     dispatch(DeviceActions.syncOnlineStatus(deviceId));
-    dispatch(VideoStreamActions.getLocalVideoStream(deviceId));
+    dispatch(MediaStreamActions.getLocalMediaStream(deviceId));
   }
 
   componentWillReceiveProps(nextProps) {
