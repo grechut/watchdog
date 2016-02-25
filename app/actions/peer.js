@@ -6,6 +6,9 @@ const Actions = {
   // TODO: wait till device is online before trying to connect
   connectToDevice(deviceId) {
     return (dispatch, getState) => {
+      // This is required to send media stream to connection initiator. Because
+      // initiator is not sending any media stream, without these contraints
+      // 'stream' event will never fire.
       const offerConstraints = {
         optional: [],
         mandatory: {
@@ -13,41 +16,24 @@ const Actions = {
           OfferToReceiveVideo: true,
         },
       };
-      const { peer, devices } = getState();
-      const device = devices[deviceId];
+      const { peer } = getState();
       const signalingRef = firebase.child('webrtc/messages');
       const connection = new SimplePeer({
         initiator: true,
         offerConstraints,
       });
+      const me = peer.id;
+      const to = deviceId;
 
-      console.log('WebRTC: connecting...');
+      console.log(`WebRTC: connecting to device ${deviceId}...`);
 
-      // TODO: move to a function and use for initiator as well
-      connection.on('connect', () => {
-        console.log('WebRTC: connected');
-      });
-
-      connection.on('error', (error) => {
-        console.warn('WebRTC: error', error);
-      });
-
-      connection.on('signal', (data) => {
-        console.log('WebRTC: signal generated', data);
-
-        // Send signaling data to the other peer
-        signalingRef.child(device.peerId).push({
-          senderPeerId: peer.id,
-          recipientPeerId: device.peerId,
-          payload: data,
-        });
-      });
+      setupConnection(connection, { from: me, to });
 
       connection.on('stream', (stream) => {
         console.log('WebRTC: media stream received', stream);
 
         dispatch({
-          type: Constants.VIDEO_STREAM_SET_REMOTE,
+          type: Constants.MEDIA_STREAM_SET_REMOTE,
           payload: {
             deviceId,
             stream,
@@ -55,6 +41,7 @@ const Actions = {
         });
       });
 
+      // Listen to incoming signaling messages
       signalingRef.child(peer.id).on('child_added', (snapshot) => {
         const message = snapshot.val();
 
@@ -80,51 +67,55 @@ const Actions = {
       // Remove WebRTC messages sent to this peer when it disconnects from Firebase
       signalingRef.onDisconnect().remove();
 
-      // Listen for incoming WebRTC messages from other peers
+      // Listen for incoming signaling messages
       signalingRef.child(peer.id).on('child_added', (snapshot) => {
         const message = snapshot.val();
-        const remoteId = message.senderPeerId;
-        let connection = connections[remoteId];
+        const me = peer.id;
+        const to = message.senderPeerId;
+        let connection = connections[to];
 
         console.log('WebRTC: signal received', message);
 
         if (!connection) {
-          connection = connections[remoteId] = new SimplePeer({
+          connection = connections[to] = new SimplePeer({
             initiator: false,
             stream: device.localStream,
           });
 
-          // Listen for local ICE/SDP messages
-          // TODO: move to a function and use for initiator as well
-          connection.on('signal', (data) => {
-            console.log('WebRTC: signal generated', data);
-
-            // Send signaling data to the other peer
-            signalingRef.child(remoteId).push({
-              senderPeerId: peer.id,
-              recipientPeerId: remoteId,
-              payload: data,
-            });
-          });
-
-          connection.on('connect', () => {
-            console.log('WebRTC: connected');
-          });
-
-          connection.on('error', (error) => {
-            console.warn('WebRTC: error', error);
-          });
-
-          connection.once('close', () => {
-            console.log('WebRTC: close');
-          });
+          setupConnection(connection, { from: me, to });
         }
 
-        // Set remote ICE/SDP message
         connection.signal(message.payload);
       });
     };
   },
 };
+
+function setupConnection(connection, { from, to }) {
+  connection.on('connect', () => {
+    console.log('WebRTC: connected');
+  });
+
+  connection.on('error', (error) => {
+    console.warn('WebRTC: error', error);
+  });
+
+  // Send generated WebRTC signaling messages to the other peer
+  connection.on('signal', (data) => {
+    console.log('WebRTC: signal generated', data);
+    const signalingRef = firebase.child('webrtc/messages');
+
+    // Send signaling data to the other peer
+    signalingRef.child(to).push({
+      senderPeerId: from,
+      recipientPeerId: to,
+      payload: data,
+    });
+  });
+
+  connection.once('close', () => {
+    console.log('WebRTC: close');
+  });
+}
 
 export default Actions;
