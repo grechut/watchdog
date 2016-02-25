@@ -16,14 +16,15 @@ const Actions = {
           OfferToReceiveVideo: true,
         },
       };
-      const { peer } = getState();
+      const { peer, devices } = getState();
+      const device = devices[deviceId];
       const signalingRef = firebase.child('webrtc/messages');
       const connection = new SimplePeer({
         initiator: true,
         offerConstraints,
       });
       const me = peer.id;
-      const to = deviceId;
+      const to = device.peerId;
 
       console.log(`WebRTC: connecting to device ${deviceId}...`);
 
@@ -42,7 +43,7 @@ const Actions = {
       });
 
       // Listen to incoming signaling messages
-      signalingRef.child(peer.id).on('child_added', (snapshot) => {
+      signalingRef.child(me).on('child_added', (snapshot) => {
         const message = snapshot.val();
 
         console.log('WebRTC: signal received', message);
@@ -63,14 +64,14 @@ const Actions = {
       const device = devices[deviceId];
       const signalingRef = firebase.child('webrtc/messages');
       const connections = {};
+      const me = peer.id;
 
       // Remove WebRTC messages sent to this peer when it disconnects from Firebase
       signalingRef.onDisconnect().remove();
 
       // Listen for incoming signaling messages
-      signalingRef.child(peer.id).on('child_added', (snapshot) => {
+      signalingRef.child(me).on('child_added', (snapshot) => {
         const message = snapshot.val();
-        const me = peer.id;
         const to = message.senderPeerId;
         let connection = connections[to];
 
