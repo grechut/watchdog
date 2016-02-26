@@ -42,11 +42,18 @@ const Actions = {
         });
       });
 
+      // Remove any pending signaling messages sent to this peer when
+      // connection with Firebase is lost.
+      signalingRef.child(me).onDisconnect().remove();
+
       // Listen to incoming signaling messages
       signalingRef.child(me).on('child_added', (snapshot) => {
         const message = snapshot.val();
 
         console.log('WebRTC: signal received', message);
+
+        // Remove message now that it's fetched
+        snapshot.ref().remove();
 
         connection.signal(message.payload);
       });
@@ -66,8 +73,9 @@ const Actions = {
       const connections = {};
       const me = peer.id;
 
-      // Remove WebRTC messages sent to this peer when it disconnects from Firebase
-      signalingRef.onDisconnect().remove();
+      // Remove any pending signaling messages sent to this peer when
+      // connection with Firebase is lost.
+      signalingRef.child(me).onDisconnect().remove();
 
       // Listen for incoming signaling messages
       signalingRef.child(me).on('child_added', (snapshot) => {
@@ -86,6 +94,9 @@ const Actions = {
           setupConnection(connection, { from: me, to });
         }
 
+        // Remove message now that it's fetched
+        snapshot.ref().remove();
+
         connection.signal(message.payload);
       });
     };
@@ -93,6 +104,8 @@ const Actions = {
 };
 
 function setupConnection(connection, { from, to }) {
+  const signalingRef = firebase.child('webrtc/messages').child(to);
+
   connection.on('connect', () => {
     console.log('WebRTC: connected');
   });
@@ -104,10 +117,9 @@ function setupConnection(connection, { from, to }) {
   // Send generated WebRTC signaling messages to the other peer
   connection.on('signal', (data) => {
     console.log('WebRTC: signal generated', data);
-    const signalingRef = firebase.child('webrtc/messages');
 
     // Send signaling data to the other peer
-    signalingRef.child(to).push({
+    signalingRef.push({
       senderPeerId: from,
       recipientPeerId: to,
       payload: data,
@@ -117,6 +129,10 @@ function setupConnection(connection, { from, to }) {
   connection.once('close', () => {
     console.log('WebRTC: close');
   });
+
+  // Remove any pending signaling messages sent to other peers when
+  // connection with Firebase is lost.
+  signalingRef.onDisconnect().remove();
 }
 
 export default Actions;
