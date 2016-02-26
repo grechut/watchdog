@@ -92,6 +92,11 @@ const Actions = {
           });
 
           setupConnection(connection, { from: me, to });
+
+          // Delete connection from the list once it's closed
+          connection.once('close', () => {
+            connections[to] = null;
+          });
         }
 
         // Remove message now that it's fetched
@@ -107,11 +112,7 @@ function setupConnection(connection, { from, to }) {
   const signalingRef = firebase.child('webrtc/messages').child(to);
 
   connection.on('connect', () => {
-    console.log('WebRTC: connected');
-  });
-
-  connection.on('error', (error) => {
-    console.warn('WebRTC: error', error);
+    console.log(`WebRTC: connected to ${to}`);
   });
 
   // Send generated WebRTC signaling messages to the other peer
@@ -128,6 +129,11 @@ function setupConnection(connection, { from, to }) {
 
   connection.once('close', () => {
     console.log('WebRTC: close');
+    connection.destroy();
+  });
+
+  connection.on('error', (error) => {
+    console.warn('WebRTC: error', error);
   });
 
   // Remove any pending signaling messages sent to other peers when

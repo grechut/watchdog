@@ -75,6 +75,8 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
         )
         .then((endpoints) => {
           const notifications = endpoints.map((endpoint) => {
+            console.log(`Sending push notification to endpoint: ${endpoint}`);
+
             if (key) {
               return webPush.sendNotification(endpoint, ttl, key, payload);
             }
