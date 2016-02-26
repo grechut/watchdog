@@ -30,6 +30,8 @@ const Actions = {
               type: Constants.AUTH_SIGN_OUT,
               payload: { authData },
             });
+
+            dispatch(routeActions.push('/'));
           }
         }
       });
