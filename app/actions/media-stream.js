@@ -76,7 +76,7 @@ const Actions = {
           },
         });
 
-        // motionDetector.start();
+        motionDetector.start();
         noiseDetector.start();
 
         dispatch({
