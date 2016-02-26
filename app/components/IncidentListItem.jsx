@@ -6,8 +6,10 @@ export default class IncidentListItem extends Component {
   icon(code) {
     switch (code) {
       case 'motion_started':
+      case 'noise_started':
         return 'alarm';
       case 'motion_stopped':
+      case 'noise_stopped':
         return 'alarm_off';
       default:
         return null;
