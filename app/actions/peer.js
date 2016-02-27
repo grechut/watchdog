@@ -93,16 +93,21 @@ const Actions = {
 
           setupConnection(connection, { from: me, to });
 
-          // Delete connection from the list once it's closed
-          connection.once('close', () => {
-            connections[to] = null;
-          });
+          // Delete connection from the list when it's closed or there's an error
+          connection.once('close', onClose);
+          connection.on('error', onClose);
         }
 
         // Remove message now that it's fetched
         snapshot.ref().remove();
 
         connection.signal(message.payload);
+
+        function onClose() {
+          if (connections[to] === connection) {
+            delete connections[to];
+          }
+        }
       });
     };
   },
@@ -134,6 +139,7 @@ function setupConnection(connection, { from, to }) {
 
   connection.on('error', (error) => {
     console.warn('WebRTC: error', error);
+    connection.destroy();
   });
 
   // Remove any pending signaling messages sent to other peers when
