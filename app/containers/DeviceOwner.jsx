@@ -1,22 +1,21 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import DeviceActions from '../actions/devices';
 import PageActions from '../actions/page';
 import PeerActions from '../actions/peer';
 import MediaStreamActions from '../actions/media-stream';
 
-import DetectorConfig from '../components/DetectorConfig';
 import Video from '../components/Video';
-
-import detectors from '../lib/detectors';
 
 class DeviceOwner extends Component {
   componentDidMount() {
-    const { dispatch, params } = this.props;
+    const { dispatch, params, devices } = this.props;
     const deviceId = params.deviceUuid;
+    const device = devices[deviceId];
 
-    dispatch(PageActions.updateTitle('Home'));
+    dispatch(PageActions.updateTitle(`Device: ${device.name} (${device.uid})`));
     dispatch(DeviceActions.bindToDevice(deviceId));
     dispatch(DeviceActions.syncOnlineStatus(deviceId));
     dispatch(MediaStreamActions.getLocalMediaStream(deviceId));
@@ -43,14 +42,11 @@ class DeviceOwner extends Component {
     if (!device) { return null; }
 
     return (
-      <div className="app">
-        <Video src={device.localStream} />
-        <h3>ID: {device.uid}</h3>
-
-        {Object.keys(detectors).map(key =>
-          <DetectorConfig key={key} detector={detectors[key]} />
-        )}
-      </div>
+      <Grid>
+        <Cell col={12} shadow={2} align="middle">
+          <Video src={device.localStream} />
+        </Cell>
+      </Grid>
     );
   }
 }

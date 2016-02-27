@@ -10,43 +10,53 @@ import Device from './containers/Device';
 import DeviceOwner from './containers/DeviceOwner';
 import DeviceNew from './containers/DeviceNew';
 
-const routes = (
-  <Route path="/" component={App}>
-    <IndexRoute component={LandingPage} onEnter={requireNoAuth} />
+import DeviceActions from './actions/devices';
 
-    <Route path="devices" component={LayoutContainer} onEnter={requireAuth}>
-      <IndexRoute component={DeviceList} />
-      <Route path="new" component={DeviceNew} />
-      <Route path=":deviceUuid" component={Device} />
-      <Route
-        path=":deviceUuid/device"
-        component={DeviceOwner}
-        onEnter={requireDeviceOwnership}
-      />
+export default function routes(store) {
+  const { dispatch } = store;
+
+  return (
+    <Route path="/" component={App} >
+      <IndexRoute component={LandingPage} onEnter={requireNoAuth} />
+
+      <Route path="devices" component={LayoutContainer} onEnter={requireAuth}>
+        <IndexRoute component={DeviceList} />
+        <Route path="new" component={DeviceNew} />
+        <Route path=":deviceUuid"
+          component={Device}
+          onEnter={fetchDevice /* requireNoOwnership */}
+        />
+        <Route
+          path=":deviceUuid/device"
+          component={DeviceOwner}
+          onEnter={fetchDevice /* requireOwnership */}
+        />
+      </Route>
     </Route>
-  </Route>
-);
+  );
 
-function requireAuth(nextState, replace) {
-  if (!firebase.getAuth()) {
-    replace({
-      pathname: '/',
-      state: { nextPathname: nextState.location.pathname },
-    });
+  function requireAuth(nextState, replace) {
+    if (!firebase.getAuth()) {
+      replace({
+        pathname: '/',
+        state: { nextPathname: nextState.location.pathname },
+      });
+    }
+  }
+
+  function requireNoAuth(nextState, replace) {
+    if (firebase.getAuth()) {
+      replace({
+        pathname: '/devices',
+        state: { nextPathname: nextState.location.pathname },
+      });
+    }
+  }
+
+  function fetchDevice(nextState, replace, callback) {
+    const deviceId = nextState.params.deviceUuid;
+
+    dispatch(DeviceActions.fetchDevice(deviceId))
+      .then(() => callback());
   }
 }
-
-function requireNoAuth(nextState, replace) {
-  if (firebase.getAuth()) {
-    replace({
-      pathname: '/devices',
-      state: { nextPathname: nextState.location.pathname },
-    });
-  }
-}
-
-function requireDeviceOwnership() {
-  // TODO implement me
-}
-
-export default routes;

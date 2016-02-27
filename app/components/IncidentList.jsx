@@ -1,35 +1,39 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { List, ListItem, ListItemContent } from 'react-mdl/lib/List';
+import { CardText } from 'react-mdl/lib/Card';
 import IncidentListItem from '../components/IncidentListItem';
 
 class IncidentList extends React.Component {
   render() {
     const { incidents } = this.props;
-
-    const list = (
+    const incidentIds = Object.keys(incidents);
+    const emptyList = (
       <List>
-        {Object.keys(incidents).map((id) =>
+        <ListItem>
+          <ListItemContent>
+            None yet.
+          </ListItemContent>
+        </ListItem>
+      </List>
+    );
+    const nonEmptyList = (
+      <List>
+        {incidentIds.map((id) =>
           <ListItem key={id} twoLine>
             <IncidentListItem incident={incidents[id]} />
           </ListItem>
         )}
       </List>
     );
-    const message = (
-      <List>
-        <ListItem>
-          <ListItemContent>
-            No incidents
-          </ListItemContent>
-        </ListItem>
-      </List>
-    );
+    const list = incidentIds.length ? nonEmptyList : emptyList;
 
     return (
-      <div>
-        {Object.keys(incidents).length ? list : message}
-      </div>
+      <Grid component={CardText} noSpacing>
+        <Cell component="h4" col={12}>Incidents</Cell>
+        <Cell col={12}>{list}</Cell>
+      </Grid>
     );
   }
 }

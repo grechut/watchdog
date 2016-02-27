@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Grid, { Cell } from 'react-mdl/lib/Grid';
+import { Card, CardText } from 'react-mdl/lib/Card';
 import _ from 'lodash';
 
 import DeviceActions from '../actions/devices';
@@ -8,17 +10,22 @@ import PageActions from '../actions/page';
 import PushNotificationActions from '../actions/push-notification';
 import PeerActions from '../actions/peer';
 
-import PushNotificationSwitch from '../components/PushNotificationSwitch';
-import IncidentList from '../components/IncidentList';
-import DeviceConnectionStatus from '../components/DeviceConnectionStatus';
 import Video from '../components/Video';
+import IncidentList from '../components/IncidentList';
+
+import DeviceConnectionStatus from '../components/DeviceConnectionStatus';
+import PushNotificationSwitch from '../components/PushNotificationSwitch';
+import DetectorConfig from '../components/DetectorConfig';
+
+import detectors from '../lib/detectors';
 
 class Device extends Component {
   componentDidMount() {
-    const { dispatch, params } = this.props;
+    const { dispatch, params, devices } = this.props;
     const deviceId = params.deviceUuid;
+    const device = devices[deviceId];
 
-    dispatch(PageActions.updateTitle('Home'));
+    dispatch(PageActions.updateTitle(`Device: ${device.name}`));
     dispatch(DeviceActions.bindToDevice(deviceId));
     dispatch(IncidentActions.bindToIncidents(deviceId));
   }
@@ -55,19 +62,36 @@ class Device extends Component {
     );
 
     return (
-      <div className="app">
-        <DeviceConnectionStatus online={device.online} />
-        <Video src={device.remoteStream} />
-        <PushNotificationSwitch
-          deviceId={device.uid}
-          checked={isSubscribed}
-          disabled={!pushNotification.enabled}
-          onChange={() =>
-            dispatch(PushNotificationActions.toggleSubscriptionForDevice(device.uid))
-          }
-        />
-        <IncidentList incidents={incidentsForDevice} />
-      </div>
+      <Grid>
+        <Cell col={12} shadow={2} align="middle">
+          <Video src={device.remoteStream} />
+        </Cell>
+
+        <Cell component={Card} col={12} shadow={2} align="middle">
+          <IncidentList incidents={incidentsForDevice} />
+        </Cell>
+
+        { /* TODO: move to separate settings page */ }
+        <Cell component={Card} col={12} shadow={2} align="middle">
+          <Grid component={CardText} noSpacing>
+            <Cell component="h4" col={12}>Settings</Cell>
+            <Cell>
+              <DeviceConnectionStatus online={device.online} />
+              <PushNotificationSwitch
+                deviceId={device.uid}
+                checked={isSubscribed}
+                disabled={!pushNotification.enabled}
+                onChange={() =>
+                  dispatch(PushNotificationActions.toggleSubscriptionForDevice(device.uid))
+                }
+              />
+              {Object.keys(detectors).map(key =>
+                <DetectorConfig key={key} detector={detectors[key]} />
+              )}
+            </Cell>
+          </Grid>
+        </Cell>
+      </Grid>
     );
   }
 }

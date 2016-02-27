@@ -58,6 +58,18 @@ const Actions = {
     };
   },
 
+  fetchDevice(deviceId) {
+    return (dispatch) => {
+      const deviceRef = firebase.child(`/devices/${deviceId}`);
+
+      // Return a promise
+      return deviceRef.once('value', (snapshot) => {
+        const device = snapshot.val();
+        dispatch(this.receiveDevice(device));
+      });
+    };
+  },
+
   bindToDevice(deviceId) {
     return (dispatch) => {
       const deviceRef = firebase.child(`/devices/${deviceId}`);
@@ -67,6 +79,7 @@ const Actions = {
         dispatch(this.receiveDevice(device));
       });
 
+      // Return a ref, so it's possible to call off() on it
       return deviceRef;
     };
   },
