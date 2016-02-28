@@ -10,11 +10,8 @@ const Actions = {
       // initiator is not sending any media stream, without these contraints
       // 'stream' event will never fire.
       const offerConstraints = {
-        optional: [],
-        mandatory: {
-          OfferToReceiveAudio: true,
-          OfferToReceiveVideo: true,
-        },
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true,
       };
       const { peer, devices } = getState();
       const device = devices[deviceId];
