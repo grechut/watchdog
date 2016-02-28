@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { routeActions } from 'react-router-redux';
-import { FABButton, Icon } from 'react-mdl/lib';
+import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { List, ListItem, ListItemContent } from 'react-mdl/lib/List';
+import { FABButton, Icon } from 'react-mdl/lib';
 import { Link } from 'react-router';
 import _ from 'lodash';
 import DeviceActions from '../actions/devices';
@@ -26,42 +27,44 @@ class DeviceList extends React.Component {
 
   render() {
     const { dispatch, devices } = this.props;
+    const emptyList = (
+      <List>
+        <ListItem>
+          <ListItemContent>
+            You don't have any devices yet.
+          </ListItemContent>
+        </ListItem>
+      </List>
+    );
+    const nonEmptyList = (
+      <List>
+        {_.values(devices).map((device) =>
+          (
+            <ListItem key={device.uid}>
+              <ListItemContent>
+                <Link to={`/devices/${device.uid}`}>{device.name}</Link>
+              </ListItemContent>
+            </ListItem>
+          )
+        )}
+      </List>
+    );
 
-    // TODO: convert to component
     return (
-      <div>
-        {(() => {
-          if (Object.keys(devices).length) {
-            return (
-              <List>
-                {_.values(devices).map((device) =>
-                  (
-                    <ListItem key={device.uid}>
-                      <ListItemContent>
-                        <Link to={`/devices/${device.uid}`}>{device.name}</Link>
-                      </ListItemContent>
-                    </ListItem>
-                  )
-                )}
-              </List>
-            );
-          }
+      <Grid>
+        <Cell col={12}>
+          {Object.keys(devices).length ? nonEmptyList : emptyList}
 
-          return (
-            <List>
-              <ListItem>
-                <ListItemContent>
-                  You don't have any devices yet.
-                </ListItemContent>
-              </ListItem>
-            </List>
-          );
-        })()}
-
-        <FABButton colored ripple onClick={() => dispatch(routeActions.push('/devices/new'))}>
-          <Icon name="add" />
-        </FABButton>
-      </div>
+          <FABButton
+            colored
+            ripple
+            onClick={() => dispatch(routeActions.push('/devices/new'))}
+            className="device-add"
+          >
+            <Icon name="add" />
+          </FABButton>
+        </Cell>
+      </Grid>
     );
   }
 }

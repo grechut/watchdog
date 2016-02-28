@@ -7,12 +7,21 @@
   justify-content: center;
 }
 
+/* Card */
+.mdl-card .mdl-card__supporting-text {
+    margin: 40px;
+    padding: 0;
+    color: inherit;
+    width: calc(100% - 80px);
+}
+
 .avatar {
   width: 48px;
   height: 48px;
   border-radius: 50%;
 }
 
+/* Video */
 .video.video-on video {
   height: 100%;
   width: 100%;
@@ -33,14 +42,6 @@
 /* Spinner */
 .mdl-spinner.is-active .mdl-spinner__layer {
   border-color: #FFFFFF;
-}
-
-/* Card */
-.mdl-card .mdl-card__supporting-text {
-    margin: 40px;
-    padding: 0;
-    color: inherit;
-    width: calc(100% - 80px);
 }
 
 /* Auth menu */
