@@ -12,7 +12,7 @@ export default class PushNotificationSwitch extends Component {
         onChange={onChange}
         className="btn btn-success"
       >
-        Enable Push Notifications for this device
+        Enable push notifications
       </Switch>
     );
   }

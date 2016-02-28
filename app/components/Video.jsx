@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react';
+import Icon from 'react-mdl/lib/Icon';
+import classnames from 'classnames';
 
 export default class Video extends React.Component {
   componentDidMount() {
@@ -14,8 +16,8 @@ export default class Video extends React.Component {
   }
 
   setSource() {
-    const video = this.refs.video;
     const stream = this.props.src;
+    const video = this.refs.video;
 
     if (stream) {
       video.setAttribute('autoplay', true);
@@ -25,10 +27,21 @@ export default class Video extends React.Component {
   }
 
   render() {
-    if (!this.props.src) { return null; }
+    const src = this.props.src;
+    const classes = classnames('video', {
+      'video-on': src,
+      'video-off': !src,
+    });
 
     return (
-      <video ref="video"></video>
+      <div className={classes}>
+        {
+          src ?
+            <video ref="video"></video>
+          :
+            <Icon name="videocam_off" />
+        }
+      </div>
     );
   }
 }

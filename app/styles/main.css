@@ -13,9 +13,21 @@
   border-radius: 50%;
 }
 
-video {
+.video.video-on video {
   height: 100%;
   width: 100%;
+}
+
+.video.video-off {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30vw;
+  background-color: #757575;
+}
+
+.video.video-off .material-icons {
+  font-size: 40px;
 }
 
 /* Spinner */

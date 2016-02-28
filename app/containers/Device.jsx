@@ -75,7 +75,7 @@ class Device extends Component {
         <Cell component={Card} col={12} shadow={2} align="middle">
           <Grid component={CardText} noSpacing>
             <Cell component="h4" col={12}>Settings</Cell>
-            <Cell>
+            <Cell col={12}>
               <DeviceConnectionStatus online={device.online} />
               <PushNotificationSwitch
                 deviceId={device.uid}

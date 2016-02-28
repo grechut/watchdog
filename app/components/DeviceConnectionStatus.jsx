@@ -5,7 +5,7 @@ export default class DeviceConnectionStatus extends Component {
     const { online } = this.props;
 
     return (
-      <p>Device is {online ? 'online' : 'offline'}</p>
+      <h6>Device is {online ? 'online' : 'offline'}</h6>
     );
   }
 }

@@ -35,10 +35,7 @@ const Actions = {
 
         dispatch({
           type: Constants.MEDIA_STREAM_SET_REMOTE,
-          payload: {
-            deviceId,
-            stream,
-          },
+          payload: { deviceId, stream },
         });
       });
 
