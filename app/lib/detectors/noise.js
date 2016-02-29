@@ -40,7 +40,7 @@ NoiseDetector.prototype.start = function () {
       const scaledVolume = (volume * 100) / 255; // range 0-100
 
       if (scaledVolume > this.options.threshold) {
-        this.onEvent(scaledVolume);
+        this.onEvent({ volume: scaledVolume });
       }
 
       window.setTimeout(run.bind(this), this.options.interval);
