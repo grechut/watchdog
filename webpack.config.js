@@ -57,6 +57,10 @@ const config = module.exports = {
   },
 };
 
+if (process.env.NODE_ENV === 'dev') {
+  config.devtool = 'eval';
+}
+
 // Minify files with uglifyjs in production
 if (process.env.NODE_ENV === 'production') {
   config.plugins.push(
