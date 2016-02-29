@@ -1,5 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
+const shrinkwrapCheck = require('./shrinkwrap-check');
+
+shrinkwrapCheck();
 
 function join(dest) { return path.resolve(__dirname, dest); }
 function web(dest) { return join(`app/${dest}`); }
