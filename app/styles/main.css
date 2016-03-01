@@ -15,7 +15,12 @@
     width: calc(100% - 80px);
 }
 
-.avatar {
+.user {
+  padding: 5px 15px;
+}
+
+.user__avatar {
+  margin-left: 20px;
   width: 48px;
   height: 48px;
   border-radius: 50%;
