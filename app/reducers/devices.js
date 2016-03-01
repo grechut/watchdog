@@ -24,7 +24,6 @@ export default function reducer(state = initialState, action) {
           peerId: device.peerId,
 
           pushNotificationEndpoints: Object.keys(device.push_notification_endpoints || {}),
-          isOwner: !!localStorage.getItem(`dummyOwner_${device.uid}`),
         },
       };
     }

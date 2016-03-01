@@ -54,9 +54,19 @@ export default function routes(store) {
   }
 
   function fetchDevice(nextState, replace, callback) {
-    const deviceId = nextState.params.deviceUuid;
+    const { deviceUuid } = nextState.params;
+    const isOwner = deviceUuid === localStorage.getItem('WATCHDOG_OWNER_UUID');
+    const deviceOwnerPath = `/devices/${deviceUuid}/device`;
 
-    dispatch(DeviceActions.fetchDevice(deviceId))
-      .then(() => callback());
+    if (isOwner && nextState.location.pathname !== deviceOwnerPath) {
+      replace({ pathname: deviceOwnerPath });
+    }
+
+    let fetch = dispatch(DeviceActions.fetchDevice(deviceUuid));
+    // if (isOwner) {
+    //   fetch = fetch.then(() => /*validate server-side device ownership using
+    //   localStorage.getItem('WATCHDOG_SECTET_TOKEN') and secret tokens collection in Firebase */)
+    // }
+    fetch.then(() => callback());
   }
 }
