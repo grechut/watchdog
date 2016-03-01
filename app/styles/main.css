@@ -1,4 +1,7 @@
 /* Common */
+html, body {
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+}
 
 .content {
   max-width: 960px;
@@ -15,7 +18,20 @@
     width: calc(100% - 80px);
 }
 
-.avatar {
+/* Drawer */
+.mdl-layout__drawer .drawer-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 16px;
+  height: 151px;
+}
+
+.mdl-layout__drawer .drawer-navigation {
+  flex-grow: 1;
+}
+
+.user__avatar {
   width: 48px;
   height: 48px;
   border-radius: 50%;
