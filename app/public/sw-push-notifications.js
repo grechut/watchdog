@@ -12,39 +12,47 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('push', (event) => {
   console.log('Service worker: push notification received', event);
 
-  const title = 'Watchdog Alert';
+  const title = 'Watchdog alert';
   const defaultBody = 'Watchdog has detected something on one of your cameras';
-  const body = event.data ? event.data.text() : defaultBody;
+  const payload = event.data && event.data.json() || {};
+  const body = payload.message || defaultBody;
 
   event.waitUntil(
     self.registration.showNotification(title, {
       body,
       icon: 'icon.png',
+      data: { url: payload.url },
     }));
 });
 
 self.addEventListener('notificationclick', (event) => {
   console.log('Service worker: push notification clicked', event);
-  const url = 'https://youtu.be/gYMkEMCHtJ4';
+  const notification = event.notification;
+  const payload = notification.data || {};
+  const url = payload.url;
 
-  event.notification.close();
+  notification.close();
 
-  event.waitUntil(
-    clients.matchAll({
-      type: 'window',
-    })
-    .then((windowClients) => {
-      for (var i = 0; i < windowClients.length; i++) {
-        const client = windowClients[i];
+  if (url) {
+    event.waitUntil(
+      clients.matchAll({
+        type: 'window',
+      })
+      .then((windowClients) => {
+        for (let i = 0; i < windowClients.length; i++) {
+          const client = windowClients[i];
 
-        if (client.url === url && 'focus' in client) {
-          return client.focus();
+          if (client.url === url && 'focus' in client) {
+            return client.focus();
+          }
         }
-      }
 
-      if (clients.openWindow) {
-        return clients.openWindow(url);
-      }
-    })
-  );
+        if (clients.openWindow) {
+          return clients.openWindow(url);
+        }
+
+        return undefined;
+      })
+    );
+  }
 });

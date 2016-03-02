@@ -31,8 +31,8 @@ const Actions = {
             const code = 'motion_started';
             const message = `Motion started at ${time(data.triggeredAt)}`;
             const payload = {
-              message,
               code,
+              message,
               triggeredAt: data.triggeredAt,
             };
 
@@ -42,8 +42,8 @@ const Actions = {
             const code = 'motion_stopped';
             const message = `Motion stopped at ${time(data.triggeredAt)}`;
             const payload = {
-              message,
               code,
+              message,
               triggeredAt: data.triggeredAt,
             };
 
@@ -56,8 +56,8 @@ const Actions = {
             const code = 'noise_started';
             const message = `Noise started at ${time(data.triggeredAt)}`;
             const payload = {
-              message,
               code,
+              message,
               triggeredAt: data.triggeredAt,
             };
 
@@ -67,8 +67,8 @@ const Actions = {
             const code = 'noise_stopped';
             const message = `Noise stopped at ${time(data.triggeredAt)}`;
             const payload = {
-              message,
               code,
+              message,
               triggeredAt: data.triggeredAt,
             };
 
@@ -83,9 +83,11 @@ const Actions = {
           type: Constants.CHANGE_DETECTOR,
         });
       };
+
       const gotError = (error) => {
         console.error(error);
       };
+
       navigator.getUserMedia = navigator.getUserMedia ||
                                navigator.webkitGetUserMedia ||
                                navigator.mozGetUserMedia;

@@ -41,7 +41,6 @@ if (process.env.NODE_ENV === 'production') {
 // API
 app.post('/api/devices/:deviceId/notify', (req, res) => {
   const deviceId = req.params.deviceId;
-  const key = req.body.key;
   const payload = req.body.payload;
   const ttl = 60 * 60;
   const endpointsUrl =
@@ -49,7 +48,6 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
 
   console.log('Sending push notification: ');
   console.log('\tdevice id:\t', deviceId);
-  console.log('\tkey:\t\t', key);
   console.log('\tpayload:\t', payload);
   console.log('\tttl:\t\t', ttl);
 
@@ -62,32 +60,38 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
     ))
     .then((userUrls) =>
       Promise.all(userUrls.map(fetch))
-        .then((responses) =>
-          Promise.all(responses.map((response) => response.json()))
-        )
-        .then((jsons) =>
-          // Mapping from Firebase strange data structure to plain array of endpoint urls
-          _(jsons)
-            .map((endpoint) => _.values(endpoint))
-            .flatten()
-            .map((endpoint) => endpoint.url)
-            .uniq()
-        )
-        .then((endpoints) => {
-          const notifications = endpoints.map((endpoint) => {
-            console.log(`Sending push notification to endpoint: ${endpoint}`);
+    )
+    .then((responses) =>
+      Promise.all(responses.map((response) => response.json()))
+    )
+    .then((jsons) =>
+      // Mapping from Firebase strange data structure to plain array of endpoint urls
+      _(jsons)
+        .map((endpoint) => _.values(endpoint))
+        .flatten()
+        .uniqBy('url')
+    )
+    .then((endpoints) => {
+      const notifications = endpoints.map((endpoint) => {
+        if (endpoint.key) {
+          console.log(
+            `Sending push notification with payload to
+            url: ${endpoint.url}
+            key: ${endpoint.key}`
+          );
+          return webPush.sendNotification(endpoint.url, ttl, endpoint.key, JSON.stringify(payload));
+        }
 
-            if (key) {
-              return webPush.sendNotification(endpoint, ttl, key, payload);
-            }
+        console.log(
+          `Sending push notification without payload to
+          url: ${endpoint.url}`
+        );
+        return webPush.sendNotification(endpoint.url, ttl);
+      });
 
-            return webPush.sendNotification(endpoint, ttl);
-          });
-
-          return Promise.all(notifications)
-            .then(() => res.sendStatus(204));
-        })
-    );
+      return Promise.all(notifications);
+    })
+    .then(() => res.sendStatus(204));
 });
 
 // HTML

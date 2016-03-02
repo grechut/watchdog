@@ -27,20 +27,36 @@ const Actions = {
   },
 
   setSubscription(subscription) {
-    return (dispatch) => {
-      const endpoint = subscription ? subscription.endpoint : null;
+    return (dispatch, getState) => {
+      const { auth } = getState();
+      const url = subscription ? subscription.endpoint : null;
       let key = null;
 
-      // Retrieve the user's public key used to encrypt notification payload
       if (subscription) {
-        const rawKey = subscription.getKey ? subscription.getKey('p256dh') : '';
-        key = rawKey ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey))) : '';
+        // Retrieve browser's public key used to encrypt payload of notifications
+        // sent to this browser.
+        const rawKey = subscription.getKey ? subscription.getKey('p256dh') : null;
+        key = rawKey ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey))) : null;
+
+        // Add endpoint and key to user's record unless it already exists
+        const endpointsPath = `/users/${auth.uid}/push_notification_endpoints`;
+        const endpointsRef = firebase.child(endpointsPath);
+
+        endpointsRef.once('value', (snapshot) => {
+          const endpointExists = _(snapshot.val())
+            .values()
+            .some((endpoint) => endpoint.url === url);
+
+          if (!endpointExists) {
+            endpointsRef.push({ url, key });
+          }
+        });
       }
 
       dispatch({
         type: Constants.PUSH_NOTIFICATION_SET_SUBSCRIPTION,
         payload: {
-          endpoint,
+          url,
           key,
         },
       });
@@ -100,6 +116,7 @@ const Actions = {
               }
 
               return subscription.unsubscribe().then(() =>
+                // TODO: remove subscription from Firebase
                 dispatch(this.setSubscription(null))
               );
             })
@@ -115,13 +132,6 @@ const Actions = {
       return dispatch(this.subscribe())
         .then((subscription) => {
           if (subscription) {
-            // TODO: don't add if endpoint already exists
-            // Add endpoint to user
-            const userRef = firebase.child(`/users/${auth.uid}/push_notification_endpoints`).push();
-            userRef.set({ url: subscription.endpoint }, (error) => {
-              if (error) return;
-            });
-
             // Add user id to device
             const deviceRef = firebase.child(`/devices/${deviceId}/push_notification_endpoints`);
             deviceRef.update({ [auth.uid]: true }, onSet);
@@ -179,21 +189,18 @@ const Actions = {
 
   // TODO: make sure that only owner can send notifications
   send(deviceId, payload) {
-    return (dispatch, getState) => {
-      const { pushNotification } = getState();
-      const key = pushNotification.key;
-
+    return (dispatch) => {
       dispatch({
         type: Constants.PUSH_NOTIFICATION_SEND,
-        payload: { deviceId, key, payload },
+        payload: { deviceId, payload },
       });
 
+      const url = `${window.location.origin}/devices/${deviceId}`;
       const incidentRef = firebase.child(`incidents/${deviceId}`).push();
       incidentRef.set(payload);
 
       return axios.post(`/api/devices/${deviceId}/notify`, {
-        key,
-        payload: payload.message,
+        payload: { ...payload, url },
       });
     };
   },
