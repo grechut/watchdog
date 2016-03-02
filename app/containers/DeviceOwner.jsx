@@ -12,7 +12,7 @@ import Video from '../components/Video';
 class DeviceOwner extends Component {
   componentDidMount() {
     const { dispatch, params, devices } = this.props;
-    const deviceId = params.deviceUuid;
+    const deviceId = params.deviceId;
     const device = devices[deviceId];
 
     dispatch(PageActions.updateTitle(`Device: ${device.name} (${device.uid})`));
@@ -23,7 +23,7 @@ class DeviceOwner extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { dispatch, params, devices } = nextProps;
-    const deviceId = params.deviceUuid;
+    const deviceId = params.deviceId;
     const device = devices[deviceId];
 
     // TODO: figure out how to wait for device, video stream and don't listen if already
@@ -35,7 +35,7 @@ class DeviceOwner extends Component {
   }
 
   render() {
-    const deviceId = this.props.params.deviceUuid;
+    const deviceId = this.props.params.deviceId;
     const { devices } = this.props;
     const device = devices[deviceId];
 

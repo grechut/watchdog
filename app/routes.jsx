@@ -22,12 +22,12 @@ export default function routes(store) {
       <Route path="devices" component={LayoutContainer} onEnter={requireAuth}>
         <IndexRoute component={DeviceList} />
         <Route path="new" component={DeviceNew} />
-        <Route path=":deviceUuid"
+        <Route path=":deviceId"
           component={Device}
           onEnter={fetchDevice /* requireNoOwnership */}
         />
         <Route
-          path=":deviceUuid/device"
+          path=":deviceId/device"
           component={DeviceOwner}
           onEnter={fetchDevice /* requireOwnership */}
         />
@@ -54,15 +54,15 @@ export default function routes(store) {
   }
 
   function fetchDevice(nextState, replace, callback) {
-    const { deviceUuid } = nextState.params;
-    const isOwner = deviceUuid === localStorage.getItem('WATCHDOG_OWNER_UUID');
-    const deviceOwnerPath = `/devices/${deviceUuid}/device`;
+    const { deviceId } = nextState.params;
+    const isOwner = deviceId === localStorage.getItem('WATCHDOG_OWNER_UUID');
+    const deviceOwnerPath = `/devices/${deviceId}/device`;
 
     if (isOwner && nextState.location.pathname !== deviceOwnerPath) {
       replace({ pathname: deviceOwnerPath });
     }
 
-    dispatch(DeviceActions.fetchDevice(deviceUuid))
+    dispatch(DeviceActions.fetchDevice(deviceId))
       .then(() => callback());
 
     // if (isOwner) {

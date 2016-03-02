@@ -22,7 +22,7 @@ import detectors from '../lib/detectors';
 class Device extends Component {
   componentDidMount() {
     const { dispatch, params, devices } = this.props;
-    const deviceId = params.deviceUuid;
+    const deviceId = params.deviceId;
     const device = devices[deviceId];
 
     dispatch(PageActions.updateTitle(`Device: ${device.name}`));
@@ -32,7 +32,7 @@ class Device extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { dispatch, params, devices } = nextProps;
-    const deviceId = params.deviceUuid;
+    const deviceId = params.deviceId;
     const device = devices[deviceId];
 
     // TODO: don't try to connect if already connecting/connected (properly)
@@ -43,13 +43,13 @@ class Device extends Component {
   }
 
   componentWillUnmount() {
-    const deviceId = this.props.params.deviceUuid;
+    const deviceId = this.props.params.deviceId;
     DeviceActions.unbindFromDevice(deviceId);
     IncidentActions.unbindFromIncidents(deviceId);
   }
 
   render() {
-    const deviceId = this.props.params.deviceUuid;
+    const deviceId = this.props.params.deviceId;
     const { dispatch, auth, devices, incidents, pushNotification } = this.props;
     const device = devices[deviceId];
 
