@@ -94,6 +94,15 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
     .then(() => res.sendStatus(204));
 });
 
+app.post('/api/devices/verify', (req, res) => {
+  const deviceId = req.body.deviceId;
+  const ownerSecretToken = req.body.ownerSecretToken;
+  console.log(`Verifying ${deviceId}, token: ${ownerSecretToken}`);
+
+  res.sendStatus(200);
+  // res.sendStatus(403);
+});
+
 // HTML
 app.get('/*', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);

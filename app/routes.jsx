@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 import firebase from './lib/firebase';
+import axios from 'axios';
 
 import App from './containers/App';
 import LandingPage from './containers/LandingPage';
@@ -62,12 +63,15 @@ export default function routes(store) {
       replace({ pathname: deviceOwnerPath });
     }
 
-    dispatch(DeviceActions.fetchDevice(deviceId))
-      .then(() => callback());
-
-    // if (isOwner) {
-    //   fetch = fetch.then(() => /*validate server-side device ownership using
-    //   localStorage.getItem('WATCHDOG_SECTET_TOKEN') and secret tokens collection in Firebase */)
-    // }
+    let fetch = dispatch(DeviceActions.fetchDevice(deviceId));
+    if (isOwner) {
+      fetch = fetch.then(() =>
+        axios.post('/api/devices/verify', {
+          deviceId,
+          ownerSecretToken: localStorage.getItem('WATCHDOG_SECTET_TOKEN'),
+        })
+      ).catch(() => replace({ pathname: '/' }));
+    }
+    fetch.then(() => callback());
   }
 }
