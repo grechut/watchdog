@@ -42,9 +42,14 @@ if (process.env.NODE_ENV === 'production') {
 app.post('/api/devices/:deviceId/notify', (req, res) => {
   const deviceId = req.params.deviceId;
   const payload = req.body.payload;
+  const ownerSecretToken = req.body.ownerSecretToken;
   const ttl = 60 * 60;
   const endpointsUrl =
     `${process.env.FIREBASE_URL}/devices/${deviceId}/push_notification_endpoints.json`;
+
+  if (!verifyOwnership(deviceId, ownerSecretToken)) {
+    res.sendStatus(403);
+  }
 
   console.log('Sending push notification: ');
   console.log('\tdevice id:\t', deviceId);
@@ -97,10 +102,12 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
 app.post('/api/devices/verify', (req, res) => {
   const deviceId = req.body.deviceId;
   const ownerSecretToken = req.body.ownerSecretToken;
-  console.log(`Verifying ${deviceId}, token: ${ownerSecretToken}`);
+
+  if (!verifyOwnership(deviceId, ownerSecretToken)) {
+    res.sendStatus(403);
+  }
 
   res.sendStatus(200);
-  // res.sendStatus(403);
 });
 
 // HTML
@@ -119,3 +126,14 @@ app.listen(port, (error) => {
     console.info(`==> 🌎  Listening on port ${port}. Open up http://localhost:${port}/ in your browser.`);
   }
 });
+
+// TODO where to put it ?
+// LOGIC
+function verifyOwnership(deviceId, ownerSecretToken) {
+  console.log(`Verifying ${deviceId}, token: ${ownerSecretToken}`);
+  const valid = true;
+
+  // TODO implement
+
+  return valid;
+}
