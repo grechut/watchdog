@@ -23,9 +23,10 @@ const Actions = {
       const userDeviceRef = firebase.child(`/users/${auth.uid}/devices/${deviceId}`);
       userDeviceRef.set({ uid: deviceId });
 
-      localStorage.setItem('WATCHDOG_OWNER_UUID', deviceId);
-      // TODO generate secret and save in safe collection on Firebase
-      localStorage.setItem('WATCHDOG_SECTET_TOKEN', 'todo_secret');
+      localStorage.setItem('WATCHDOG_OWNED_DEVICE_ID', deviceId);
+      // TODO generate on server this secret token,
+      // save in safe collection on Firebase and return to frontend
+      localStorage.setItem('WATCHDOG_OWNED_DEVICE_SECTET_TOKEN', 'todo_secret');
 
       dispatch(routeActions.push(`/devices/${deviceId}/device`));
     };

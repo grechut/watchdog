@@ -27,6 +27,9 @@ class DeviceList extends React.Component {
 
   render() {
     const { dispatch, devices } = this.props;
+    const ownedDeviceId = localStorage.getItem('WATCHDOG_OWNED_DEVICE_ID');
+    const hasValidOwnedDevice = Object.keys(devices).indexOf(ownedDeviceId) !== -1;
+
     const emptyList = (
       <List>
         <ListItem>
@@ -42,7 +45,12 @@ class DeviceList extends React.Component {
           (
             <ListItem key={device.uid}>
               <ListItemContent>
-                <Link to={`/devices/${device.uid}`}>{device.name}</Link>
+                <Link to={`/devices/${device.uid}`}>
+                  { device.uid === ownedDeviceId ?
+                      `${device.name} (this device)`
+                      : device.name
+                  }
+                </Link>
               </ListItemContent>
             </ListItem>
           )
@@ -55,14 +63,16 @@ class DeviceList extends React.Component {
         <Cell col={12}>
           {Object.keys(devices).length ? nonEmptyList : emptyList}
 
-          <FABButton
-            colored
-            ripple
-            onClick={() => dispatch(routeActions.push('/devices/new'))}
-            className="device-add"
-          >
-            <Icon name="add" />
-          </FABButton>
+          { !hasValidOwnedDevice ?
+            <FABButton
+              colored
+              ripple
+              onClick={() => dispatch(routeActions.push('/devices/new'))}
+              className="device-add"
+            >
+              <Icon name="add" />
+            </FABButton>
+            : null }
         </Cell>
       </Grid>
     );

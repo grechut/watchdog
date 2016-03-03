@@ -56,7 +56,7 @@ export default function routes(store) {
 
   function fetchDevice(nextState, replace, callback) {
     const { deviceId } = nextState.params;
-    const isOwner = deviceId === localStorage.getItem('WATCHDOG_OWNER_UUID');
+    const isOwner = deviceId === localStorage.getItem('WATCHDOG_OWNED_DEVICE_ID');
     const deviceOwnerPath = `/devices/${deviceId}/device`;
 
     if (isOwner && nextState.location.pathname !== deviceOwnerPath) {
@@ -68,7 +68,7 @@ export default function routes(store) {
       fetch = fetch.then(() =>
         axios.post('/api/devices/verify', {
           deviceId,
-          ownerSecretToken: localStorage.getItem('WATCHDOG_SECTET_TOKEN'),
+          ownerSecretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECTET_TOKEN'),
         })
       ).catch(() => replace({ pathname: '/' }));
     }
