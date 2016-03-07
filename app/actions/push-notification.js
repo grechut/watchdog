@@ -201,6 +201,7 @@ const Actions = {
 
       return axios.post(`/api/devices/${deviceId}/notify`, {
         payload: { ...payload, url },
+        secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
       });
     };
   },
