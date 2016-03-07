@@ -1,6 +1,7 @@
 import { routeActions } from 'react-router-redux';
 import Constants from '../constants';
 import firebase from '../lib/firebase';
+import axios from 'axios';
 
 const Actions = {
   createDevice() {
@@ -9,26 +10,23 @@ const Actions = {
 
       // Create a new device in /devices
       const { peer } = getState();
-      const deviceRef = firebase.child('/devices').push();
-      const deviceId = deviceRef.key();
-      deviceRef.set({
-        uid: deviceId,
-        name: 'Living room',
-        online: true,
-        peerId: peer.id,
-      });
 
       // Create association with current user
       const auth = getState().auth;
-      const userDeviceRef = firebase.child(`/users/${auth.uid}/devices/${deviceId}`);
-      userDeviceRef.set({ uid: deviceId });
 
-      localStorage.setItem('WATCHDOG_OWNED_DEVICE_ID', deviceId);
-      // TODO generate on server this secret token,
-      // save in safe collection on Firebase and return to frontend
-      localStorage.setItem('WATCHDOG_OWNED_DEVICE_SECTET_TOKEN', 'todo_secret');
+      axios.post('/api/devices/create', {
+        peerId: peer.id,
+        authUid: auth.uid,
+      }).then((res) => {
+        const { deviceId } = res.data;
 
-      dispatch(routeActions.push(`/devices/${deviceId}/device`));
+        localStorage.setItem('WATCHDOG_OWNED_DEVICE_ID', deviceId);
+
+        // // TODO generate on server this secret token,
+        // // save in safe collection on Firebase and return to frontend
+        // localStorage.setItem('WATCHDOG_OWNED_DEVICE_SECTET_TOKEN', 'todo_secret');
+        dispatch(routeActions.push(`/devices/${deviceId}/device`));
+      });
     };
   },
 

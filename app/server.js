@@ -9,6 +9,10 @@ const compression = require('compression');
 const morgan = require('morgan');
 const webPush = require('web-push');
 const fetch = require('node-fetch');
+const Firebase = require('firebase');
+
+const firebaseRef = new Firebase(process.env.FIREBASE_URL);
+
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -39,6 +43,27 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // API
+app.post('/api/devices/create', (req, res) => {
+  const peerId = req.body.peerId;
+  const authUid = req.body.authUid;
+
+  const deviceRef = firebaseRef.child('/devices').push();
+  const deviceId = deviceRef.key();
+  deviceRef.set({
+    uid: deviceId,
+    name: 'Living room',
+    online: true,
+    peerId: peerId,
+  });
+
+  const userDeviceRef = firebaseRef.child(`/users/${authUid}/devices/${deviceId}`);
+  userDeviceRef.set({ uid: deviceId });
+
+  res.send({
+    deviceId
+  });
+});
+
 app.post('/api/devices/:deviceId/notify', (req, res) => {
   const deviceId = req.params.deviceId;
   const payload = req.body.payload;
