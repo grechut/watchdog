@@ -68,7 +68,7 @@ export default function routes(store) {
       fetch = fetch.then(() =>
         axios.post('/api/devices/verify', {
           deviceId,
-          ownerSecretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECTET_TOKEN'),
+          secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
         })
       ).catch(() => replace({ pathname: '/' }));
     }
