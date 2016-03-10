@@ -1,13 +1,11 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 
-export default class DeviceConnectionStatus extends Component {
-  render() {
-    const { online } = this.props;
+export default function DeviceConnectionStatus(props) {
+  const { online } = props;
 
-    return (
-      <h6>Device is {online ? 'online' : 'offline'}</h6>
-    );
-  }
+  return (
+    <h6>Device is {online ? 'online' : 'offline'}</h6>
+  );
 }
 
 DeviceConnectionStatus.propTypes = {

@@ -4,27 +4,24 @@ import { Card, CardTitle, CardText } from 'react-mdl/lib/Card';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import Switch from 'react-mdl/lib/Switch';
 
-export default class DetectorConfig extends React.Component {
+export default function DetectorConfig(props) {
+  if (_.isEmpty(props.detector)) { return null; }
 
-  render() {
-    if (_.isEmpty(this.props.detector)) { return null; }
+  const { name, isRunning } = props.detector;
 
-    const { name, isRunning } = this.props.detector;
-
-    return (
-      <Card shadow={2}>
-        <CardTitle>{name}</CardTitle>
-        <CardText>
-          <Grid>
-            <Cell col={3} />
-            <Cell col={3}>
-              <Switch disabled ripple checked={isRunning}>Status</Switch>
-            </Cell>
-          </Grid>
-        </CardText>
-      </Card>
-    );
-  }
+  return (
+    <Card shadow={2}>
+      <CardTitle>{name}</CardTitle>
+      <CardText>
+        <Grid>
+          <Cell col={3} />
+          <Cell col={3}>
+            <Switch disabled ripple checked={isRunning}>Status</Switch>
+          </Cell>
+        </Grid>
+      </CardText>
+    </Card>
+  );
 }
 
 DetectorConfig.propTypes = {
