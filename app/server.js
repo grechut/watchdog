@@ -54,7 +54,7 @@ app.post('/api/devices/create', (req, res) => {
     uid: deviceId,
     name: 'Living room',
     online: true,
-    peerId: peerId,
+    peerId,
   });
 
   const userDeviceRef = firebaseRef.child(`/users/${authUid}/devices/${deviceId}`);
@@ -124,7 +124,10 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
 
       return Promise.all(notifications);
     })
-    .then(() => res.sendStatus(204));
+    .then(
+      () => res.sendStatus(204),
+      () => res.sendStatus(500)
+    );
 });
 
 app.post('/api/devices/verify', (req, res) => {
