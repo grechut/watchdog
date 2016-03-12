@@ -6,32 +6,30 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 import User from '../components/User';
 import AuthActions from '../actions/auth';
 
-class LayoutContainer extends React.Component {
-  render() {
-    const { children, dispatch, page, auth } = this.props;
+export default function LayoutContainer(props) {
+  const { children, dispatch, page, auth } = props;
 
-    return (
-      <Layout fixedHeader fixedDrawer>
-        <Header title={page.title} />
-        <Drawer className="mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
-            <header className="drawer-header">
-              <User auth={auth} />
-            </header>
-            <Navigation className="drawer-navigation mdl-color--blue-grey-800">
-              <Link to="/devices">Devices</Link>
-              <a href="#" onClick={() => dispatch(AuthActions.signOut())}>Sign out</a>
-            </Navigation>
-          </Drawer>
-        <Content>
-          <Grid className="content">
-            <Cell col={8} tablet={12} align="middle">
-              {children}
-            </Cell>
-          </Grid>
-        </Content>
-      </Layout>
-    );
-  }
+  return (
+    <Layout fixedHeader fixedDrawer>
+      <Header title={page.title} />
+      <Drawer className="mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
+          <header className="drawer-header">
+            <User auth={auth} />
+          </header>
+          <Navigation className="drawer-navigation mdl-color--blue-grey-800">
+            <Link to="/devices">Devices</Link>
+            <a href="#" onClick={() => dispatch(AuthActions.signOut())}>Sign out</a>
+          </Navigation>
+        </Drawer>
+      <Content>
+        <Grid className="content">
+          <Cell col={8} tablet={12} align="middle">
+            {children}
+          </Cell>
+        </Grid>
+      </Content>
+    </Layout>
+  );
 }
 
 LayoutContainer.propTypes = {
