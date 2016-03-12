@@ -5,7 +5,6 @@ import axios from 'axios';
 
 import App from './containers/App';
 import LandingPage from './containers/LandingPage';
-import LayoutContainer from './containers/LayoutContainer';
 import DeviceList from './containers/DeviceList';
 import Device from './containers/Device';
 import DeviceOwner from './containers/DeviceOwner';
@@ -20,7 +19,7 @@ export default function routes(store) {
     <Route path="/" component={App} >
       <IndexRoute component={LandingPage} onEnter={requireNoAuth} />
 
-      <Route path="devices" component={LayoutContainer} onEnter={requireAuth}>
+      <Route path="devices" onEnter={requireAuth}>
         <IndexRoute component={DeviceList} />
         <Route path="new" component={DeviceNew} />
         <Route path=":deviceId"

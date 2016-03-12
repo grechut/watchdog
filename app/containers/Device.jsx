@@ -17,6 +17,8 @@ import DeviceConnectionStatus from '../components/DeviceConnectionStatus';
 import PushNotificationSwitch from '../components/PushNotificationSwitch';
 import DetectorConfig from '../components/DetectorConfig';
 
+import LayoutContainer from './LayoutContainer';
+
 import detectors from '../lib/detectors';
 
 class Device extends Component {
@@ -62,36 +64,38 @@ class Device extends Component {
     );
 
     return (
-      <Grid>
-        <Cell col={12} shadow={2} align="middle">
-          <Video src={device.remoteStream} />
-        </Cell>
+      <LayoutContainer yolo="Szimek">
+        <Grid>
+          <Cell col={12} shadow={2} align="middle">
+            <Video src={device.remoteStream} />
+          </Cell>
 
-        <Cell component={Card} col={12} shadow={2} align="middle">
-          <IncidentList incidents={incidentsForDevice} />
-        </Cell>
+          <Cell component={Card} col={12} shadow={2} align="middle">
+            <IncidentList incidents={incidentsForDevice} />
+          </Cell>
 
-        { /* TODO: move to separate settings page */ }
-        <Cell component={Card} col={12} shadow={2} align="middle">
-          <Grid component={CardText} noSpacing>
-            <Cell component="h4" col={12}>Settings</Cell>
-            <Cell col={12}>
-              <DeviceConnectionStatus online={device.online} />
-              <PushNotificationSwitch
-                deviceId={device.uid}
-                checked={isSubscribed}
-                disabled={!pushNotification.enabled}
-                onChange={() =>
-                  dispatch(PushNotificationActions.toggleSubscriptionForDevice(device.uid))
-                }
-              />
-              {Object.keys(detectors).map(key =>
-                <DetectorConfig key={key} detector={detectors[key]} />
-              )}
-            </Cell>
-          </Grid>
-        </Cell>
-      </Grid>
+          { /* TODO: move to separate settings page */ }
+          <Cell component={Card} col={12} shadow={2} align="middle">
+            <Grid component={CardText} noSpacing>
+              <Cell component="h4" col={12}>Settings</Cell>
+              <Cell col={12}>
+                <DeviceConnectionStatus online={device.online} />
+                <PushNotificationSwitch
+                  deviceId={device.uid}
+                  checked={isSubscribed}
+                  disabled={!pushNotification.enabled}
+                  onChange={() =>
+                    dispatch(PushNotificationActions.toggleSubscriptionForDevice(device.uid))
+                  }
+                />
+                {Object.keys(detectors).map(key =>
+                  <DetectorConfig key={key} detector={detectors[key]} />
+                )}
+              </Cell>
+            </Grid>
+          </Cell>
+        </Grid>
+      </LayoutContainer>
     );
   }
 }
