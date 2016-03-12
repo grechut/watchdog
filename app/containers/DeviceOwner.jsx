@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import DeviceActions from '../actions/devices';
+import MediaStreamActions from '../actions/media-stream';
 import PageActions from '../actions/page';
 import PeerActions from '../actions/peer';
-import MediaStreamActions from '../actions/media-stream';
 
 import Video from '../components/Video';
+
+import LayoutContainer from './LayoutContainer';
 
 class DeviceOwner extends Component {
   componentDidMount() {
@@ -42,11 +44,13 @@ class DeviceOwner extends Component {
     if (!device) { return null; }
 
     return (
-      <Grid>
-        <Cell col={12} shadow={2} align="middle">
-          <Video src={device.localStream} />
-        </Cell>
-      </Grid>
+      <LayoutContainer>
+        <Grid>
+          <Cell col={12} shadow={2} align="middle">
+            <Video src={device.localStream} />
+          </Cell>
+        </Grid>
+      </LayoutContainer>
     );
   }
 }
