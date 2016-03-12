@@ -1,3 +1,5 @@
+/* eslint react/prefer-stateless-function: "off" */
+
 import React, { Component, PropTypes } from 'react';
 import _ from 'lodash';
 import { Card, CardTitle, CardText } from 'react-mdl/lib/Card';
