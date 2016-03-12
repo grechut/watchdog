@@ -4,22 +4,21 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { Card, CardText } from 'react-mdl/lib/Card';
 import _ from 'lodash';
 
+import detectors from '../lib/detectors';
+
 import DeviceActions from '../actions/devices';
 import IncidentActions from '../actions/incidents';
 import PageActions from '../actions/page';
-import PushNotificationActions from '../actions/push-notification';
 import PeerActions from '../actions/peer';
+import PushNotificationActions from '../actions/push-notification';
 
-import Video from '../components/Video';
-import IncidentList from '../components/IncidentList';
-
-import DeviceConnectionStatus from '../components/DeviceConnectionStatus';
-import PushNotificationSwitch from '../components/PushNotificationSwitch';
 import DetectorConfig from '../components/DetectorConfig';
+import DeviceConnectionStatus from '../components/DeviceConnectionStatus';
+import IncidentList from '../components/IncidentList';
+import PushNotificationSwitch from '../components/PushNotificationSwitch';
+import Video from '../components/Video';
 
 import LayoutContainer from './LayoutContainer';
-
-import detectors from '../lib/detectors';
 
 class Device extends Component {
   componentDidMount() {
@@ -64,7 +63,7 @@ class Device extends Component {
     );
 
     return (
-      <LayoutContainer yolo="Szimek">
+      <LayoutContainer>
         <Grid>
           <Cell col={12} shadow={2} align="middle">
             <Video src={device.remoteStream} />

@@ -9,8 +9,6 @@ import AuthActions from '../actions/auth';
 export default function LayoutContainer(props) {
   const { children, dispatch, page, auth } = props;
 
-  console.log(`My yolo props: ${props.yolo}`);
-
   return (
     <Layout fixedHeader fixedDrawer>
       <Header title={page.title} />
