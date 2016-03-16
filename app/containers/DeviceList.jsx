@@ -6,8 +6,11 @@ import { List, ListItem, ListItemContent } from 'react-mdl/lib/List';
 import { FABButton, Icon } from 'react-mdl/lib';
 import { Link } from 'react-router';
 import _ from 'lodash';
+
 import DeviceActions from '../actions/devices';
 import PageActions from '../actions/page';
+
+import LayoutContainer from './LayoutContainer';
 
 class DeviceList extends React.Component {
   componentDidMount() {
@@ -59,22 +62,24 @@ class DeviceList extends React.Component {
     );
 
     return (
-      <Grid>
-        <Cell col={12}>
-          {Object.keys(devices).length ? nonEmptyList : emptyList}
+      <LayoutContainer>
+        <Grid>
+          <Cell col={12}>
+            {Object.keys(devices).length ? nonEmptyList : emptyList}
 
-          { !hasValidOwnedDevice ?
-            <FABButton
-              colored
-              ripple
-              onClick={() => dispatch(routeActions.push('/devices/new'))}
-              className="device-add"
-            >
-              <Icon name="add" />
-            </FABButton>
-            : null }
-        </Cell>
-      </Grid>
+            { !hasValidOwnedDevice ?
+              <FABButton
+                colored
+                ripple
+                onClick={() => dispatch(routeActions.push('/devices/new'))}
+                className="device-add"
+              >
+                <Icon name="add" />
+              </FABButton>
+              : null }
+          </Cell>
+        </Grid>
+      </LayoutContainer>
     );
   }
 }
