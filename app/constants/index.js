@@ -17,8 +17,6 @@ const Constants = keymirror({
   MEDIA_STREAM_SET_LOCAL: null,
   MEDIA_STREAM_SET_REMOTE: null,
 
-  PAGE_TITLE_SET: null,
-
   PEER_CONNECTING: null,
   PEER_CONNECTED: null,
 

@@ -4,7 +4,6 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 
 import DeviceActions from '../actions/devices';
 import MediaStreamActions from '../actions/media-stream';
-import PageActions from '../actions/page';
 import PeerActions from '../actions/peer';
 
 import Video from '../components/Video';
@@ -13,11 +12,9 @@ import LayoutContainer from './LayoutContainer';
 
 class DeviceOwner extends Component {
   componentDidMount() {
-    const { dispatch, params, devices } = this.props;
+    const { dispatch, params } = this.props;
     const deviceId = params.deviceId;
-    const device = devices[deviceId];
 
-    dispatch(PageActions.updateTitle(`Device: ${device.name} (${device.uid})`));
     dispatch(DeviceActions.bindToDevice(deviceId));
     dispatch(DeviceActions.syncOnlineStatus(deviceId));
     dispatch(MediaStreamActions.getLocalMediaStream(deviceId));
@@ -44,7 +41,7 @@ class DeviceOwner extends Component {
     if (!device) { return null; }
 
     return (
-      <LayoutContainer>
+      <LayoutContainer title={`Device: ${device.name} (${device.uid})`}>
         <Grid>
           <Cell col={12} shadow={2} align="middle">
             <Video src={device.localStream} />

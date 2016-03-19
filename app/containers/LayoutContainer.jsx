@@ -7,11 +7,11 @@ import User from '../components/User';
 import AuthActions from '../actions/auth';
 
 export default function LayoutContainer(props) {
-  const { children, dispatch, page, auth } = props;
+  const { children, dispatch, auth, title } = props;
 
   return (
     <Layout fixedHeader fixedDrawer>
-      <Header title={page.title} />
+      <Header title={title} />
       <Drawer className="mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
           <header className="drawer-header">
             <User auth={auth} />
@@ -36,13 +36,12 @@ LayoutContainer.propTypes = {
   children: PropTypes.object,
   dispatch: PropTypes.func,
   auth: PropTypes.object,
-  page: PropTypes.object,
+  title: PropTypes.string,
 };
 
 function mapStateToProps(state) {
   return {
     auth: state.auth,
-    page: state.page,
   };
 }
 

@@ -8,7 +8,6 @@ import { Link } from 'react-router';
 import _ from 'lodash';
 
 import DeviceActions from '../actions/devices';
-import PageActions from '../actions/page';
 
 import LayoutContainer from './LayoutContainer';
 
@@ -16,7 +15,6 @@ class DeviceList extends React.Component {
   componentDidMount() {
     const { dispatch } = this.props;
 
-    dispatch(PageActions.updateTitle('Devices'));
     // TODO: move to onEnter/aync-props
     dispatch(DeviceActions.bindToDevices());
   }
@@ -62,7 +60,7 @@ class DeviceList extends React.Component {
     );
 
     return (
-      <LayoutContainer>
+      <LayoutContainer title="Devices">
         <Grid>
           <Cell col={12}>
             {Object.keys(devices).length ? nonEmptyList : emptyList}

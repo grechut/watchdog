@@ -8,7 +8,6 @@ import detectors from '../lib/detectors';
 
 import DeviceActions from '../actions/devices';
 import IncidentActions from '../actions/incidents';
-import PageActions from '../actions/page';
 import PeerActions from '../actions/peer';
 import PushNotificationActions from '../actions/push-notification';
 
@@ -22,11 +21,9 @@ import LayoutContainer from './LayoutContainer';
 
 class Device extends Component {
   componentDidMount() {
-    const { dispatch, params, devices } = this.props;
+    const { dispatch, params } = this.props;
     const deviceId = params.deviceId;
-    const device = devices[deviceId];
 
-    dispatch(PageActions.updateTitle(`Device: ${device.name}`));
     dispatch(DeviceActions.bindToDevice(deviceId));
     dispatch(IncidentActions.bindToIncidents(deviceId));
   }
@@ -63,7 +60,7 @@ class Device extends Component {
     );
 
     return (
-      <LayoutContainer>
+      <LayoutContainer title={`Device: ${device.name}`}>
         <Grid>
           <Cell col={12} shadow={2} align="middle">
             <Video src={device.remoteStream} />
