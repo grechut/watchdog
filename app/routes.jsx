@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 import firebase from './lib/firebase';
-import axios from 'axios';
 
 import App from './containers/App';
 import LandingPage from './containers/LandingPage';
@@ -62,15 +61,21 @@ export default function routes(store) {
       replace({ pathname: deviceOwnerPath });
     }
 
-    let fetch = dispatch(DeviceActions.fetchDevice(deviceId));
+    let deviceFetch = dispatch(DeviceActions.fetchDevice(deviceId));
     if (isOwner) {
-      fetch = fetch.then(() =>
-        axios.post('/api/devices/verify', {
-          deviceId,
-          secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
-        })
-      ).catch(() => replace({ pathname: '/' }));
+      deviceFetch = deviceFetch.then(() =>
+        fetch('/api/devices/verify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            deviceId,
+            secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
+          }),
+        }
+      )).catch(() => replace({ pathname: '/' }));
     }
-    fetch.then(() => callback());
+    deviceFetch.then(() => callback());
   }
 }

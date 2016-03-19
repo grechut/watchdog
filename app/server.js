@@ -16,7 +16,7 @@ const firebaseRef = new Firebase(process.env.FIREBASE_URL);
 
 const port = process.env.PORT || 3000;
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(compression());
 app.use(morgan('dev'));
@@ -110,7 +110,8 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
           console.log(
             `Sending push notification with payload to
             url: ${endpoint.url}
-            key: ${endpoint.key}`
+            key: ${endpoint.key}
+            payload: ${payload}`
           );
           return webPush.sendNotification(endpoint.url, ttl, endpoint.key, JSON.stringify(payload));
         }
@@ -126,7 +127,10 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
     })
     .then(
       () => res.sendStatus(204),
-      () => res.sendStatus(500)
+      (err) => {
+        console.log(`Error when sending notifications: ${err}`);
+        return res.sendStatus(500);
+      }
     );
 });
 

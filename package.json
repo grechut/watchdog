@@ -13,7 +13,6 @@
     "shrinkwrap:check": "echo \"require('./shrinkwrap-check')();\" | node"
   },
   "dependencies": {
-    "axios": "^0.9.1",
     "babel-core": "^6.6.5",
     "babel-plugin-react-transform": "^2.0.2",
     "babel-plugin-transform-runtime": "^6.6.0",

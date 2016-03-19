@@ -1,4 +1,3 @@
-import axios from 'axios';
 import firebase from '../lib/firebase';
 import _ from 'lodash';
 import Constants from '../constants';
@@ -199,9 +198,15 @@ const Actions = {
       const incidentRef = firebase.child(`incidents/${deviceId}`).push();
       incidentRef.set(payload);
 
-      return axios.post(`/api/devices/${deviceId}/notify`, {
-        payload: { ...payload, url },
-        secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
+      return fetch(`/api/devices/${deviceId}/notify`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          payload: { ...payload, url },
+          secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
+        }),
       });
     };
   },

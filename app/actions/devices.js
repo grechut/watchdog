@@ -1,7 +1,6 @@
 import { routeActions } from 'react-router-redux';
 import Constants from '../constants';
 import firebase from '../lib/firebase';
-import axios from 'axios';
 
 const Actions = {
   createDevice() {
@@ -14,11 +13,19 @@ const Actions = {
       // Create association with current user
       const auth = getState().auth;
 
-      axios.post('/api/devices/create', {
-        peerId: peer.id,
-        authUid: auth.uid,
-      }).then((res) => {
-        const { deviceId, secretToken } = res.data;
+      fetch('/api/devices/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          peerId: peer.id,
+          authUid: auth.uid,
+        }),
+      })
+      .then((res) => res.json())
+      .then((json) => {
+        const { deviceId, secretToken } = json;
 
         localStorage.setItem('WATCHDOG_OWNED_DEVICE_ID', deviceId);
         localStorage.setItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN', secretToken);
