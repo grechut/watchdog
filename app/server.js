@@ -74,20 +74,21 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
   const deviceId = req.params.deviceId;
   const payload = req.body.payload;
   const secretToken = req.body.secretToken;
-  const ttl = 60 * 60;
+  const TTL = 60 * 60;
   const endpointsUrl =
     `${process.env.FIREBASE_URL}/devices/${deviceId}/push_notification_endpoints.json`;
 
   console.log('Sending push notification: ');
   console.log('\tdevice id:\t', deviceId);
   console.log('\tpayload:\t', payload);
-  console.log('\tttl:\t\t', ttl);
+  console.log('\TTL:\t\t', TTL);
 
   // TODO: simplify by changing data structure stored in Firebase
   verifyOwnership(deviceId, secretToken)
     .then(() => fetch(endpointsUrl))
     .then((response) => response.json())
-    .then((json) => Object.keys(json))
+    // If there are no subscribed devices, json will be null
+    .then((json) => (json ? Object.keys(json) : []))
     .then((userIds) => _(userIds).uniq().map((userId) =>
       `${process.env.FIREBASE_URL}/users/${userId}/push_notification_endpoints.json`
     ))
@@ -104,32 +105,34 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
         .flatten()
         .uniqBy('url')
     )
-    .then((endpoints) => {
-      const notifications = endpoints.map((endpoint) => {
-        if (endpoint.key) {
-          console.log(
-            `Sending push notification with payload to
-            url: ${endpoint.url}
-            key: ${endpoint.key}
-            payload: ${payload}`
-          );
-          return webPush.sendNotification(endpoint.url, ttl, endpoint.key, JSON.stringify(payload));
-        }
+    .then((subscriptions) => {
+      const notifications = subscriptions.map((subscription) => {
+        const userPublicKey = subscription.publicKey;
+        const userAuth = subscription.authSecret;
 
         console.log(
-          `Sending push notification without payload to
-          url: ${endpoint.url}`
+          `Sending push notification with payload to
+          url: ${subscription.url}
+          publicKey: ${userPublicKey}
+          auth: ${userAuth}
+          payload: ${JSON.stringify(payload)}`
         );
-        return webPush.sendNotification(endpoint.url, ttl);
+
+        return webPush.sendNotification(subscription.url, {
+          TTL,
+          userPublicKey,
+          userAuth,
+          payload: JSON.stringify(payload),
+        });
       });
 
       return Promise.all(notifications);
     })
     .then(
       () => res.sendStatus(204),
-      (err) => {
-        console.log(`Error when sending notifications: ${err}`);
-        return res.sendStatus(500);
+      (error) => {
+        console.log(`Error when sending notifications: ${error}`);
+        return res.status(500).send(error);
       }
     );
 });
@@ -143,10 +146,6 @@ app.post('/api/devices/verify', (req, res) => {
 });
 
 // HTML
-app.get('/*', (req, res) => {
-  res.sendFile(`${__dirname}/index.html`);
-});
-
 app.get('/*', (req, res) => {
   res.sendFile(`${__dirname}/index.html`);
 });

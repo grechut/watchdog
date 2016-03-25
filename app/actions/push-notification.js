@@ -29,15 +29,16 @@ const Actions = {
     return (dispatch, getState) => {
       const { auth } = getState();
       const url = subscription ? subscription.endpoint : null;
-      let key = null;
+      const payload = { url };
 
       if (subscription) {
-        // Retrieve browser's public key used to encrypt payload of notifications
-        // sent to this browser.
-        const rawKey = subscription.getKey ? subscription.getKey('p256dh') : null;
-        key = rawKey ? btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey))) : null;
+        // Retrieve browser's public key and auth used to encrypt payload of notifications
+        // sent *to* this browser.
+        const subscriptionData = subscription.toJSON();
+        payload.authSecret = subscriptionData.keys.auth;
+        payload.publicKey = subscriptionData.keys.p256dh;
 
-        // Add endpoint and key to user's record unless it already exists
+        // Add endpoint data to user's record unless it already exists
         const endpointsPath = `/users/${auth.uid}/push_notification_endpoints`;
         const endpointsRef = firebase.child(endpointsPath);
 
@@ -47,17 +48,14 @@ const Actions = {
             .some((endpoint) => endpoint.url === url);
 
           if (!endpointExists) {
-            endpointsRef.push({ url, key });
+            endpointsRef.push(payload);
           }
         });
       }
 
       dispatch({
         type: Constants.PUSH_NOTIFICATION_SET_SUBSCRIPTION,
-        payload: {
-          url,
-          key,
-        },
+        payload,
       });
 
       return subscription;

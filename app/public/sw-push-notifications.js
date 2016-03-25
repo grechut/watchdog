@@ -1,6 +1,4 @@
 /* eslint-env serviceworker */
-"use strict";
-
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   console.log('Service worker: installed', event);
