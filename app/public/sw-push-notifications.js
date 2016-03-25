@@ -19,7 +19,7 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(title, {
       body,
-      icon: 'icon.png',
+      icon: '/images/stolen-temporary-logo.jpg',
       data: { url: payload.url },
     }));
 });
