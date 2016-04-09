@@ -3,15 +3,15 @@
 ## Roadmap
 
 - [X] Notifications about detected motion
-- [X] Push notifications
-- [X] Web rtc video transfer
-- [X] Sound detection
-- [ ] Remote configuration
-- [ ] Screenshots saving
-- [ ] Video recording
+- [X] Notifications about detected noise
+- [X] Web push notifications with payload
+- [X] WebRTC video transfer
+- [ ] Remote camera configuration (on/off, detector config
+- [ ] Saving screenshots
+- [ ] Recording videos (MediaRecorder API)
 - [ ] Security (Firebase security rules)
 - [ ] Better design (UX/UI)
-- [ ] Really good detection algos
+- [ ] Better detection algorithms
 - [ ] Easy way to host
 
 ## Usage
