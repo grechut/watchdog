@@ -159,7 +159,7 @@ app.listen(port, (error) => {
 });
 
 // TODO where to put it ?
-// LOGIC
+// Helper functions
 function verifyOwnership(deviceId, secretToken) {
   const secretTokenEndpoint = `${process.env.FIREBASE_URL}/secretTokens/${deviceId}.json`;
   return fetch(secretTokenEndpoint)
