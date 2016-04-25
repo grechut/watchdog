@@ -45,14 +45,15 @@ if (process.env.NODE_ENV === 'production') {
 
 // API
 app.post('/api/devices/create', (req, res) => {
-  const peerId = req.body.peerId;
-  const authUid = req.body.authUid;
+  const peerId = req.body.peerId,
+    authUid = req.body.authUid,
+    name = req.body.name;
 
   const deviceRef = firebaseRef.child('/devices').push();
   const deviceId = deviceRef.key();
   deviceRef.set({
     uid: deviceId,
-    name: 'Living room',
+    name: name,
     online: true,
     peerId,
   });

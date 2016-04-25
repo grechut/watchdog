@@ -5,7 +5,7 @@ import firebase from 'lib/firebase';
 import Constants from 'constants';
 
 const Actions = {
-  createDevice() {
+  createDevice(name) {
     return (dispatch, getState) => {
       dispatch({ type: Constants.DEVICE_CREATE });
 
@@ -23,6 +23,7 @@ const Actions = {
         body: JSON.stringify({
           peerId: peer.id,
           authUid: auth.uid,
+          name,
         }),
       })
       .then((res) => res.json())
