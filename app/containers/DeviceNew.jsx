@@ -4,6 +4,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Button from 'react-mdl/lib/Button';
 import Textfield from 'react-mdl/lib/Textfield';
+import _ from 'lodash';
 
 import DeviceActions from 'actions/devices';
 
@@ -15,7 +16,7 @@ class DeviceNew extends Component {
     super(props);
 
     this.state = {
-      deviceName: 'Room',
+      deviceName: `Room ${_.random(1, 1000)}`,
     };
   }
 
@@ -33,6 +34,7 @@ class DeviceNew extends Component {
           <Textfield
             onChange={ (e) => { this.setState({ deviceName: e.target.value }); } }
             label="Device name"
+            value={this.state.deviceName}
             floatingLabel
           />
 
