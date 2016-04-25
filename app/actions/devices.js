@@ -1,6 +1,8 @@
 import { routeActions } from 'react-router-redux';
-import Constants from '../constants';
-import firebase from '../lib/firebase';
+
+import firebase from 'lib/firebase';
+
+import Constants from 'constants';
 
 const Actions = {
   createDevice() {

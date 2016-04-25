@@ -3,7 +3,8 @@ import { browserHistory } from 'react-router';
 import { syncHistory, routeReducer } from 'react-router-redux';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
-import reducers from '../reducers';
+
+import reducers from 'reducers';
 
 const reduxRouterMiddleware = syncHistory(browserHistory);
 const loggerMiddleware = createLogger();

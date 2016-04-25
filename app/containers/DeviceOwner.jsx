@@ -2,13 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 
-import DeviceActions from '../actions/devices';
-import MediaStreamActions from '../actions/media-stream';
-import PeerActions from '../actions/peer';
+import DeviceActions from 'actions/devices';
+import MediaStreamActions from 'actions/media-stream';
+import PeerActions from 'actions/peer';
 
-import Video from '../components/Video';
+import Video from 'components/Video';
 
-import LayoutContainer from './LayoutContainer';
+import LayoutContainer from 'containers/LayoutContainer';
 
 class DeviceOwner extends Component {
   componentDidMount() {

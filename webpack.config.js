@@ -22,6 +22,7 @@ const config = module.exports = {
   },
 
   resolve: {
+    root: web(''),
     extensions: ['', '.jsx', '.js'],
   },
 

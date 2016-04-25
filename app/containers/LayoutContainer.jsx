@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { Layout, Content, Drawer, Navigation, Header } from 'react-mdl/lib/Layout';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
-import User from '../components/User';
-import AuthActions from '../actions/auth';
+
+import AuthActions from 'actions/auth';
+
+import User from 'components/User';
 
 export default function LayoutContainer(props) {
   const { children, dispatch, auth, title } = props;

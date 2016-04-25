@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { List, ListItem, ListItemContent } from 'react-mdl/lib/List';
 import { CardText } from 'react-mdl/lib/Card';
-import IncidentListItem from '../components/IncidentListItem';
+
+import IncidentListItem from 'components/IncidentListItem';
 
 function IncidentList(props) {
   const { incidents } = props;

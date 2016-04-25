@@ -4,20 +4,20 @@ import Grid, { Cell } from 'react-mdl/lib/Grid';
 import { Card, CardText } from 'react-mdl/lib/Card';
 import _ from 'lodash';
 
-import detectors from '../lib/detectors';
+import detectors from 'lib/detectors';
 
-import DeviceActions from '../actions/devices';
-import IncidentActions from '../actions/incidents';
-import PeerActions from '../actions/peer';
-import PushNotificationActions from '../actions/push-notification';
+import DeviceActions from 'actions/devices';
+import IncidentActions from 'actions/incidents';
+import PeerActions from 'actions/peer';
+import PushNotificationActions from 'actions/push-notification';
 
-import DetectorConfig from '../components/DetectorConfig';
-import DeviceConnectionStatus from '../components/DeviceConnectionStatus';
-import IncidentList from '../components/IncidentList';
-import PushNotificationSwitch from '../components/PushNotificationSwitch';
-import Video from '../components/Video';
+import DetectorConfig from 'components/DetectorConfig';
+import DeviceConnectionStatus from 'components/DeviceConnectionStatus';
+import IncidentList from 'components/IncidentList';
+import PushNotificationSwitch from 'components/PushNotificationSwitch';
+import Video from 'components/Video';
 
-import LayoutContainer from './LayoutContainer';
+import LayoutContainer from 'containers/LayoutContainer';
 
 class Device extends Component {
   componentDidMount() {

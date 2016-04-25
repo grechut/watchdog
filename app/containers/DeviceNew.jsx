@@ -4,9 +4,9 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Button from 'react-mdl/lib/Button';
 
-import DeviceActions from '../actions/devices';
+import DeviceActions from 'actions/devices';
 
-import LayoutContainer from './LayoutContainer';
+import LayoutContainer from 'containers/LayoutContainer';
 
 class DeviceNew extends Component {
   render() {

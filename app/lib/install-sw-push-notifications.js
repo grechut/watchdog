@@ -1,4 +1,4 @@
-import PushNotificationActions from '../actions/push-notification';
+import PushNotificationActions from 'actions/push-notification';
 
 export default function install(dispatch) {
   if ('serviceWorker' in navigator) {

@@ -2,7 +2,8 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Layout, Content } from 'react-mdl/lib/Layout';
 import { Button } from 'react-mdl/lib';
-import AuthActions from '../actions/auth';
+
+import AuthActions from 'actions/auth';
 
 function LandingPage(props) {
   const { dispatch } = props;

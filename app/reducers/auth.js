@@ -1,5 +1,6 @@
-import Constants from '../constants';
-import firebase from '../lib/firebase';
+import firebase from 'lib/firebase';
+
+import Constants from 'constants';
 
 const initialState = authDataToState(firebase.getAuth());
 

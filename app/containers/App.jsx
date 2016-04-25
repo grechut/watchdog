@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import AuthActions from '../actions/auth';
+
+import AuthActions from 'actions/auth';
 
 class App extends React.Component {
   componentDidMount() {

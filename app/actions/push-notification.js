@@ -1,6 +1,8 @@
-import firebase from '../lib/firebase';
 import _ from 'lodash';
-import Constants from '../constants';
+
+import firebase from 'lib/firebase';
+
+import Constants from 'constants';
 
 const Actions = {
   setSupported(flag) {

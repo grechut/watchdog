@@ -1,6 +1,8 @@
 import SimplePeer from 'simple-peer';
-import firebase from '../lib/firebase';
-import Constants from '../constants';
+
+import firebase from 'lib/firebase';
+
+import Constants from 'constants';
 
 const Actions = {
   // TODO: wait till device is online before trying to connect

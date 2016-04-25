@@ -1,6 +1,7 @@
 import Firebase from 'firebase';
-import Constants from '../constants';
 import { routeActions } from 'react-router-redux';
+
+import Constants from 'constants';
 
 const ref = new Firebase(process.env.FIREBASE_URL);
 

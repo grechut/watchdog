@@ -1,10 +1,13 @@
 import Rx from 'rxjs/Rx';
 import moment from 'moment';
-import Constants from '../constants';
-import detectors from '../lib/detectors';
-import MotionDetector from '../lib/detectors/motion';
-import NoiseDetector from '../lib/detectors/noise';
-import PushNotificationActions from '../actions/push-notification';
+
+import detectors from 'lib/detectors';
+import MotionDetector from 'lib/detectors/motion';
+import NoiseDetector from 'lib/detectors/noise';
+
+import Constants from 'constants';
+
+import PushNotificationActions from 'actions/push-notification';
 
 const Actions = {
   getLocalMediaStream(deviceId) {

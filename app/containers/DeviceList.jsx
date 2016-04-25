@@ -7,9 +7,9 @@ import { FABButton, Icon } from 'react-mdl/lib';
 import { Link } from 'react-router';
 import _ from 'lodash';
 
-import DeviceActions from '../actions/devices';
+import DeviceActions from 'actions/devices';
 
-import LayoutContainer from './LayoutContainer';
+import LayoutContainer from 'containers/LayoutContainer';
 
 class DeviceList extends React.Component {
   componentDidMount() {
