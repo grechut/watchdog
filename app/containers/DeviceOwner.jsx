@@ -41,7 +41,7 @@ class DeviceOwner extends Component {
     if (!device) { return null; }
 
     return (
-      <LayoutContainer title={`Device: ${device.name} (${device.uid})`}>
+      <LayoutContainer title={`Device: ${device.name}`}>
         <Grid>
           <Cell col={12} shadow={2} align="middle">
             <Video src={device.localStream} />
