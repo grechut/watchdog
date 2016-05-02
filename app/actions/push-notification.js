@@ -186,19 +186,18 @@ const Actions = {
     };
   },
 
-  // TODO: make sure that only owner can send notifications
   send(deviceId, payload) {
-    return (dispatch) => {
-      dispatch({
-        type: Constants.PUSH_NOTIFICATION_SEND,
-        payload: { deviceId, payload },
-      });
+    return (dispatch, getState) => {
+      const state = getState();
+
+      // used for not sending push notification to the owner itself
+      const ownerEndpointUrl = state.pushNotification.url;
 
       const url = `${window.location.origin}/devices/${deviceId}`;
       const incidentRef = firebase.child(`incidents/${deviceId}`).push();
       incidentRef.set(payload);
 
-      return fetch(`/api/devices/${deviceId}/notify`, {
+      fetch(`/api/devices/${deviceId}/notify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -206,7 +205,12 @@ const Actions = {
         body: JSON.stringify({
           payload: { ...payload, url },
           secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
+          ownerEndpointUrl,
         }),
+      });
+
+      return dispatch({
+        type: Constants.PUSH_NOTIFICATION_SEND,
       });
     };
   },

@@ -75,6 +75,7 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
   const deviceId = req.params.deviceId;
   const payload = req.body.payload;
   const secretToken = req.body.secretToken;
+  const ownerEndpointUrl = req.body.ownerEndpointUrl;
   const TTL = 60 * 60;
   const endpointsUrl =
     `${process.env.FIREBASE_URL}/devices/${deviceId}/push_notification_endpoints.json`;
@@ -104,6 +105,7 @@ app.post('/api/devices/:deviceId/notify', (req, res) => {
       _(jsons)
         .map((endpoint) => _.values(endpoint))
         .flatten()
+        .filter((e) => e.url !== ownerEndpointUrl)
         .uniqBy('url')
     )
     .then((subscriptions) => {
