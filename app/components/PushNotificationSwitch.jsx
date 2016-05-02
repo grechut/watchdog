@@ -5,8 +5,6 @@ import Switch from 'react-mdl/lib/Switch';
 export default function PushNotificationSwitch(props) {
   const { checked, disabled, onChange } = props;
 
-  console.log('PushNotificationSwitch', checked);
-
   return (
     <Grid>
       <Cell col={10}>
