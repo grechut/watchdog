@@ -77,3 +77,10 @@ html, body {
   margin: 100px auto;
   text-align: center;
 }
+
+/* InsidentList */
+
+.incident-list {
+  height: 200px;
+  overflow-y: scroll;
+}

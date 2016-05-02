@@ -1,14 +1,17 @@
 import React, { PropTypes } from 'react';
-import { ListItemContent } from 'react-mdl/lib/List';
-import moment from 'moment';
+import { ListItem, ListItemContent } from 'react-mdl/lib/List';
+// import moment from 'moment';
 
 export default function IncidentListItem(props) {
   const { incident } = props;
 
   return (
-    <ListItemContent subtitle={incident.message} icon={icon(incident.code)}>
-      {moment(incident.triggeredAt).format('HH:mm:ss')}
-    </ListItemContent>
+    <ListItem>
+      <ListItemContent subtitle={incident.message} icon={icon(incident.code)}>
+        {/* Right now we're double displaying date
+          moment(incident.triggeredAt).format('HH:mm:ss')*/}
+      </ListItemContent>
+    </ListItem>
   );
 }
 

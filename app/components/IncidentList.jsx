@@ -21,9 +21,7 @@ function IncidentList(props) {
   const nonEmptyList = (
     <List>
       {incidentIds.map((id) =>
-        <ListItem key={id} twoLine>
-          <IncidentListItem incident={incidents[id]} />
-        </ListItem>
+        <IncidentListItem key={id} incident={incidents[id]} />
       )}
     </List>
   );
@@ -32,7 +30,11 @@ function IncidentList(props) {
   return (
     <Grid component={CardText} noSpacing>
       <Cell component="h4" col={12}>Incidents</Cell>
-      <Cell col={12}>{list}</Cell>
+      <Cell col={12}>
+        <div className="incident-list">
+          {list}
+        </div>
+      </Cell>
     </Grid>
   );
 }
