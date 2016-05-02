@@ -59,7 +59,7 @@ const config = module.exports = {
 };
 
 if (process.env.NODE_ENV === 'dev') {
-  config.devtool = 'eval';
+  config.devtool = 'cheap-eval-source-map';
 }
 
 // Minify files with uglifyjs in production
