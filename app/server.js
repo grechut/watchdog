@@ -24,12 +24,8 @@ app.use(express.static(`${__dirname}/public`));
 
 webPush.setGCMAPIKey(process.env.GCM_API_KEY);
 
-if (process.env.NODE_ENV === 'production') {
-  // TODO temporary and ugly solution
-  app.get(['/static/bundle.js'], (req, res) => {
-    res.sendFile(`${__dirname}/static/bundle.js`);
-  });
-} else {
+// TODO temporary and ugly solution
+if (process.env.NODE_ENV === 'dev') {
   const webpack = require('webpack');
   const webpackDevMiddleware = require('webpack-dev-middleware');
   const webpackHotMiddleware = require('webpack-hot-middleware');
@@ -41,6 +37,11 @@ if (process.env.NODE_ENV === 'production') {
     publicPath: config.output.publicPath,
   }));
   app.use(webpackHotMiddleware(compiler));
+} else {
+  // TODO temporary and ugly solution
+  app.get(['/static/bundle.js'], (req, res) => {
+    res.sendFile(`${__dirname}/static/bundle.js`);
+  });
 }
 
 // API

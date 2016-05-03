@@ -10,7 +10,6 @@ function web(dest) { return join(`app/${dest}`); }
 const config = module.exports = {
   // our app's entry points
   entry: [
-    'webpack-hot-middleware/client',
     web('index'),
   ],
 
@@ -28,13 +27,11 @@ const config = module.exports = {
 
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         FIREBASE_URL: `"${process.env.FIREBASE_URL}"`,
       },
     }),
-    // new webpack.NoErrorsPlugin(),
   ],
 
   module: {
@@ -58,12 +55,20 @@ const config = module.exports = {
   },
 };
 
+
 if (process.env.NODE_ENV === 'dev') {
   config.devtool = 'cheap-eval-source-map';
-}
 
-// Minify files with uglifyjs in production
-if (process.env.NODE_ENV === 'production') {
+  config.entry.push(
+    'webpack-hot-middleware/client'
+  );
+
+  config.plugins.push(
+    new webpack.HotModuleReplacementPlugin()
+  );
+} else {
+  // TODO Locally, when running via webpack command NODE_ENV var is not available.
+  // We need to reorganize this config + HMR..
   config.plugins.push(
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({ minimize: true })
