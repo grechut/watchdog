@@ -8,8 +8,6 @@ shrinkwrapCheck();
 
 const env = process.env.NODE_ENV || 'dev';
 
-console.log('NODE_ENV', process.env.NODE_ENV);
-
 function join(dest) { return path.resolve(__dirname, dest); }
 function web(dest) { return join(`app/${dest}`); }
 
