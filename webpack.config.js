@@ -1,19 +1,24 @@
+require('dotenv').load();
+
 const path = require('path');
 const webpack = require('webpack');
 const shrinkwrapCheck = require('./shrinkwrap-check');
 
 shrinkwrapCheck();
 
+const env = process.env.NODE_ENV || 'dev';
+
+console.log('NODE_ENV', process.env.NODE_ENV);
+
 function join(dest) { return path.resolve(__dirname, dest); }
 function web(dest) { return join(`app/${dest}`); }
 
 const config = module.exports = {
-  // our app's entry points
+
   entry: [
     web('index'),
   ],
 
-  // where webpack should output our files
   output: {
     path: web('static'),
     filename: 'bundle.js',
@@ -55,22 +60,19 @@ const config = module.exports = {
   },
 };
 
+const initializeEnv = {
+  dev: (config) => {
+    config.devtool = 'cheap-eval-source-map';
+    config.entry.push('webpack-hot-middleware/client');
+    config.plugins.push(new webpack.HotModuleReplacementPlugin());
+  },
 
-if (process.env.NODE_ENV === 'dev') {
-  config.devtool = 'cheap-eval-source-map';
-
-  config.entry.push(
-    'webpack-hot-middleware/client'
-  );
-
-  config.plugins.push(
-    new webpack.HotModuleReplacementPlugin()
-  );
-} else {
-  // TODO Locally, when running via webpack command NODE_ENV var is not available.
-  // We need to reorganize this config + HMR..
-  config.plugins.push(
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin({ minimize: true })
-  );
+  production: (config) => {
+    config.plugins.push(
+      new webpack.optimize.DedupePlugin(),
+      new webpack.optimize.UglifyJsPlugin({ minimize: true })
+    );
+  }
 }
+
+initializeEnv[env](config);

@@ -1,5 +1,7 @@
 require('dotenv').load();
 
+const env = process.env.NODE_ENV || 'dev';
+
 const express = require('express');
 const app = express();
 
@@ -15,26 +17,29 @@ app.use(compression());
 app.use(morgan('dev'));
 app.use(express.static(`${__dirname}/public`));
 
+const initializeEnv = {
+  dev: (app) => {
+    const webpack = require('webpack');
+    const webpackDevMiddleware = require('webpack-dev-middleware');
+    const webpackHotMiddleware = require('webpack-hot-middleware');
+    const config = require('../webpack.config');
+    const compiler = webpack(config);
 
-// TODO temporary and ugly solution
-if (process.env.NODE_ENV === 'dev') {
-  const webpack = require('webpack');
-  const webpackDevMiddleware = require('webpack-dev-middleware');
-  const webpackHotMiddleware = require('webpack-hot-middleware');
-  const config = require('../webpack.config');
-  const compiler = webpack(config);
+    app.use(webpackDevMiddleware(compiler, {
+      noInfo: true,
+      publicPath: config.output.publicPath,
+    }));
+    app.use(webpackHotMiddleware(compiler));
+  },
 
-  app.use(webpackDevMiddleware(compiler, {
-    noInfo: true,
-    publicPath: config.output.publicPath,
-  }));
-  app.use(webpackHotMiddleware(compiler));
-} else {
-  // TODO temporary and ugly solution
-  app.get(['/static/bundle.js'], (req, res) => {
-    res.sendFile(`${__dirname}/static/bundle.js`);
-  });
+  production: (app) => {
+    app.get(['/static/bundle.js'], (req, res) => {
+      res.sendFile(`${__dirname}/static/bundle.js`);
+    });
+  }
 }
+
+initializeEnv[env](app);
 
 require('./api')(app);
 
@@ -47,6 +52,6 @@ app.listen(port, (error) => {
   if (error) {
     console.error(error);
   } else {
-    console.info(`==> 🌎  Listening on port ${port}. Open up http://localhost:${port}/ in your browser.`);
+    console.info(`==> Running on http://localhost:${port}/`);
   }
 });
