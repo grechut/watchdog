@@ -8,7 +8,7 @@ import AuthActions from 'actions/auth';
 
 import User from 'components/User';
 
-export default function LayoutContainer(props) {
+function LayoutContainer(props) {
   const { children, dispatch, auth, title } = props;
 
   return (
