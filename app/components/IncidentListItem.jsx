@@ -1,31 +1,14 @@
 import React, { PropTypes } from 'react';
-import { ListItem, ListItemContent } from 'react-mdl/lib/List';
-// import moment from 'moment';
+import moment from 'moment';
 
 export default function IncidentListItem(props) {
   const { incident } = props;
 
   return (
-    <ListItem>
-      <ListItemContent subtitle={incident.message} icon={icon(incident.code)}>
-        {/* Right now we're double displaying date
-          moment(incident.triggeredAt).format('HH:mm:ss')*/}
-      </ListItemContent>
-    </ListItem>
+    <li>
+      <span>{moment(incident.triggeredAt).fromNow()}: <b>{incident.message}</b></span>
+    </li>
   );
-}
-
-function icon(code) {
-  switch (code) {
-    case 'motion_started':
-    case 'noise_started':
-      return 'alarm';
-    case 'motion_stopped':
-    case 'noise_stopped':
-      return 'alarm_off';
-    default:
-      return null;
-  }
 }
 
 IncidentListItem.propTypes = {

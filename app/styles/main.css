@@ -78,9 +78,9 @@ html, body {
   text-align: center;
 }
 
-/* InsidentList */
+/* IncidentList */
 
 .incident-list {
-  height: 200px;
+  height: 300px;
   overflow-y: scroll;
 }
