@@ -28,7 +28,7 @@ function IncidentList(props) {
   const list = incidentIds.length ? nonEmptyList : emptyList;
 
   return (
-    <Grid component={CardText} noSpacing>
+    <Grid component={CardText}>
       <Cell component="h4" col={12}>Incidents</Cell>
       <Cell col={12}>
         <div className="incident-list">

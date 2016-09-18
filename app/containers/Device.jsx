@@ -62,16 +62,14 @@ class Device extends Component {
     return (
       <LayoutContainer title={`Device: ${device.name}`}>
         <Grid>
-          <Cell col={12} shadow={2} align="middle">
+          <Cell col={6} shadow={2}>
             <Video src={device.remoteStream} />
-          </Cell>
 
-          <Cell component={Card} col={12} shadow={2} align="middle">
             <IncidentList incidents={incidentsForDevice} />
           </Cell>
 
-          { /* TODO: move to separate settings page */ }
-          <Cell component={Card} col={12} shadow={2} align="middle">
+          <Cell component={Card} col={6} shadow={2}>
+
             <Grid component={CardText} noSpacing>
               <Cell component="h4" col={12}>Settings</Cell>
               <Cell col={12}>
@@ -89,6 +87,7 @@ class Device extends Component {
                 )}
               </Cell>
             </Grid>
+
           </Cell>
         </Grid>
       </LayoutContainer>

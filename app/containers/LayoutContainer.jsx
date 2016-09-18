@@ -25,7 +25,7 @@ function LayoutContainer(props) {
         </Drawer>
       <Content>
         <Grid className="content">
-          <Cell col={8} tablet={12} align="middle">
+          <Cell col={10} tablet={12} align="middle">
             {children}
           </Cell>
         </Grid>
