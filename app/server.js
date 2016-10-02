@@ -18,7 +18,7 @@ app.use(morgan('dev'));
 app.use(express.static(`${__dirname}/public`));
 
 const initializeEnv = {
-  dev: (app) => {
+  dev: () => {
     const webpack = require('webpack');
     const webpackDevMiddleware = require('webpack-dev-middleware');
     const webpackHotMiddleware = require('webpack-hot-middleware');
@@ -32,12 +32,12 @@ const initializeEnv = {
     app.use(webpackHotMiddleware(compiler));
   },
 
-  production: (app) => {
+  production: () => {
     app.get(['/static/bundle.js'], (req, res) => {
       res.sendFile(`${__dirname}/static/bundle.js`);
     });
-  }
-}
+  },
+};
 
 initializeEnv[env](app);
 
