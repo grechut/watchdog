@@ -1,8 +1,8 @@
 import SimplePeer from 'simple-peer';
 
-import firebase from 'lib/firebase';
+import { rootRef } from '../lib/firebase';
 
-import Constants from 'constants';
+import Constants from '../constants';
 
 const Actions = {
   // TODO: wait till device is online before trying to connect
@@ -17,7 +17,7 @@ const Actions = {
       };
       const { peer, devices } = getState();
       const device = devices[deviceId];
-      const signalingRef = firebase.child('webrtc/messages');
+      const signalingRef = rootRef.child('webrtc/messages');
       const connection = new SimplePeer({
         initiator: true,
         offerConstraints,
@@ -49,7 +49,7 @@ const Actions = {
         console.log('WebRTC: signal received', message);
 
         // Remove message now that it's fetched
-        snapshot.ref().remove();
+        snapshot.ref.remove();
 
         connection.signal(message.payload);
       });
@@ -65,7 +65,7 @@ const Actions = {
 
       const { peer, devices } = getState();
       const device = devices[deviceId];
-      const signalingRef = firebase.child('webrtc/messages');
+      const signalingRef = rootRef.child('webrtc/messages');
       const connections = {};
       const me = peer.id;
 
@@ -95,7 +95,7 @@ const Actions = {
         }
 
         // Remove message now that it's fetched
-        snapshot.ref().remove();
+        snapshot.ref.remove();
 
         connection.signal(message.payload);
 
@@ -110,7 +110,7 @@ const Actions = {
 };
 
 function setupConnection(connection, { from, to }) {
-  const signalingRef = firebase.child('webrtc/messages').child(to);
+  const signalingRef = rootRef.child('webrtc/messages').child(to);
 
   connection.on('connect', () => {
     console.log(`WebRTC: connected to ${to}`);

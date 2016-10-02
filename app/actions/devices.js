@@ -1,8 +1,8 @@
 import { routeActions } from 'react-router-redux';
 
-import firebase from 'lib/firebase';
+import { rootRef } from '../lib/firebase';
 
-import Constants from 'constants';
+import Constants from '../constants';
 
 const Actions = {
   createDevice(name) {
@@ -26,7 +26,7 @@ const Actions = {
           name,
         }),
       })
-      .then((res) => res.json())
+      .then(res => res.json())
       .then((json) => {
         const { deviceId, secretToken } = json;
 
@@ -41,12 +41,12 @@ const Actions = {
   bindToDevices() {
     return (dispatch, getState) => {
       const { auth } = getState();
-      const devicesRef = firebase.child(`users/${auth.uid}/devices`);
+      const devicesRef = rootRef.child(`users/${auth.uid}/devices`);
 
       // TODO: listen to child_removed, child_changed as well?
       devicesRef.on('child_added', (deviceIdSnapshot) => {
-        const deviceId = deviceIdSnapshot.key();
-        const deviceRef = firebase.child(`devices/${deviceId}`);
+        const deviceId = deviceIdSnapshot.key;
+        const deviceRef = rootRef.child(`devices/${deviceId}`);
 
         deviceRef.once('value', (deviceSnapshot) => {
           const device = deviceSnapshot.val();
@@ -60,7 +60,7 @@ const Actions = {
   unbindFromDevices() {
     return (dispatch, getState) => {
       const { auth } = getState();
-      const devicesRef = firebase.child(`users/${auth.uid}/devices`);
+      const devicesRef = rootRef.child(`users/${auth.uid}/devices`);
 
       devicesRef.off('child_added');
     };
@@ -68,7 +68,7 @@ const Actions = {
 
   fetchDevice(deviceId) {
     return (dispatch) => {
-      const deviceRef = firebase.child(`/devices/${deviceId}`);
+      const deviceRef = rootRef.child(`/devices/${deviceId}`);
 
       // Return a promise
       return deviceRef.once('value', (snapshot) => {
@@ -80,7 +80,7 @@ const Actions = {
 
   bindToDevice(deviceId) {
     return (dispatch) => {
-      const deviceRef = firebase.child(`/devices/${deviceId}`);
+      const deviceRef = rootRef.child(`/devices/${deviceId}`);
 
       deviceRef.on('value', (snapshot) => {
         const device = snapshot.val();
@@ -93,14 +93,14 @@ const Actions = {
   },
 
   unbindFromDevice(deviceId) {
-    const deviceRef = firebase.child(`/devices/${deviceId}`);
+    const deviceRef = rootRef.child(`/devices/${deviceId}`);
     deviceRef.off('value');
   },
 
   syncOnlineStatus(deviceId) {
     return () => {
-      const connectedRef = firebase.child('.info/connected');
-      const deviceRef = firebase.child(`/devices/${deviceId}`);
+      const connectedRef = rootRef.child('.info/connected');
+      const deviceRef = rootRef.child(`/devices/${deviceId}`);
 
       connectedRef.on('value', (snapshot) => {
         if (snapshot.val()) {

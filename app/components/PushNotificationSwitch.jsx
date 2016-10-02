@@ -15,7 +15,8 @@ export default function PushNotificationSwitch(props) {
         </label>
       </Cell>
       <Cell col={2}>
-        <Switch ripple
+        <Switch
+          ripple
           checked={checked}
           disabled={disabled}
           onChange={onChange}

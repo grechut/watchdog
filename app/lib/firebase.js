@@ -1,5 +1,12 @@
-import Firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 
-const ref = new Firebase(process.env.FIREBASE_URL);
+firebase.initializeApp({
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
+});
 
-export default ref;
+export const rootRef = firebase.database().ref();
+export default firebase;

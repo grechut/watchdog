@@ -7,9 +7,8 @@ import { FABButton, Icon } from 'react-mdl/lib';
 import { Link } from 'react-router';
 import _ from 'lodash';
 
-import DeviceActions from 'actions/devices';
-
-import LayoutContainer from 'containers/LayoutContainer';
+import DeviceActions from '../actions/devices';
+import LayoutContainer from '../containers/LayoutContainer';
 
 class DeviceList extends React.Component {
   componentDidMount() {
@@ -35,27 +34,25 @@ class DeviceList extends React.Component {
       <List>
         <ListItem>
           <ListItemContent>
-            You don't have any devices yet.
+            You don&apos;t have any devices yet.
           </ListItemContent>
         </ListItem>
       </List>
     );
     const nonEmptyList = (
       <List>
-        {_.values(devices).map((device) =>
-          (
-            <ListItem key={device.uid}>
-              <ListItemContent>
-                <Link to={`/devices/${device.uid}`}>
-                  { device.uid === ownedDeviceId ?
-                      `${device.name} (this device)`
-                      : device.name
-                  }
-                </Link>
-              </ListItemContent>
-            </ListItem>
-          )
-        )}
+        {_.values(devices).map(device => (
+          <ListItem key={device.uid}>
+            <ListItemContent>
+              <Link to={`/devices/${device.uid}`}>
+                { device.uid === ownedDeviceId ?
+                    `${device.name} (this device)`
+                    : device.name
+                }
+              </Link>
+            </ListItemContent>
+          </ListItem>
+        ))}
       </List>
     );
 
@@ -84,13 +81,11 @@ class DeviceList extends React.Component {
 
 DeviceList.propTypes = {
   dispatch: PropTypes.func,
-  auth: PropTypes.object,
   devices: PropTypes.object,
 };
 
 function mapStateToProps(state) {
   return {
-    auth: state.auth,
     devices: state.devices,
   };
 }

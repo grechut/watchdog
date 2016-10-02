@@ -1,16 +1,15 @@
-import firebase from 'lib/firebase';
+import firebase from '../lib/firebase';
+import Constants from '../constants';
 
-import Constants from 'constants';
+const initialState = userToState(firebase.auth().currentUser);
 
-const initialState = authDataToState(firebase.getAuth());
-
-function authDataToState(authData) {
+function userToState(user) {
   return {
-    uid: authData ? authData.uid : null,
-    name: authData ? authData.google.displayName : null,
-    avatarUrl: authData ? authData.google.profileImageURL : null,
-    email: authData ? authData.google.email : null,
-    state: authData ? Constants.AUTH_SIGNED_IN : Constants.AUTH_SIGNED_OUT,
+    uid: user ? user.uid : null,
+    name: user ? user.providerData[0].displayName : null,
+    avatarUrl: user ? user.providerData[0].photoURL : null,
+    email: user ? user.providerData[0].email : null,
+    state: user ? Constants.AUTH_SIGNED_IN : Constants.AUTH_SIGNED_OUT,
   };
 }
 
@@ -19,20 +18,20 @@ export default function reducer(state = initialState, action) {
     case Constants.AUTH_SIGN_IN_PENDING:
       return {
         ...state,
-        ...authDataToState(null),
+        ...userToState(null),
         state: Constants.AUTH_SIGN_IN_PENDING,
       };
     case Constants.AUTH_SIGN_IN: {
-      const authData = action.payload.authData;
+      const user = action.payload.user;
       return {
         ...state,
-        ...authDataToState(authData),
+        ...userToState(user),
       };
     }
     case Constants.AUTH_SIGN_OUT:
       return {
         ...state,
-        ...authDataToState(null),
+        ...userToState(null),
       };
     default:
       return state;

@@ -1,3 +1,5 @@
+/* eslint import/no-extraneous-dependencies: "off" */
+
 require('dotenv').load();
 
 const path = require('path');
@@ -28,7 +30,9 @@ const config = module.exports = {
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
-        FIREBASE_URL: `"${process.env.FIREBASE_URL}"`,
+        FIREBASE_AUTH_DOMAIN: `"${process.env.FIREBASE_AUTH_DOMAIN}"`,
+        FIREBASE_DATABASE_URL: `"${process.env.FIREBASE_DATABASE_URL}"`,
+        FIREBASE_API_KEY: `"${process.env.FIREBASE_API_KEY}"`,
       },
     }),
   ],

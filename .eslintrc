@@ -1,21 +1,13 @@
 {
   "extends": "airbnb",
 
-  "parserOptions": {
-    "ecmaFeatures": {
-      "experimentalObjectRestSpread": true,
-    },
+  "env": {
+    "browser": true,
   },
 
   "rules": {
-    "no-undef": 2,                          // http://eslint.org/docs/rules/no-undef
     "no-use-before-define": [2, "nofunc"],  // http://eslint.org/docs/rules/no-use-before-define
 
-    "object-curly-spacing": [2, "always"],  // http://eslint.org/docs/rules/object-curly-spacing
-    "space-before-function-paren": [2, {    // http://eslint.org/docs/rules/space-before-function-paren
-      "anonymous": "always",
-      "named": "never",
-    }],
     "no-unused-expressions": [2, {
       "allowTernary": true,
     }],
@@ -23,10 +15,14 @@
       "args": "after-used",
       "argsIgnorePattern": "^_",
     }],
-    "func-names": 0,
-    "no-console": 0,
+
+    "no-underscore-dangle": 0,
+
+    "no-console": "off",
+    "func-names": "off",
 
     // JSX
     "react/jsx-no-bind": 0,                 // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-bind.md
+    "react/forbid-prop-types": 0,           // temporarily
   },
 }

@@ -1,14 +1,12 @@
 require('dotenv').load();
 
-const env = process.env.NODE_ENV || 'dev';
-
 const express = require('express');
-const app = express();
-
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const morgan = require('morgan');
 
+const app = express();
+const env = process.env.NODE_ENV || 'dev';
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,10 +17,13 @@ app.use(express.static(`${__dirname}/public`));
 
 const initializeEnv = {
   dev: () => {
+    /* eslint-disable global-require, import/no-extraneous-dependencies */
     const webpack = require('webpack');
     const webpackDevMiddleware = require('webpack-dev-middleware');
     const webpackHotMiddleware = require('webpack-hot-middleware');
     const config = require('../webpack.config');
+    /* eslint-enable global-require, import/no-extraneous-dependencies */
+
     const compiler = webpack(config);
 
     app.use(webpackDevMiddleware(compiler, {

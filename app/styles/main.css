@@ -10,6 +10,13 @@ html, body {
   justify-content: center;
 }
 
+button.link {
+  border: none;
+  text-align: left;
+  background-color: transparent;
+  cursor: pointer;
+}
+
 /* Card */
 .mdl-card .mdl-card__supporting-text {
     margin: 40px;

@@ -5,6 +5,7 @@ export default function Avatar(props) {
 
   return (
     <img
+      alt="avatar"
       className="user__avatar"
       src={src}
     />

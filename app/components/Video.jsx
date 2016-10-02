@@ -17,7 +17,7 @@ export default class Video extends React.Component {
 
   setSource() {
     const stream = this.props.src;
-    const video = this.refs.video;
+    const video = this.video;
 
     if (stream) {
       video.setAttribute('autoplay', true);
@@ -37,7 +37,7 @@ export default class Video extends React.Component {
       <div className={classes}>
         {
           src ?
-            <video ref="video"></video>
+            <video ref={(c) => { this.video = c; }} />
           :
             <Icon name="videocam_off" />
         }

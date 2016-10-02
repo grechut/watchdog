@@ -2,25 +2,28 @@ const _ = require('lodash');
 const webPush = require('web-push');
 const fetch = require('node-fetch');
 const uuid = require('uuid');
-const Firebase = require('firebase');
+const firebase = require('firebase');
 
-const firebaseRef = new Firebase(process.env.FIREBASE_URL);
+firebase.initializeApp({
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
+});
+const firebaseRef = firebase.database().ref();
 
 webPush.setGCMAPIKey(process.env.GCM_API_KEY);
 
-
 module.exports = (app) => {
-
   app.post('/api/devices/create', (req, res) => {
-    const peerId = req.body.peerId,
-      authUid = req.body.authUid,
-      name = req.body.name;
+    const peerId = req.body.peerId;
+    const authUid = req.body.authUid;
+    const name = req.body.name;
 
     const deviceRef = firebaseRef.child('/devices').push();
-    const deviceId = deviceRef.key();
+    const deviceId = deviceRef.key;
     deviceRef.set({
       uid: deviceId,
-      name: name,
+      name,
       online: true,
       peerId,
     });
@@ -50,24 +53,24 @@ module.exports = (app) => {
     // TODO: simplify by changing data structure stored in Firebase
     verifyOwnership(deviceId, secretToken)
       .then(() => fetch(endpointsUrl))
-      .then((response) => response.json())
+      .then(response => response.json())
       // If there are no subscribed devices, json will be null
-      .then((json) => (json ? Object.keys(json) : []))
-      .then((userIds) => _(userIds).uniq().map((userId) =>
+      .then(json => (json ? Object.keys(json) : []))
+      .then(userIds => _(userIds).uniq().map(userId =>
         `${process.env.FIREBASE_URL}/users/${userId}/push_notification_endpoints.json`
       ))
-      .then((userUrls) =>
+      .then(userUrls =>
         Promise.all(userUrls.map(fetch))
       )
-      .then((responses) =>
-        Promise.all(responses.map((response) => response.json()))
+      .then(responses =>
+        Promise.all(responses.map(response => response.json()))
       )
-      .then((jsons) =>
+      .then(jsons =>
         // Mapping from Firebase strange data structure to plain array of endpoint urls
         _(jsons)
-          .map((endpoint) => _.values(endpoint))
+          .map(endpoint => _.values(endpoint))
           .flatten()
-          .filter((e) => e.url !== ownerEndpointUrl)
+          .filter(e => e.url !== ownerEndpointUrl)
           .uniqBy('url')
       )
       .then((subscriptions) => {
@@ -101,13 +104,13 @@ module.exports = (app) => {
     verifyOwnership(deviceId, secretToken)
       .then(() => res.sendStatus(200));
   });
-}
+};
 
 
 function verifyOwnership(deviceId, secretToken) {
-  const secretTokenEndpoint = `${process.env.FIREBASE_URL}/secretTokens/${deviceId}.json`;
+  const secretTokenEndpoint = `${process.env.FIREBASE_DATABASE_URL}/secretTokens/${deviceId}.json`;
   return fetch(secretTokenEndpoint)
-    .then((response) => response.json())
+    .then(response => response.json())
     .then((json) => {
       if (json.token !== secretToken) {
         throw new Error('Invalid device secret token');
