@@ -6,9 +6,8 @@ import Button from 'react-mdl/lib/Button';
 import Textfield from 'react-mdl/lib/Textfield';
 import _ from 'lodash';
 
-import DeviceActions from 'actions/devices';
-
-import LayoutContainer from 'containers/LayoutContainer';
+import DeviceActions from '../actions/devices';
+import LayoutContainer from '../containers/LayoutContainer';
 
 class DeviceNew extends Component {
 
@@ -32,7 +31,7 @@ class DeviceNew extends Component {
         <div className="app">
 
           <Textfield
-            onChange={ (e) => { this.setState({ deviceName: e.target.value }); } }
+            onChange={(e) => { this.setState({ deviceName: e.target.value }); }}
             label="Device name"
             value={this.state.deviceName}
             floatingLabel
@@ -40,7 +39,10 @@ class DeviceNew extends Component {
 
           <br />
 
-          <Button raised accent ripple
+          <Button
+            raised
+            accent
+            ripple
             onClick={this.createDevice.bind(this)}
             className="btn btn-success"
           >

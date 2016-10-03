@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
-import firebase from 'lib/firebase';
+import { rootRef } from '../lib/firebase';
 
-import Constants from 'constants';
+import Constants from '../constants';
 
 const Actions = {
   setSupported(flag) {
@@ -42,12 +42,12 @@ const Actions = {
 
         // Add endpoint data to user's record unless it already exists
         const endpointsPath = `/users/${auth.uid}/push_notification_endpoints`;
-        const endpointsRef = firebase.child(endpointsPath);
+        const endpointsRef = rootRef.child(endpointsPath);
 
         endpointsRef.once('value', (snapshot) => {
           const endpointExists = _(snapshot.val())
             .values()
-            .some((endpoint) => endpoint.url === url);
+            .some(endpoint => endpoint.url === url);
 
           if (!endpointExists) {
             endpointsRef.push(payload);
@@ -65,11 +65,11 @@ const Actions = {
   },
 
   subscribe() {
-    return (dispatch) =>
+    return dispatch =>
       navigator
         .serviceWorker
         .getRegistration()
-        .then((registration) =>
+        .then(registration =>
           registration
             .pushManager
             .getSubscription()
@@ -82,7 +82,7 @@ const Actions = {
               return registration
                 .pushManager
                 .subscribe({ userVisibleOnly: true })
-                .then((subscription) =>
+                .then(subscription =>
                   dispatch(this.setSubscription(subscription))
                 )
                 .catch((error) => {
@@ -100,11 +100,11 @@ const Actions = {
   },
 
   unsubscribe() {
-    return (dispatch) =>
+    return dispatch =>
       navigator
         .serviceWorker
         .getRegistration()
-        .then((registration) =>
+        .then(registration =>
           registration
             .pushManager
             .getSubscription()
@@ -132,7 +132,7 @@ const Actions = {
         .then((subscription) => {
           if (subscription) {
             // Add user id to device
-            const deviceRef = firebase.child(`/devices/${deviceId}/push_notification_endpoints`);
+            const deviceRef = rootRef.child(`/devices/${deviceId}/push_notification_endpoints`);
             deviceRef.update({ [auth.uid]: true }, onSet);
           }
         });
@@ -155,7 +155,7 @@ const Actions = {
       });
 
       const { auth } = getState();
-      const deviceRef = firebase.child(`/devices/${deviceId}`);
+      const deviceRef = rootRef.child(`/devices/${deviceId}`);
       const endpointsRef = deviceRef.child(`/push_notification_endpoints/${auth.uid}`);
       endpointsRef.remove(onRemove);
 
@@ -194,7 +194,7 @@ const Actions = {
       const ownerEndpointUrl = state.pushNotification.url;
 
       const url = `${window.location.origin}/devices/${deviceId}`;
-      const incidentRef = firebase.child(`incidents/${deviceId}`).push();
+      const incidentRef = rootRef.child(`incidents/${deviceId}`).push();
       incidentRef.set(payload);
 
       fetch(`/api/devices/${deviceId}/notify`, {

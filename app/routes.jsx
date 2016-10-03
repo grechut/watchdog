@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, IndexRoute } from 'react-router';
+import { IndexRoute, Redirect, Route } from 'react-router';
 import firebase from './lib/firebase';
 
 import App from './containers/App';
@@ -21,21 +21,24 @@ export default function routes(store) {
       <Route path="devices" onEnter={requireAuth}>
         <IndexRoute component={DeviceList} />
         <Route path="new" component={DeviceNew} />
-        <Route path=":deviceId"
+        <Route
+          path=":deviceId"
           component={Device}
-          onEnter={fetchDevice /* requireNoOwnership */}
+          onEnter={fetchDevice}
         />
         <Route
           path=":deviceId/device"
           component={DeviceOwner}
-          onEnter={fetchDevice /* requireOwnership */}
+          onEnter={fetchDevice}
         />
       </Route>
+
+      <Redirect from="*" to="/" />
     </Route>
   );
 
   function requireAuth(nextState, replace) {
-    if (!firebase.getAuth()) {
+    if (!firebase.auth().currentUser) {
       replace({
         pathname: '/',
         state: { nextPathname: nextState.location.pathname },
@@ -44,7 +47,7 @@ export default function routes(store) {
   }
 
   function requireNoAuth(nextState, replace) {
-    if (firebase.getAuth()) {
+    if (firebase.auth().currentUser) {
       replace({
         pathname: '/devices',
         state: { nextPathname: nextState.location.pathname },

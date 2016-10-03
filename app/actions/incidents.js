@@ -1,6 +1,6 @@
-import firebase from 'lib/firebase';
+import { rootRef } from '../lib/firebase';
 
-import Constants from 'constants';
+import Constants from '../constants';
 
 // TODO: convert ref to a function
 const Actions = {
@@ -19,7 +19,7 @@ const Actions = {
       incidentsRef(deviceId).on('child_added', (snapshot) => {
         const device = { uid: deviceId };
         const incident = {
-          [snapshot.key()]: snapshot.val(),
+          [snapshot.key]: snapshot.val(),
         };
 
         dispatch(this.addIncident(device, incident));
@@ -35,7 +35,7 @@ const Actions = {
 };
 
 function incidentsRef(deviceId) {
-  return firebase
+  return rootRef
     .child(`incidents/${deviceId}`)
     .orderByKey()
     .limitToLast(10);

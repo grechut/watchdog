@@ -13,7 +13,7 @@ self.addEventListener('push', (event) => {
 
   const title = 'Watchdog alert';
   const defaultBody = 'Watchdog has detected something on one of your cameras';
-  const payload = event.data && event.data.json() || {};
+  const payload = (event.data && event.data.json()) || {};
   const body = payload.message || defaultBody;
 
   event.waitUntil(
@@ -38,7 +38,7 @@ self.addEventListener('notificationclick', (event) => {
         type: 'window',
       })
       .then((windowClients) => {
-        for (let i = 0; i < windowClients.length; i++) {
+        for (let i = 0; i < windowClients.length; i += 1) {
           const client = windowClients[i];
 
           if (client.url === url && 'focus' in client) {

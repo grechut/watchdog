@@ -4,7 +4,7 @@ import { syncHistory, routeReducer } from 'react-router-redux';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 
-import reducers from 'reducers';
+import reducers from '../reducers';
 
 const reduxRouterMiddleware = syncHistory(browserHistory);
 const loggerMiddleware = createLogger();
@@ -20,7 +20,7 @@ const reducer = combineReducers(Object.assign({}, reducers, {
 export default function configureStore(initialState) {
   const store = createStore(reducer, initialState, compose(
     middlewares,
-    window.devToolsExtension ? window.devToolsExtension() : (f) => f
+    window.devToolsExtension ? window.devToolsExtension() : f => f
   ));
 
   // Required for replaying actions from devtools to work
@@ -29,7 +29,8 @@ export default function configureStore(initialState) {
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
     module.hot.accept('../reducers', () => {
-      const nextRootReducer = require('../reducers');
+      const nextRootReducer = require('../reducers'); // eslint-disable-line global-require
+
       store.replaceReducer(nextRootReducer);
     });
   }

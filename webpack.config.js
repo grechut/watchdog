@@ -1,10 +1,9 @@
+/* eslint import/no-extraneous-dependencies: "off" */
+
 require('dotenv').load();
 
 const path = require('path');
 const webpack = require('webpack');
-const shrinkwrapCheck = require('./shrinkwrap-check');
-
-shrinkwrapCheck();
 
 const env = process.env.NODE_ENV || 'dev';
 
@@ -12,7 +11,6 @@ function join(dest) { return path.resolve(__dirname, dest); }
 function web(dest) { return join(`app/${dest}`); }
 
 const config = module.exports = {
-
   entry: [
     web('index'),
   ],
@@ -32,7 +30,9 @@ const config = module.exports = {
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
-        FIREBASE_URL: `"${process.env.FIREBASE_URL}"`,
+        FIREBASE_AUTH_DOMAIN: `"${process.env.FIREBASE_AUTH_DOMAIN}"`,
+        FIREBASE_DATABASE_URL: `"${process.env.FIREBASE_DATABASE_URL}"`,
+        FIREBASE_API_KEY: `"${process.env.FIREBASE_API_KEY}"`,
       },
     }),
   ],
@@ -59,18 +59,18 @@ const config = module.exports = {
 };
 
 const initializeEnv = {
-  dev: (config) => {
+  dev: () => {
     config.devtool = 'cheap-eval-source-map';
     config.entry.push('webpack-hot-middleware/client');
     config.plugins.push(new webpack.HotModuleReplacementPlugin());
   },
 
-  production: (config) => {
+  production: () => {
     config.plugins.push(
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({ minimize: true })
     );
-  }
-}
+  },
+};
 
 initializeEnv[env](config);

@@ -1,39 +1,35 @@
-import Firebase from 'firebase';
 import { routeActions } from 'react-router-redux';
-
-import Constants from 'constants';
-
-const ref = new Firebase(process.env.FIREBASE_URL);
+import Constants from '../constants';
+import firebase, { rootRef } from '../lib/firebase';
 
 const Actions = {
   listen() {
     return (dispatch, getState) => {
       const state = getState();
 
-      ref.onAuth((authData) => {
-        if (authData) {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
           // Save user to Firebase
-          const userRef = ref.child(`users/${authData.uid}`);
+          const userRef = rootRef.child(`users/${user.uid}`);
+
           userRef.update({
-            uid: authData.uid,
-            name: authData.google.displayName,
-            email: authData.google.email,
-            avatarUrl: authData.google.profileImageURL,
+            uid: user.uid,
+            name: user.providerData[0].displayName,
+            email: user.providerData[0].email,
+            avatarUrl: user.providerData[0].photoURL,
           });
 
           dispatch({
             type: Constants.AUTH_SIGN_IN,
-            payload: { authData },
+            payload: { user },
           });
-        } else {
-          if (state.auth.state !== Constants.AUTH_SIGNED_OUT) {
-            dispatch({
-              type: Constants.AUTH_SIGN_OUT,
-              payload: { authData },
-            });
+        } else if (state.auth.state !== Constants.AUTH_SIGNED_OUT) {
+          dispatch({
+            type: Constants.AUTH_SIGN_OUT,
+            payload: { user },
+          });
 
-            dispatch(routeActions.push('/'));
-          }
+          dispatch(routeActions.push('/'));
         }
       });
     };
@@ -45,18 +41,17 @@ const Actions = {
         type: Constants.AUTH_SIGN_IN_PENDING,
       });
 
-      ref.authWithOAuthPopup('google', (error) => {
-        if (error) {
-          return dispatch({
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.addScope('email');
+
+      firebase.auth().signInWithPopup(provider)
+        .then(() => dispatch(routeActions.push('/devices')))
+        .catch(error =>
+          dispatch({
             type: Constants.AUTH_SIGN_IN_FAILURE,
             payload: { error },
-          });
-        }
-
-        return dispatch(routeActions.push('/devices'));
-      }, {
-        scope: 'email',
-      });
+          })
+        );
     };
   },
 
@@ -65,7 +60,7 @@ const Actions = {
       dispatch({
         type: Constants.AUTH_SIGN_OUT,
       });
-      ref.unauth();
+      firebase.auth().signOut();
 
       return dispatch(routeActions.push('/'));
     };

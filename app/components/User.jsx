@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 
-import Constants from 'constants';
+import Constants from '../constants';
 
-import Avatar from 'components/Avatar';
+import Avatar from '../components/Avatar';
 
 export default function User(props) {
   const { auth } = props;
