@@ -34,8 +34,8 @@ const initializeEnv = {
   },
 
   production: () => {
-    app.get(['/static/bundle.js'], (req, res) => {
-      res.sendFile(`${__dirname}/static/bundle.js`);
+    app.get(['/js/bundle.js'], (req, res) => {
+      res.sendFile(`${__dirname}/../dist/js/bundle.js`);
     });
   },
 };
@@ -46,7 +46,7 @@ require('./api')(app);
 
 // HTML
 app.get('/*', (req, res) => {
-  res.sendFile(`${__dirname}/index.html`);
+  res.sendFile(`${__dirname}/../dist/index.html`);
 });
 
 app.listen(port, (error) => {

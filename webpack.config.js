@@ -1,9 +1,11 @@
-/* eslint import/no-extraneous-dependencies: "off" */
+/* eslint import/no-extraneous-dependencies: ["error", { devDependencies: true}] */
 
-require('dotenv').load();
+require('dotenv').config({ silent: true });
 
 const path = require('path');
 const webpack = require('webpack');
+const CleanPlugin = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const env = process.env.NODE_ENV || 'dev';
 
@@ -11,31 +13,20 @@ function join(dest) { return path.resolve(__dirname, dest); }
 function web(dest) { return join(`app/${dest}`); }
 
 const config = module.exports = {
-  entry: [
-    web('index'),
-  ],
+  entry: {
+    app: [web('index.jsx')],
+  },
 
   output: {
-    path: web('static'),
-    filename: 'bundle.js',
-    publicPath: '/static/',
+    path: web('../dist'),
+    filename: 'js/[name]-[hash].bundle.js',
+    publicPath: '/',
   },
 
   resolve: {
     root: web(''),
     extensions: ['', '.jsx', '.js'],
   },
-
-  plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.DefinePlugin({
-      'process.env': {
-        FIREBASE_AUTH_DOMAIN: `"${process.env.FIREBASE_AUTH_DOMAIN}"`,
-        FIREBASE_DATABASE_URL: `"${process.env.FIREBASE_DATABASE_URL}"`,
-        FIREBASE_API_KEY: `"${process.env.FIREBASE_API_KEY}"`,
-      },
-    }),
-  ],
 
   module: {
     preLoaders: [{
@@ -50,18 +41,36 @@ const config = module.exports = {
         cacheDirectory: true,
       },
       exclude: /node_modules/,
-      include: __dirname,
     }, {
       test: /\.css$/,
       loader: 'style-loader!css-loader',
     }],
   },
+
+  plugins: [
+    new CleanPlugin(['dist']),
+
+    new HtmlWebpackPlugin({
+      template: web('index.html'),
+      cache: true,
+    }),
+
+    new webpack.optimize.OccurenceOrderPlugin(),
+
+    new webpack.DefinePlugin({
+      'process.env': {
+        FIREBASE_AUTH_DOMAIN: `"${process.env.FIREBASE_AUTH_DOMAIN}"`,
+        FIREBASE_DATABASE_URL: `"${process.env.FIREBASE_DATABASE_URL}"`,
+        FIREBASE_API_KEY: `"${process.env.FIREBASE_API_KEY}"`,
+      },
+    }),
+  ],
 };
 
 const initializeEnv = {
   dev: () => {
     config.devtool = 'cheap-eval-source-map';
-    config.entry.push('webpack-hot-middleware/client');
+    config.entry.app.push('webpack-hot-middleware/client');
     config.plugins.push(new webpack.HotModuleReplacementPlugin());
   },
 
