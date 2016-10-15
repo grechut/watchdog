@@ -9,8 +9,8 @@ import Constants from './constants';
 import configureStore from './store/configureStore';
 import installServiceWorker from './lib/install-sw-push-notifications';
 
-require('../node_modules/react-mdl/extra/material.css');
 require('../node_modules/react-mdl/extra/material.js');
+require('../node_modules/react-mdl/extra/material.css');
 require('./styles/main.css');
 
 const store = configureStore(window.__INITIAL_STATE__ || {});

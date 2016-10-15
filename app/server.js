@@ -6,7 +6,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 
 const app = express();
-const env = process.env.NODE_ENV || 'dev';
+const env = process.env.NODE_ENV || 'development';
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -16,7 +16,7 @@ app.use(morgan('dev'));
 app.use(express.static(`${__dirname}/public`));
 
 const initializeEnv = {
-  dev: () => {
+  development: () => {
     /* eslint-disable global-require, import/no-extraneous-dependencies */
     const webpack = require('webpack');
     const webpackDevMiddleware = require('webpack-dev-middleware');
