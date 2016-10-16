@@ -12,6 +12,9 @@
     "lint": "eslint ./app --ext js --ext jsx",
     "start": "node app/server.js"
   },
+  "engines": {
+    "node": "6.8.1"
+  },
   "dependencies": {
     "body-parser": "1.15.2",
     "classnames": "2.2.5",
