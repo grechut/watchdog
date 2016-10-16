@@ -1,4 +1,4 @@
-import Constants from 'constants';
+import Constants from '../constants';
 
 // TODO: use Reselect for derived data (http://rackt.org/redux/docs/recipes/ComputingDerivedData.html)
 const initialState = {

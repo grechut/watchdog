@@ -8,5 +8,7 @@ firebase.initializeApp({
   databaseURL: process.env.FIREBASE_DATABASE_URL,
 });
 
-export const rootRef = firebase.database().ref();
+const rootRef = firebase.database().ref();
+
+export { rootRef };
 export default firebase;

@@ -16,6 +16,25 @@ function web(dest) { return join(`app/${dest}`); }
 const config = module.exports = {
   entry: {
     app: [web('index.jsx')],
+    vendor: [
+      'classnames',
+      'firebase',
+      'lodash',
+      'moment',
+      'react',
+      'react-dom',
+      'react-mdl',
+      'react-redux',
+      'react-router',
+      'react-router-redux',
+      'redux',
+      'redux-logger',
+      'redux-thunk',
+      'resemblejs',
+      'rxjs',
+      'simple-peer',
+      'uuid',
+    ],
   },
 
   output: {
@@ -57,11 +76,17 @@ const config = module.exports = {
 
     new webpack.DefinePlugin({
       'process.env': {
-        FIREBASE_AUTH_DOMAIN: `"${process.env.FIREBASE_AUTH_DOMAIN}"`,
-        FIREBASE_DATABASE_URL: `"${process.env.FIREBASE_DATABASE_URL}"`,
-        FIREBASE_API_KEY: `"${process.env.FIREBASE_API_KEY}"`,
+        NODE_ENV: `'${process.env.NODE_ENV}'`,
+        FIREBASE_AUTH_DOMAIN: `'${process.env.FIREBASE_AUTH_DOMAIN}'`,
+        FIREBASE_DATABASE_URL: `'${process.env.FIREBASE_DATABASE_URL}'`,
+        FIREBASE_API_KEY: `'${process.env.FIREBASE_API_KEY}'`,
       },
     }),
+
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+    }),
+
   ],
 };
 
