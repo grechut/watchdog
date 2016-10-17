@@ -7,8 +7,7 @@ const initialState = {
   pending: false,
   enabled: true,
   subscribed: false,
-  url: null,
-  key: null,
+  token: null,
 };
 
 export default function reducer(state = initialState, action) {
@@ -28,9 +27,8 @@ export default function reducer(state = initialState, action) {
     case Constants.PUSH_NOTIFICATION_SET_SUBSCRIPTION:
       return {
         ...state,
-        subscribed: !!action.payload.url,
-        url: action.payload.url,
-        key: action.payload.key,
+        subscribed: !!action.payload.token,
+        token: action.payload.token,
         enabled: state.supported && !state.denied,
       };
     case Constants.PUSH_NOTIFICATION_SUBSCRIBE_TO_DEVICE_REQUEST_PENDING:

@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const webPush = require('web-push');
+const FCM = require('fcm-node');
 const fetch = require('node-fetch');
-const uuid = require('uuid');
 const firebase = require('firebase');
+const uuid = require('uuid');
 
 firebase.initializeApp({
   apiKey: process.env.FIREBASE_API_KEY,
@@ -10,8 +10,7 @@ firebase.initializeApp({
   databaseURL: process.env.FIREBASE_DATABASE_URL,
 });
 const firebaseRef = firebase.database().ref();
-
-webPush.setGCMAPIKey(process.env.GCM_API_KEY);
+const fcm = new FCM(process.env.FIREBASE_SERVER_KEY);
 
 module.exports = (app) => {
   app.post('/api/devices/create', (req, res) => {
@@ -45,10 +44,10 @@ module.exports = (app) => {
     const deviceId = req.params.deviceId;
     const payload = req.body.payload;
     const secretToken = req.body.secretToken;
-    const ownerEndpointUrl = req.body.ownerEndpointUrl;
-    const TTL = 60 * 60;
+    const ownerPushToken = req.body.pushToken;
+
     const endpointsUrl =
-      `${process.env.FIREBASE_URL}/devices/${deviceId}/push_notification_endpoints.json`;
+      `${process.env.FIREBASE_DATABASE_URL}/devices/${deviceId}/push_notification_endpoints.json`;
 
     // TODO: simplify by changing data structure stored in Firebase
     verifyOwnership(deviceId, secretToken)
@@ -57,7 +56,7 @@ module.exports = (app) => {
       // If there are no subscribed devices, json will be null
       .then(json => (json ? Object.keys(json) : []))
       .then(userIds => _(userIds).uniq().map(userId =>
-        `${process.env.FIREBASE_URL}/users/${userId}/push_notification_endpoints.json`
+        `${process.env.FIREBASE_DATABASE_URL}/users/${userId}/push_notification_endpoints.json`
       ))
       .then(userUrls =>
         Promise.all(userUrls.map(fetch))
@@ -66,35 +65,45 @@ module.exports = (app) => {
         Promise.all(responses.map(response => response.json()))
       )
       .then(jsons =>
-        // Mapping from Firebase strange data structure to plain array of endpoint urls
         _(jsons)
-          .map(endpoint => _.values(endpoint))
+          .map(_.values)
           .flatten()
-          .filter(e => e.url !== ownerEndpointUrl)
-          .uniqBy('url')
+          .without(ownerPushToken)
+          .uniq()
+          .value()
       )
-      .then((subscriptions) => {
-        const notifications = subscriptions.map((subscription) => {
-          const userPublicKey = subscription.publicKey;
-          const userAuth = subscription.authSecret;
+      .then((pushTokens) => {
+        const notifications = pushTokens.map(pushToken =>
+          new Promise((resolve, reject) => {
+            fcm.send({
+              to: pushToken,
+              data: payload,
+              notification: {
+                title: 'Watchdog alert!',
+                body: payload.message,
+                icon: '/images/stolen-temporary-logo.jpg',
+                click_action: payload.url,
+              },
+              priority: 'high',
+            }, (error, response) => {
+              if (error) { return reject(error); }
+              return resolve(response);
+            });
+          })
+        );
 
-          return webPush.sendNotification(subscription.url, {
-            TTL,
-            userPublicKey,
-            userAuth,
-            payload: JSON.stringify(payload),
-          });
-        });
+        console.log('Sending notifications to:', pushTokens);
 
         return Promise.all(notifications);
       })
-      .then(
-        () => res.sendStatus(204),
-        (error) => {
-          console.log(`Error when sending notifications: ${error}`);
-          return res.status(500).send(error);
-        }
-      );
+      .then((responses) => {
+        console.log(`Sent notifications: ${JSON.stringify(responses, null, 2)}`);
+        res.status(200).send(responses);
+      })
+      .catch((error) => {
+        console.log(`Error when sending notifications: ${JSON.stringify(error, null, 2)}`);
+        return res.status(500).send(error);
+      });
   });
 
   app.post('/api/devices/verify', (req, res) => {

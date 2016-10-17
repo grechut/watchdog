@@ -22,7 +22,6 @@ export default function reducer(state = initialState, action) {
           name: device.name,
           online: device.online,
           peerId: device.peerId,
-
           pushNotificationEndpoints: Object.keys(device.push_notification_endpoints || {}),
         },
       };

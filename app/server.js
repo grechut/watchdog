@@ -70,5 +70,11 @@ app.listen(port, (error) => {
     console.error(error);
   } else {
     console.info(`==> Running in ${env} env on http://localhost:${port}/`);
+    console.log('Using the following Firebase configuration:');
+    console.log('FIREBASE_AUTH_DOMAIN:\t\t', process.env.FIREBASE_AUTH_DOMAIN);
+    console.log('FIREBASE_DATABASE_URL:\t\t', process.env.FIREBASE_DATABASE_URL);
+    console.log('FIREBASE_API_KEY:\t\t', process.env.FIREBASE_API_KEY);
+    console.log('FIREBASE_SERVER_KEY:\t\t', process.env.FIREBASE_SERVER_KEY);
+    console.log('FIREBASE_MESSAGING_SENDER_ID:\t', process.env.FIREBASE_MESSAGING_SENDER_ID);
   }
 });
