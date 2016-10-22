@@ -1,41 +1,52 @@
-/* eslint import/no-extraneous-dependencies: "off" */
+/* eslint import/no-extraneous-dependencies: ["error", { devDependencies: true}] */
 
-require('dotenv').load();
+require('dotenv').config({ silent: true });
 
 const path = require('path');
 const webpack = require('webpack');
+const CleanPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const env = process.env.NODE_ENV || 'dev';
+const env = process.env.NODE_ENV || 'development';
 
 function join(dest) { return path.resolve(__dirname, dest); }
 function web(dest) { return join(`app/${dest}`); }
 
 const config = module.exports = {
-  entry: [
-    web('index'),
-  ],
+  entry: {
+    app: [web('index.jsx')],
+    vendor: [
+      'classnames',
+      'firebase',
+      'lodash',
+      'moment',
+      'react',
+      'react-dom',
+      'react-mdl',
+      'react-redux',
+      'react-router',
+      'react-router-redux',
+      'redux',
+      'redux-logger',
+      'redux-thunk',
+      'resemblejs',
+      'rxjs',
+      'simple-peer',
+      'uuid',
+    ],
+  },
 
   output: {
-    path: web('static'),
-    filename: 'bundle.js',
-    publicPath: '/static/',
+    path: web('../dist'),
+    filename: 'js/[name]-[hash].js',
+    publicPath: '/',
   },
 
   resolve: {
     root: web(''),
     extensions: ['', '.jsx', '.js'],
   },
-
-  plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.DefinePlugin({
-      'process.env': {
-        FIREBASE_AUTH_DOMAIN: `"${process.env.FIREBASE_AUTH_DOMAIN}"`,
-        FIREBASE_DATABASE_URL: `"${process.env.FIREBASE_DATABASE_URL}"`,
-        FIREBASE_API_KEY: `"${process.env.FIREBASE_API_KEY}"`,
-      },
-    }),
-  ],
 
   module: {
     preLoaders: [{
@@ -50,23 +61,59 @@ const config = module.exports = {
         cacheDirectory: true,
       },
       exclude: /node_modules/,
-      include: __dirname,
-    }, {
-      test: /\.css$/,
-      loader: 'style-loader!css-loader',
     }],
   },
+
+  plugins: [
+    new CleanPlugin(['dist']),
+
+    new HtmlWebpackPlugin({
+      template: web('index.html'),
+      cache: true,
+    }),
+
+    new webpack.optimize.OccurenceOrderPlugin(),
+
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: `'${process.env.NODE_ENV}'`,
+        FIREBASE_AUTH_DOMAIN: `'${process.env.FIREBASE_AUTH_DOMAIN}'`,
+        FIREBASE_DATABASE_URL: `'${process.env.FIREBASE_DATABASE_URL}'`,
+        FIREBASE_API_KEY: `'${process.env.FIREBASE_API_KEY}'`,
+      },
+    }),
+
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+    }),
+
+  ],
 };
 
 const initializeEnv = {
-  dev: () => {
+  development: () => {
     config.devtool = 'cheap-eval-source-map';
-    config.entry.push('webpack-hot-middleware/client');
-    config.plugins.push(new webpack.HotModuleReplacementPlugin());
+
+    // Inline CSS in HTML
+    config.module.loaders.push({
+      test: /\.css$/,
+      loader: 'style-loader!css-loader',
+    });
+    config.entry.app.push('webpack-hot-middleware/client');
+    config.plugins.push(
+      new webpack.HotModuleReplacementPlugin()
+    );
   },
 
   production: () => {
+    // Extract CSS to separate file
+    config.module.loaders.push({
+      test: /\.css$/,
+      loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
+    });
+
     config.plugins.push(
+      new ExtractTextPlugin('css/[name]-[hash].css'),
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({ minimize: true })
     );
