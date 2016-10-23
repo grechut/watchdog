@@ -6,7 +6,9 @@ import { Button } from 'react-mdl/lib';
 import AuthActions from '../actions/auth';
 
 function LandingPage(props) {
-  const { dispatch } = props;
+  const { dispatch, location } = props;
+  const returnToParam = location.query['return-to'];
+  const returnToPath = returnToParam ? decodeURIComponent(returnToParam) : null;
 
   return (
     <Layout>
@@ -28,7 +30,7 @@ function LandingPage(props) {
           <h1>Watchdog</h1>
           <h5>Real-time motion and audio detection on your devices</h5>
           <Button
-            onClick={() => dispatch(AuthActions.signIn())}
+            onClick={() => dispatch(AuthActions.signIn(returnToPath))}
             raised
             colored
           >
@@ -42,6 +44,7 @@ function LandingPage(props) {
 
 LandingPage.propTypes = {
   dispatch: PropTypes.func,
+  location: PropTypes.object,
 };
 
 export default connect()(LandingPage);
