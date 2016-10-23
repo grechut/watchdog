@@ -35,17 +35,18 @@ const Actions = {
     };
   },
 
-  signIn() {
+  signIn(returnToPath) {
     return (dispatch) => {
       dispatch({
         type: Constants.AUTH_SIGN_IN_PENDING,
       });
 
+      const defaultPath = '/devices';
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.addScope('email');
 
       firebase.auth().signInWithPopup(provider)
-        .then(() => dispatch(routeActions.push('/devices')))
+        .then(() => dispatch(routeActions.push(returnToPath || defaultPath)))
         .catch(error =>
           dispatch({
             type: Constants.AUTH_SIGN_IN_FAILURE,

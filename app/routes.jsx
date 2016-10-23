@@ -38,10 +38,13 @@ export default function routes(store) {
   );
 
   function requireAuth(nextState, replace) {
+    const url = nextState.location.pathname;
+
     if (!firebase.auth().currentUser) {
       replace({
         pathname: '/',
-        state: { nextPathname: nextState.location.pathname },
+        query: { 'return-to': encodeURIComponent(url) },
+        state: { nextPathname: url },
       });
     }
   }
