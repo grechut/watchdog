@@ -62,13 +62,13 @@ class Device extends Component {
     return (
       <LayoutContainer title={`Device: ${device.name}`}>
         <Grid>
-          <Cell col={6} shadow={2}>
+          <Cell col={6} tablet={10} shadow={2}>
             <Video src={device.remoteStream} />
 
             <IncidentList incidents={incidentsForDevice} />
           </Cell>
 
-          <Cell component={Card} col={6} shadow={2}>
+          <Cell component={Card} col={6} tablet={10} shadow={2}>
 
             <Grid component={CardText} noSpacing>
               <Cell component="h4" col={12}>Settings</Cell>

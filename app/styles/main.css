@@ -5,8 +5,6 @@ html, body {
 
 .content {
   max-width: 960px;
-  margin: 0 auto 120px;
-  padding: 40px;
   justify-content: center;
 }
 
