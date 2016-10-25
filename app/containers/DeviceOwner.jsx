@@ -6,6 +6,7 @@ import DeviceActions from '../actions/devices';
 import MediaStreamActions from '../actions/media-stream';
 import PeerActions from '../actions/peer';
 
+import ShareLink from '../components/ShareLink';
 import Video from '../components/Video';
 
 import LayoutContainer from '../containers/LayoutContainer';
@@ -41,7 +42,10 @@ class DeviceOwner extends Component {
     if (!device) { return null; }
 
     return (
-      <LayoutContainer title={`Device: ${device.name}`}>
+      <LayoutContainer
+        title={`Device: ${device.name}`}
+        headerContent={<ShareLink link={window.location.href} />}
+      >
         <Grid>
           <Cell col={12} shadow={2} align="middle">
             <Video src={device.localStream} />

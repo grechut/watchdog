@@ -32,6 +32,7 @@
     "morgan": "1.7.0",
     "node-fetch": "1.6.3",
     "react": "15.3.2",
+    "react-copy-to-clipboard": "^4.2.3",
     "react-dom": "15.3.2",
     "react-mdl": "1.7.2",
     "react-redux": "4.4.5",
