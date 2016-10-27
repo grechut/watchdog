@@ -6,11 +6,13 @@ const express = require('express');
 const history = require('connect-history-api-fallback');
 const morgan = require('morgan');
 const path = require('path');
+const requireHTTPS = require('./requireHTTPS');
 
 const app = express();
 const env = process.env.NODE_ENV || 'development';
 const port = process.env.PORT || 3000;
 
+app.use(requireHTTPS);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(compression());
