@@ -15,6 +15,7 @@ import DetectorConfig from '../components/DetectorConfig';
 import DeviceConnectionStatus from '../components/DeviceConnectionStatus';
 import IncidentList from '../components/IncidentList';
 import PushNotificationSwitch from '../components/PushNotificationSwitch';
+import ShareLink from '../components/ShareLink';
 import Video from '../components/Video';
 
 import LayoutContainer from '../containers/LayoutContainer';
@@ -60,7 +61,11 @@ class Device extends Component {
     );
 
     return (
-      <LayoutContainer title={`Device: ${device.name}`}>
+      <LayoutContainer
+        title={`Device: ${device.name}`}
+        headerContent={<ShareLink link={window.location.href} />}
+      >
+
         <Grid>
           <Cell col={6} tablet={10} shadow={2}>
             <Video src={device.remoteStream} />
