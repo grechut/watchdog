@@ -1,8 +1,4 @@
 /* Common */
-html, body {
-  font-family: 'Roboto', 'Helvetica', sans-serif;
-}
-
 .content {
   max-width: 960px;
   justify-content: center;
@@ -81,6 +77,16 @@ button.link {
   width: 300px;
   margin: 100px auto;
   text-align: center;
+}
+
+.landing-page h2, h5 {
+  font-family: 'Handlee', serif;
+}
+
+.landing-page button {
+  height: 80px;
+  width: 200px;
+  font-size: 2em;
 }
 
 /* IncidentList */

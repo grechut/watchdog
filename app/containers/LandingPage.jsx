@@ -27,14 +27,14 @@ function LandingPage(props) {
             />
           </a>
 
-          <h1>Watchdog</h1>
-          <h5>Real-time motion and audio detection on your devices</h5>
+          <h2>WATCHDOG</h2>
+          <h5>Live motion and audio alerts</h5>
           <Button
             onClick={() => dispatch(AuthActions.signIn(returnToPath))}
             raised
             colored
           >
-            Get started
+            LAUNCH
           </Button>
         </div>
       </Content>

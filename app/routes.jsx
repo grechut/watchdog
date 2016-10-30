@@ -38,6 +38,7 @@ export default function routes(store) {
   );
 
   function requireAuth(nextState, replace) {
+    console.log('requireAuth');
     const url = nextState.location.pathname;
 
     if (!firebase.auth().currentUser) {
