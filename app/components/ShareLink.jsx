@@ -4,15 +4,13 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 
 function ShareLink(props) {
   const { link } = props;
+  const onCopy = () => console.log('Copied', link);
 
   return (
-    <CopyToClipboard
-      text={link}
-      /* TODO maybe add notifications like:
-        https://www.npmjs.com/package/react-notifications */
-      onCopy={() => console.log('Copied')}
-    >
-      <IconButton name="share" />
+    // TODO maybe add notifications like:
+    // https://www.npmjs.com/package/react-notifications
+    <CopyToClipboard text={link} onCopy={onCopy}>
+      <IconButton name="share" title="Share" />
     </CopyToClipboard>
   );
 }
@@ -22,4 +20,3 @@ ShareLink.propTypes = {
 };
 
 export default ShareLink;
-

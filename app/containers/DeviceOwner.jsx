@@ -38,13 +38,15 @@ class DeviceOwner extends Component {
     const deviceId = this.props.params.deviceId;
     const { devices } = this.props;
     const device = devices[deviceId];
+    const title = `Device: ${device.name}`;
+    const url = window.location.href.replace(/\/device$/, '');
 
     if (!device) { return null; }
 
     return (
       <LayoutContainer
-        title={`Device: ${device.name}`}
-        headerContent={<ShareLink link={window.location.href} />}
+        title={title}
+        headerContent={<ShareLink link={url} />}
       >
         <Grid>
           <Cell col={12} shadow={2} align="middle">
