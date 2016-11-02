@@ -11,6 +11,8 @@ import Video from '../components/Video';
 
 import LayoutContainer from '../containers/LayoutContainer';
 
+import { deviceUrl } from '../routes';
+
 class DeviceOwner extends Component {
   componentDidMount() {
     const { dispatch, params } = this.props;
@@ -39,14 +41,13 @@ class DeviceOwner extends Component {
     const { devices } = this.props;
     const device = devices[deviceId];
     const title = `Device: ${device.name}`;
-    const url = window.location.href.replace(/\/device$/, '');
 
     if (!device) { return null; }
 
     return (
       <LayoutContainer
         title={title}
-        headerContent={<ShareLink link={url} />}
+        headerContent={<ShareLink link={deviceUrl(deviceId)} />}
       >
         <Grid>
           <Cell col={12} shadow={2} align="middle">

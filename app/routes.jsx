@@ -86,3 +86,7 @@ export default function routes(store) {
     deviceFetch.then(() => callback());
   }
 }
+
+export function deviceUrl(deviceId) {
+  return `${window.location.origin}/devices/${deviceId}`;
+}
