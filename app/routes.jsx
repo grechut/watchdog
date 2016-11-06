@@ -40,7 +40,9 @@ export default function routes(store) {
   function requireAuth(nextState, replace, callback) {
     const url = nextState.location.pathname;
 
-    firebase.auth().onAuthStateChanged((user) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      unsubscribe();
+
       if (!user) {
         replace({
           pathname: '/',
@@ -53,7 +55,9 @@ export default function routes(store) {
   }
 
   function requireNoAuth(nextState, replace, callback) {
-    firebase.auth().onAuthStateChanged((user) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      unsubscribe();
+
       if (user) {
         replace({
           pathname: '/devices',
