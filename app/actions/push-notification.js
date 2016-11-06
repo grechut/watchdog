@@ -1,8 +1,8 @@
 import _ from 'lodash';
-
-import { rootRef } from '../lib/firebase';
-
+import firebase, { rootRef } from '../lib/firebase';
 import Constants from '../constants';
+
+const messaging = firebase.messaging();
 
 const Actions = {
   setSupported(flag) {
@@ -27,99 +27,78 @@ const Actions = {
     };
   },
 
-  setSubscription(subscription) {
+  setSubscription(token) {
     return (dispatch, getState) => {
       const { auth } = getState();
-      const url = subscription ? subscription.endpoint : null;
-      const payload = { url };
 
-      if (subscription) {
-        // Retrieve browser's public key and auth used to encrypt payload of notifications
-        // sent *to* this browser.
-        const subscriptionData = subscription.toJSON();
-        payload.authSecret = subscriptionData.keys.auth;
-        payload.publicKey = subscriptionData.keys.p256dh;
-
+      if (token) {
         // Add endpoint data to user's record unless it already exists
         const endpointsPath = `/users/${auth.uid}/push_notification_endpoints`;
         const endpointsRef = rootRef.child(endpointsPath);
 
         endpointsRef.once('value', (snapshot) => {
-          const endpointExists = _(snapshot.val())
+          const tokenExists = _(snapshot.val())
             .values()
-            .some(endpoint => endpoint.url === url);
+            .includes(token);
 
-          if (!endpointExists) {
-            endpointsRef.push(payload);
+          if (!tokenExists) {
+            endpointsRef.push(token);
           }
         });
       }
 
       dispatch({
         type: Constants.PUSH_NOTIFICATION_SET_SUBSCRIPTION,
-        payload,
+        payload: { token },
       });
 
-      return subscription;
+      return token;
     };
   },
 
   subscribe() {
-    return dispatch =>
-      navigator
-        .serviceWorker
-        .getRegistration()
-        .then(registration =>
-          registration
-            .pushManager
-            .getSubscription()
-            .then((existingSubscription) => {
-              // Check if we need to subscribe
-              if (existingSubscription) {
-                return dispatch(this.setSubscription(existingSubscription));
+    return (dispatch) => {
+      // TODO Figure out where it should be, if here on in subscribeToDevice.
+      // TODO Remember to stop listening to token refreshes once it's no longer needed
+      messaging.onTokenRefresh(() => {
+        messaging.getToken()
+          .then((refreshedToken) => {
+            console.log('Push notification: Token refreshed.');
+            dispatch(this.setSubscription(refreshedToken));
+          })
+          .catch((err) => {
+            console.log('Push notification: Unable to retrieve refreshed token ', err);
+          });
+      });
+
+      return messaging.requestPermission()
+        .then(() =>
+          messaging.getToken()
+            .then(
+              (currentToken) => {
+                if (currentToken) {
+                  // Send token to server
+                  dispatch(this.setSubscription(currentToken));
+                } else {
+                  dispatch(this.setSubscription(null));
+                }
+
+                return currentToken || null;
+              },
+              (err) => {
+                console.log('Push notification: An error occurred while retrieving token. ', err);
+                dispatch(this.setSubscription(null));
               }
-
-              return registration
-                .pushManager
-                .subscribe({ userVisibleOnly: true })
-                .then(subscription =>
-                  dispatch(this.setSubscription(subscription))
-                )
-                .catch((error) => {
-                  if (Notification.permission === 'denied') {
-                    dispatch(this.setDenied(true));
-                    console.log('Push Notification: permission denied', error);
-                  } else {
-                    console.log('Push Notification: error during subscribe', error);
-                  }
-
-                  return dispatch(this.setSubscription(null));
-                });
+            )
+            .catch((err) => {
+              console.log('Push notification: Error while setting subscription token. ', err);
+              dispatch(this.setSubscription(null));
             })
-      );
-  },
-
-  unsubscribe() {
-    return dispatch =>
-      navigator
-        .serviceWorker
-        .getRegistration()
-        .then(registration =>
-          registration
-            .pushManager
-            .getSubscription()
-            .then((subscription) => {
-              // Check if need to unsubscribe
-              if (!subscription) {
-                return dispatch(this.setSubscription(null));
-              }
-
-              return subscription.unsubscribe().then(() =>
-                // TODO: remove subscription from Firebase
-                dispatch(this.setSubscription(null))
-              );
-            })
-      );
+        )
+        .catch((err) => {
+          console.log('Push notification: Unable to get permission to notify. ', err);
+        });
+    };
   },
 
   subscribeToDevice(deviceId) {
@@ -129,8 +108,8 @@ const Actions = {
       dispatch({ type: Constants.PUSH_NOTIFICATION_SUBSCRIBE_TO_DEVICE_REQUEST_PENDING });
 
       return dispatch(this.subscribe())
-        .then((subscription) => {
-          if (subscription) {
+        .then((pushToken) => {
+          if (pushToken) {
             // Add user id to device
             const deviceRef = rootRef.child(`/devices/${deviceId}/push_notification_endpoints`);
             deviceRef.update({ [auth.uid]: true }, onSet);
@@ -190,8 +169,10 @@ const Actions = {
     return (dispatch, getState) => {
       const state = getState();
 
-      // used for not sending push notification to the owner itself
-      const ownerEndpointUrl = state.pushNotification.url;
+      // TODO: can't we figure it out from the data in the database?
+      // Send owner's push token to prevent server from sending notifications to the owner.
+      const pushToken = state.pushNotification.token;
+      const secretToken = localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN');
 
       const url = `${window.location.origin}/devices/${deviceId}`;
       const incidentRef = rootRef.child(`incidents/${deviceId}`).push();
@@ -203,9 +184,9 @@ const Actions = {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          secretToken,
+          pushToken,
           payload: { ...payload, url },
-          secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
-          ownerEndpointUrl,
         }),
       });
 

@@ -54,6 +54,7 @@ const config = module.exports = {
       loader: 'eslint-loader',
       exclude: /node_modules/,
     }],
+
     loaders: [{
       test: /.jsx?$/,
       loader: 'babel-loader',
@@ -61,6 +62,19 @@ const config = module.exports = {
         cacheDirectory: true,
       },
       exclude: /node_modules/,
+    }, {
+      test: /manifest.json$/,
+      loader: 'file-loader',
+      query: {
+        name: 'manifest.json',
+      },
+    }, {
+      test: /manifest.json$/,
+      loader: 'string-replace-loader',
+      query: {
+        search: '$process.env.FIREBASE_MESSAGING_SENDER_ID',
+        replace: process.env.FIREBASE_MESSAGING_SENDER_ID,
+      },
     }],
   },
 
@@ -80,6 +94,7 @@ const config = module.exports = {
         FIREBASE_AUTH_DOMAIN: `'${process.env.FIREBASE_AUTH_DOMAIN}'`,
         FIREBASE_DATABASE_URL: `'${process.env.FIREBASE_DATABASE_URL}'`,
         FIREBASE_API_KEY: `'${process.env.FIREBASE_API_KEY}'`,
+        FIREBASE_MESSAGING_SENDER_ID: `'${process.env.FIREBASE_MESSAGING_SENDER_ID}'`,
       },
     }),
 
@@ -92,7 +107,7 @@ const config = module.exports = {
 
 const initializeEnv = {
   development: () => {
-    config.devtool = 'cheap-eval-source-map';
+    config.devtool = 'inline-source-map';
 
     // Inline CSS in HTML
     config.module.loaders.push({

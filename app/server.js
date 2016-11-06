@@ -1,4 +1,4 @@
-require('dotenv').load();
+const dotenvConf = require('dotenv').load();
 
 const bodyParser = require('body-parser');
 const compression = require('compression');
@@ -70,5 +70,7 @@ app.listen(port, (error) => {
     console.error(error);
   } else {
     console.info(`==> Running in ${env} env on http://localhost:${port}/`);
+    console.info('Using the following configuration:');
+    console.info({ dotenvConf });
   }
 });
