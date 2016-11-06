@@ -37,26 +37,35 @@ export default function routes(store) {
     </Route>
   );
 
-  function requireAuth(nextState, replace) {
-    console.log('requireAuth');
+  function requireAuth(nextState, replace, callback) {
     const url = nextState.location.pathname;
 
-    if (!firebase.auth().currentUser) {
-      replace({
-        pathname: '/',
-        query: { 'return-to': encodeURIComponent(url) },
-        state: { nextPathname: url },
-      });
-    }
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      unsubscribe();
+
+      if (!user) {
+        replace({
+          pathname: '/',
+          query: { 'return-to': encodeURIComponent(url) },
+          state: { nextPathname: url },
+        });
+      }
+      callback();
+    });
   }
 
-  function requireNoAuth(nextState, replace) {
-    if (firebase.auth().currentUser) {
-      replace({
-        pathname: '/devices',
-        state: { nextPathname: nextState.location.pathname },
-      });
-    }
+  function requireNoAuth(nextState, replace, callback) {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      unsubscribe();
+
+      if (user) {
+        replace({
+          pathname: '/devices',
+          state: { nextPathname: nextState.location.pathname },
+        });
+      }
+      callback();
+    });
   }
 
   function fetchDevice(nextState, replace, callback) {
