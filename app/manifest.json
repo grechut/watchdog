@@ -2,5 +2,5 @@
   "name": "Watchdog",
   "short_name": "Watchdog",
   "display": "standalone",
-  "gcm_sender_id": "$process.env.GCM_SENDER_ID"
+  "gcm_sender_id": "103953800507"
 }
