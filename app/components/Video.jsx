@@ -16,18 +16,18 @@ export default class Video extends React.Component {
   }
 
   setSource() {
-    const stream = this.props.src;
-    const video = this.video;
+    const { src } = this.props;
+    const video = this.videoEl;
 
-    if (stream) {
+    if (src) {
       video.setAttribute('autoplay', true);
-      video.src = window.URL.createObjectURL(stream);
+      video.src = window.URL.createObjectURL(src);
       video.play();
     }
   }
 
   render() {
-    const src = this.props.src;
+    const { muted, src } = this.props;
     const classes = classnames('video', {
       'video-on': src,
       'video-off': !src,
@@ -35,12 +35,11 @@ export default class Video extends React.Component {
 
     return (
       <div className={classes}>
-        {
-          src ?
-            <video ref={(c) => { this.video = c; }} />
-          :
-            <Icon name="videocam_off" />
-        }
+        {src ? (
+          <video muted={muted} ref={(c) => { this.videoEl = c; }} />
+          ) : (
+          <Icon name="videocam_off" />
+        )}
       </div>
     );
   }
@@ -48,4 +47,5 @@ export default class Video extends React.Component {
 
 Video.propTypes = {
   src: PropTypes.object,
+  muted: PropTypes.bool,
 };

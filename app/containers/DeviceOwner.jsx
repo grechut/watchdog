@@ -51,7 +51,7 @@ class DeviceOwner extends Component {
       >
         <Grid>
           <Cell col={12} shadow={2} align="middle">
-            <Video src={device.localStream} />
+            <Video src={device.localStream} muted />
           </Cell>
         </Grid>
       </LayoutContainer>

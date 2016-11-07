@@ -22,6 +22,7 @@ export default function MotionDetector(stream, options = {}) {
 
   this.video.setAttribute('autoplay', true);
   this.video.src = window.URL.createObjectURL(this.stream);
+  this.video.muted = true;
   this.video.play();
 }
 
