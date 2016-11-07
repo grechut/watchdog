@@ -89,7 +89,7 @@ export default function routes(store) {
             deviceId,
             secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
           }),
-        }
+        },
       )).catch(() => replace({ pathname: '/' }));
     }
     deviceFetch.then(() => callback());

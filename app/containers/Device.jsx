@@ -59,7 +59,7 @@ class Device extends Component {
     const incidentsForDevice = incidents[device.uid] || {};
     const isSubscribed = _.includes(
       device.pushNotificationEndpoints,
-      auth.uid
+      auth.uid,
     );
 
     return (
@@ -90,7 +90,7 @@ class Device extends Component {
                   }
                 />
                 {Object.keys(detectors).map(key =>
-                  <DetectorConfig key={key} detector={detectors[key]} />
+                  <DetectorConfig key={key} detector={detectors[key]} />,
                 )}
               </Cell>
             </Grid>

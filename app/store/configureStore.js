@@ -11,7 +11,7 @@ const loggerMiddleware = createLogger();
 const middlewares = applyMiddleware(
   reduxRouterMiddleware, // Sync dispatched route actions to the history
   thunkMiddleware,       // Lets us dispatch() functions
-  loggerMiddleware       // Logs all actions to the console
+  loggerMiddleware,      // Logs all actions to the console
 );
 const reducer = combineReducers(Object.assign({}, reducers, {
   routing: routeReducer,
@@ -20,7 +20,7 @@ const reducer = combineReducers(Object.assign({}, reducers, {
 export default function configureStore(initialState) {
   const store = createStore(reducer, initialState, compose(
     middlewares,
-    window.devToolsExtension ? window.devToolsExtension() : f => f
+    window.devToolsExtension ? window.devToolsExtension() : f => f,
   ));
 
   // Required for replaying actions from devtools to work

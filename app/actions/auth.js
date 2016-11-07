@@ -51,7 +51,7 @@ const Actions = {
           dispatch({
             type: Constants.AUTH_SIGN_IN_FAILURE,
             payload: { error },
-          })
+          }),
         );
     };
   },

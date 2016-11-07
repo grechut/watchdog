@@ -21,7 +21,7 @@ function IncidentList(props) {
   const nonEmptyList = (
     <List>
       {incidentIds.map(id =>
-        <IncidentListItem key={id} incident={incidents[id]} />
+        <IncidentListItem key={id} incident={incidents[id]} />,
       )}
     </List>
   );

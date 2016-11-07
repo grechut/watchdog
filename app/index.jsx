@@ -41,6 +41,6 @@ const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
     <Provider store={store}>
       <Router history={browserHistory} routes={routes(store)} />
     </Provider>,
-    document.getElementById('root')
+    document.getElementById('root'),
   );
 });

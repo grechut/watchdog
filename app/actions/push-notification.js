@@ -88,12 +88,12 @@ const Actions = {
               (err) => {
                 console.log('Push notification: An error occurred while retrieving token. ', err);
                 dispatch(this.setSubscription(null));
-              }
+              },
             )
             .catch((err) => {
               console.log('Push notification: Error while setting subscription token. ', err);
               dispatch(this.setSubscription(null));
-            })
+            }),
         )
         .catch((err) => {
           console.log('Push notification: Unable to get permission to notify. ', err);
@@ -157,7 +157,7 @@ const Actions = {
       const device = devices[deviceId];
       const isSubscribed = _.includes(
         device.pushNotificationEndpoints,
-        auth.uid
+        auth.uid,
       );
       const action = isSubscribed ? 'unsubscribeFromDevice' : 'subscribeToDevice';
 
