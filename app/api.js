@@ -85,6 +85,7 @@ module.exports = (app) => {
                 click_action: payload.url,
               },
               priority: 'high',
+              collapse_key: `/cameras/${deviceId}`,
             }, (error, response) => {
               if (error) { return reject(error); }
               return resolve(response);
