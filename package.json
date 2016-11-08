@@ -10,7 +10,7 @@
   "scripts": {
     "build": "webpack",
     "debug": "node --debug app/server.js",
-    "lint": "eslint ./app --ext js --ext jsx",
+    "lint": "eslint --cache \"**/*.{js,jsx}\"",
     "start": "node app/server.js",
     "heroku-postbuild": "npm run build"
   },
