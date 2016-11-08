@@ -44,7 +44,7 @@ const initializeEnv = {
     // Serve index.html from memory
     app.get('/index.html', (req, res) => {
       const index = devMiddleware.fileSystem.readFileSync(
-        path.join(config.output.path, 'index.html'),
+        path.join(config.output.path, 'index.html')
       );
       res.end(index);
     });

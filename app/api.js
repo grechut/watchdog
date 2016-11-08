@@ -56,13 +56,13 @@ module.exports = (app) => {
       // If there are no subscribed devices, json will be null
       .then(json => (json ? Object.keys(json) : []))
       .then(userIds => _(userIds).uniq().map(userId =>
-        `${process.env.FIREBASE_DATABASE_URL}/users/${userId}/push_notification_endpoints.json`,
+        `${process.env.FIREBASE_DATABASE_URL}/users/${userId}/push_notification_endpoints.json`
       ))
       .then(userUrls =>
-        Promise.all(userUrls.map(fetch)),
+        Promise.all(userUrls.map(fetch))
       )
       .then(responses =>
-        Promise.all(responses.map(response => response.json())),
+        Promise.all(responses.map(response => response.json()))
       )
       .then(jsons =>
         _(jsons)
@@ -70,7 +70,7 @@ module.exports = (app) => {
           .flatten()
           .without(ownerPushToken)
           .uniq()
-          .value(),
+          .value()
       )
       .then((pushTokens) => {
         const notifications = pushTokens.map(pushToken =>
@@ -90,7 +90,7 @@ module.exports = (app) => {
               if (error) { return reject(error); }
               return resolve(response);
             });
-          }),
+          })
         );
 
         console.log('Sending notifications to:', pushTokens);
