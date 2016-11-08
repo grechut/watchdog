@@ -116,7 +116,7 @@ const initializeEnv = {
     });
     config.entry.app.push('webpack-hot-middleware/client');
     config.plugins.push(
-      new webpack.HotModuleReplacementPlugin(),
+      new webpack.HotModuleReplacementPlugin()
     );
   },
 
@@ -130,7 +130,7 @@ const initializeEnv = {
     config.plugins.push(
       new ExtractTextPlugin('css/[name]-[hash].css'),
       new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin({ minimize: true }),
+      new webpack.optimize.UglifyJsPlugin({ minimize: true })
     );
   },
 };
