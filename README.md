@@ -6,7 +6,7 @@
 - [X] Notifications about detected noise
 - [X] Web push notifications with payload
 - [X] WebRTC video transfer
-- [ ] Remote camera configuration (on/off, detector config
+- [ ] Remote camera configuration (on/off, detector config)
 - [ ] Saving screenshots
 - [ ] Recording videos (MediaRecorder API)
 - [ ] Security (Firebase security rules)
@@ -19,11 +19,11 @@
 Install
 
 ```
-npm install
+yarn install
 ```
 
 Run
 
 ```
-npm start
+yarn start
 ```

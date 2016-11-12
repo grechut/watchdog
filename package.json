@@ -9,9 +9,9 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack",
-    "debug": "node --debug app/server.js",
+    "debug": "node --debug server/server.js",
     "lint": "eslint --cache \"**/*.{js,jsx}\"",
-    "start": "node app/server.js",
+    "start": "node server/server.js",
     "heroku-postbuild": "npm run build"
   },
   "engines": {

@@ -1,4 +1,4 @@
-{
+module.exports = {
   "extends": "airbnb",
 
   "env": {
@@ -25,4 +25,4 @@
     "react/jsx-no-bind": 0,                 // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-bind.md
     "react/forbid-prop-types": 0,           // temporarily
   },
-}
+};

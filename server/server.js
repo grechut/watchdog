@@ -6,7 +6,8 @@ const express = require('express');
 const history = require('connect-history-api-fallback');
 const morgan = require('morgan');
 const path = require('path');
-const requireHTTPS = require('./requireHTTPS');
+const requireHTTPS = require('./middlewares/requireHTTPS');
+const routes = require('./routes');
 
 const app = express();
 const env = process.env.NODE_ENV || 'development';
@@ -17,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(compression());
 app.use(morgan('dev'));
-app.use(express.static(path.resolve(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, '..', 'client', 'public')));
 
 const initializeEnv = {
   development: () => {
@@ -60,7 +61,7 @@ const initializeEnv = {
 };
 
 // API
-require('./api')(app);
+app.use('/', routes);
 
 // HTML/JS/CSS
 initializeEnv[env]();

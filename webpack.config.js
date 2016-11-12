@@ -11,7 +11,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const env = process.env.NODE_ENV || 'development';
 
 function join(dest) { return path.resolve(__dirname, dest); }
-function web(dest) { return join(`app/${dest}`); }
+function web(dest) { return join(`client/${dest}`); }
 
 const config = module.exports = {
   entry: {
