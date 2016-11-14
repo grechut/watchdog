@@ -35,11 +35,9 @@ export default class Video extends React.Component {
 
     return (
       <div className={classes}>
-        {src ? (
+        {src ?
           <video muted={muted} ref={(c) => { this.videoEl = c; }} />
-          ) : (
-          <Icon name="videocam_off" />
-        )}
+          : <Icon name="videocam_off" /> }
       </div>
     );
   }
