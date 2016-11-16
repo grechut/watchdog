@@ -16,8 +16,8 @@ export default function MotionDetector(stream, options = {}) {
 
   this.video = document.createElement('video');
   this.canvas = document.createElement('canvas');
-  this.canvas.width = this.video.width = 400;
-  this.canvas.height = this.video.height = 300;
+  this.canvas.width = this.video.width = 100;
+  this.canvas.height = this.video.height = 100;
   this.ctx = this.canvas.getContext('2d');
 
   this.video.setAttribute('autoplay', true);
