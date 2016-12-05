@@ -84,8 +84,9 @@ button.link {
 }
 
 .landing-page button {
+  margin-top: 50px;
   height: 80px;
-  width: 200px;
+  width: 260px;
   font-size: 2em;
 }
 
