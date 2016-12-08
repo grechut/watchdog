@@ -27,7 +27,7 @@ export default function routes(store) {
           onEnter={fetchDevice}
         />
         <Route
-          path=":deviceId/device"
+          path=":deviceId/owner"
           component={DeviceOwner}
           onEnter={fetchDevice}
         />
@@ -71,28 +71,43 @@ export default function routes(store) {
   function fetchDevice(nextState, replace, callback) {
     const { deviceId } = nextState.params;
     const isOwner = deviceId === localStorage.getItem('WATCHDOG_OWNED_DEVICE_ID');
-    const deviceOwnerPath = `/devices/${deviceId}/device`;
 
-    if (isOwner && nextState.location.pathname !== deviceOwnerPath) {
+    const deviceListenerPath = `/devices/${deviceId}`;
+    const deviceOwnerPath = `/devices/${deviceId}/owner`;
+    const { pathname } = nextState.location;
+
+    if (isOwner && pathname === deviceListenerPath) {
       replace({ pathname: deviceOwnerPath });
+    } else if (!isOwner && pathname === deviceOwnerPath) {
+      replace({ pathname: deviceListenerPath });
     }
 
     let deviceFetch = dispatch(DeviceActions.fetchDevice(deviceId));
+
     if (isOwner) {
-      deviceFetch = deviceFetch.then(() =>
-        fetch('/api/devices/verify', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            deviceId,
-            secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
-          }),
-        },
-      )).catch(() => replace({ pathname: '/' }));
+      // if user cheats for being owner, then we redirect him
+      deviceFetch = deviceFetch.then(() => verifyOwner(deviceId))
+        .catch(() => replace({ pathname: '/' }));
     }
+
     deviceFetch.then(() => callback());
+  }
+
+  /* TODO
+    1. Find better place, but where? It's not an action..
+    2. Do we still need such "security"?
+  */
+  function verifyOwner(deviceId) {
+    fetch('/api/devices/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        deviceId,
+        secretToken: localStorage.getItem('WATCHDOG_OWNED_DEVICE_SECRET_TOKEN'),
+      }),
+    });
   }
 }
 
