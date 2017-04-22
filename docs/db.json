@@ -1,0 +1,46 @@
+{
+    "devices": {
+        "device1_id": {
+            "name": "Room 25",
+            "ownerId": "user1_id",
+            "rtcPeerId": "peer1_id",
+            "online": true
+        }
+    },
+    "users": {
+        "user1_id": {
+            "uuid": "google:1",
+            "email": "a@a.pl",
+            "name": "A A",
+            "avatarUrl": "some.link.com",
+            // Needed? Still we could always fetch viewingDevice token from browser / localStorage
+            "FCMRegistrationToken": {
+                "fcmRegToken1": true
+            },
+            // Maybe having such helpful redundancy?
+            "devices": {
+                "device1_id": true
+            }
+        }
+    },
+    "sharedLinks": {
+        "resonablySecureGuid1": "device1_id"
+    },
+    "incidents": {
+        "devide1_id": {
+            "indicent1_id": {
+                "code": "motion_detected",
+                "message": "At ....",
+                "created_at": 123232
+            }
+        }
+    },
+    "fcmTopics": {
+        "device1_id": {
+            "fcmRegToken1": true
+        }
+    },
+    "sectetTokens": {
+        "device1_id": "privateTokenKnownOnlyToTrueSourceDevice"
+    }
+}
