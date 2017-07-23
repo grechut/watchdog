@@ -21,8 +21,9 @@ module.exports = {
     "no-console": "off",
     "func-names": "off",
 
-    // JSX
+    // React
     "react/jsx-no-bind": 0,                 // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-bind.md
-    "react/forbid-prop-types": 0,           // temporarily
+    "react/forbid-prop-types": 0,
+    "react/require-default-props": "off",
   },
 };

@@ -82,10 +82,11 @@ const Actions = {
         console.log('WebRTC: signal received', message);
 
         if (!connection) {
-          connection = connections[to] = new SimplePeer({
+          connection = new SimplePeer({
             initiator: false,
             stream: device.localStream,
           });
+          connections[to] = connection;
 
           setupConnection(connection, { from: me, to });
 
