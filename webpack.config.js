@@ -10,31 +10,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const env = process.env.NODE_ENV || 'development';
 
-function join(dest) { return path.resolve(__dirname, dest); }
-function web(dest) { return join(`client/${dest}`); }
+function web(dest = '') { return path.resolve(__dirname, `client/${dest}`); }
 
-const config = module.exports = {
+const config = {
   entry: {
     app: [web('index.jsx')],
-    vendor: [
-      'classnames',
-      'firebase',
-      'lodash',
-      'moment',
-      'react',
-      'react-dom',
-      'react-mdl',
-      'react-redux',
-      'react-router',
-      'react-router-redux',
-      'redux',
-      'redux-logger',
-      'redux-thunk',
-      'resemblejs',
-      'rxjs',
-      'simple-peer',
-      'uuid',
-    ],
   },
 
   output: {
@@ -44,36 +24,42 @@ const config = module.exports = {
   },
 
   resolve: {
-    root: web(''),
-    extensions: ['', '.jsx', '.js'],
+    extensions: ['.js', '.jsx'],
   },
 
   module: {
-    preLoaders: [{
+    rules: [{
       test: /\.jsx?$/,
-      loader: 'eslint-loader',
+      enforce: 'pre',
+      use: {
+        loader: 'eslint-loader',
+      },
       exclude: /node_modules/,
-    }],
-
-    loaders: [{
+    }, {
       test: /.jsx?$/,
-      loader: 'babel-loader',
-      query: {
-        cacheDirectory: true,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          cacheDirectory: true,
+        },
       },
       exclude: /node_modules/,
     }, {
       test: /manifest.json$/,
-      loader: 'file-loader',
-      query: {
-        name: 'manifest.json',
+      use: {
+        loader: 'file-loader',
+        options: {
+          name: 'manifest.json',
+        },
       },
     }, {
       test: /manifest.json$/,
-      loader: 'string-replace-loader',
-      query: {
-        search: '$process.env.FIREBASE_MESSAGING_SENDER_ID',
-        replace: process.env.FIREBASE_MESSAGING_SENDER_ID,
+      use: {
+        loader: 'string-replace-loader',
+        options: {
+          search: '$process.env.FIREBASE_MESSAGING_SENDER_ID',
+          replace: process.env.FIREBASE_MESSAGING_SENDER_ID,
+        },
       },
     }],
   },
@@ -86,8 +72,6 @@ const config = module.exports = {
       cache: true,
     }),
 
-    new webpack.optimize.OccurenceOrderPlugin(),
-
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: `'${process.env.NODE_ENV}'`,
@@ -98,31 +82,48 @@ const config = module.exports = {
       },
     }),
 
+    // Extract libraries used by "app" entry into "vendor" chunk
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
+      chunks: ['app'],
+      minChunks(module) {
+        // This assumes all our vendor imports exist in node_modules directory
+        return module.context && module.context.indexOf('node_modules') !== -1;
+      },
     }),
 
+    // Enable scope hoisting
+    new webpack.optimize.ModuleConcatenationPlugin(),
   ],
 };
 
 const initializeEnv = {
   development: () => {
-    config.devtool = 'inline-source-map';
+    config.devtool = 'cheap-module-eval-source-map';
 
     // Inline CSS in HTML
-    config.module.loaders.push({
+    config.module.rules.push({
       test: /\.css$/,
-      loader: 'style-loader!css-loader',
+      use: [{
+        loader: 'style-loader',
+      }, {
+        loader: 'css-loader',
+      }],
     });
+
     config.entry.app.push('webpack-hot-middleware/client');
+
     config.plugins.push(
-      new webpack.HotModuleReplacementPlugin()
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NamedModulesPlugin(),
     );
   },
 
   production: () => {
+    config.devtool = 'source-map';
+
     // Extract CSS to separate file
-    config.module.loaders.push({
+    config.module.rules.push({
       test: /\.css$/,
       loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
     });
@@ -130,9 +131,11 @@ const initializeEnv = {
     config.plugins.push(
       new ExtractTextPlugin('css/[name]-[hash].css'),
       new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin({ minimize: true })
+      new webpack.optimize.UglifyJsPlugin({ minimize: true }),
     );
   },
 };
 
 initializeEnv[env](config);
+
+module.exports = config;

@@ -36,6 +36,7 @@ export default class Video extends React.Component {
     return (
       <div className={classes}>
         {src ?
+          // eslint-disable-next-line jsx-a11y/media-has-caption
           <video muted={muted} ref={(c) => { this.videoEl = c; }} />
           : <Icon name="videocam_off" /> }
       </div>
